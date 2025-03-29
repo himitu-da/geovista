@@ -8,6 +8,7 @@ import LanguageToggle from '@/components/LanguageToggle';
 import { motion } from 'framer-motion';
 import { ButtonAnimation } from '@/components/animations/ButtonAnimation';
 import ParticleBackground from '@/components/animations/ParticleBackground';
+import RippleEffect from '@/components/animations/RippleEffect';
 import { LandingHeader } from '@/components/landing/LandingHeader';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { FeaturesSection } from '@/components/landing/FeaturesSection';
@@ -37,6 +38,9 @@ const Landing = () => {
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
       {/* パーティクル背景 */}
       <ParticleBackground />
+      
+      {/* さざ波エフェクト */}
+      <RippleEffect />
       
       {/* ヘッダーセクション */}
       <LandingHeader />

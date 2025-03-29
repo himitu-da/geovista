@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Globe, BarChart3, Users, Map, Compass } from 'lucide-react';
+import { Globe, BarChart3, Users, Map, Compass, Database } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
 import { FeatureCard } from './FeatureCard';
@@ -16,12 +16,61 @@ const staggeredContainer = {
   }
 };
 
+// フローティングアニメーション
+const floatAnimation = {
+  initial: { y: 0 },
+  animate: {
+    y: [0, -10, 0],
+    transition: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+  }
+};
+
+// 回転アニメーション
+const rotateAnimation = {
+  initial: { rotate: 0 },
+  animate: {
+    rotate: 360,
+    transition: { duration: 20, repeat: Infinity, ease: "linear" }
+  }
+};
+
 export const FeaturesSection = () => {
   const { t } = useLanguage();
   
   return (
-    <section id="features" className="py-24 bg-white">
-      <div className="container mx-auto px-6">
+    <section id="features" className="py-24 bg-white relative overflow-hidden">
+      {/* 装飾要素 - フローティングオブジェクト */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute left-[5%] top-[15%] opacity-10"
+          variants={floatAnimation}
+          initial="initial"
+          animate="animate"
+        >
+          <Globe className="h-16 w-16 text-blue-500" strokeWidth={0.5} />
+        </motion.div>
+        
+        <motion.div
+          className="absolute right-[10%] top-[30%] opacity-10"
+          variants={rotateAnimation}
+          initial="initial"
+          animate="animate"
+        >
+          <Map className="h-20 w-20 text-green-500" strokeWidth={0.5} />
+        </motion.div>
+        
+        <motion.div
+          className="absolute left-[15%] bottom-[10%] opacity-10"
+          variants={floatAnimation}
+          initial="initial"
+          animate="animate"
+          transition={{ delay: 1 }}
+        >
+          <Database className="h-12 w-12 text-purple-500" strokeWidth={0.5} />
+        </motion.div>
+      </div>
+      
+      <div className="container mx-auto px-6 relative z-10">
         <motion.div 
           className="text-center mb-16"
           initial={{ opacity: 0, y: 30 }}
