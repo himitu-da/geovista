@@ -47,8 +47,9 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
       fillColor: getColorForValue(value, selectedMetric),
       weight: isSelected ? 2 : 1,
       opacity: 1,
-      color: '#627BC1',
-      fillOpacity: isSelected ? 1 : (selectedCountry ? 0.5 : 0.8)
+      color: isSelected ? '#0071e3' : '#86868b',
+      fillOpacity: isSelected ? 0.8 : (selectedCountry ? 0.4 : 0.65),
+      dashArray: isSelected ? '' : '2'
     };
   };
   
@@ -88,9 +89,9 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     setPopupInfo({
       position: [center.lat, center.lng],
       content: `
-        <div class="p-2">
-          <h3 class="font-bold text-lg">${props.name}</h3>
-          <p>${valueToShow}</p>
+        <div class="py-2 px-3">
+          <h3 class="font-medium text-base text-gray-900">${props.name}</h3>
+          <p class="text-sm text-gray-600">${valueToShow}</p>
         </div>
       `,
       isOpen: true
@@ -98,8 +99,13 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     
     layer.setStyle({
       weight: 2,
-      fillOpacity: 1
+      fillOpacity: 0.8,
+      dashArray: ''
     });
+    
+    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+      layer.bringToFront();
+    }
   };
   
   // Handle mouseout
@@ -112,7 +118,8 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     if (layer.feature.properties.id !== selectedCountry) {
       layer.setStyle({
         weight: 1,
-        fillOpacity: selectedCountry ? 0.5 : 0.8
+        fillOpacity: selectedCountry ? 0.4 : 0.65,
+        dashArray: '2'
       });
     }
   };
@@ -165,7 +172,7 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
       {popupInfo && popupInfo.isOpen && (
         <Popup
           position={popupInfo.position}
-          className="leaflet-popup"
+          className="country-popup"
         >
           <div dangerouslySetInnerHTML={{ __html: popupInfo.content }} />
         </Popup>
