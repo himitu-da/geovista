@@ -1,4 +1,3 @@
-
 import { TranslationRecord } from './types';
 
 // Explorer page translations
@@ -167,5 +166,65 @@ export const explorerTranslations: Record<string, TranslationRecord> = {
     en: "No countries found",
     es: "No se encontraron países",
     ja: "国が見つかりません"
+  },
+  addPin: {
+    en: "Click on the map to add a pin",
+    es: "Haga clic en el mapa para añadir un pin",
+    ja: "マップをクリックしてピンを追加"
+  },
+  confirmAddPin: {
+    en: "Add Pin Here?",
+    es: "¿Añadir Pin Aquí?",
+    ja: "ここにピンを追加しますか？"
+  },
+  add: {
+    en: "Add",
+    es: "Añadir",
+    ja: "追加"
+  },
+  cancel: {
+    en: "Cancel",
+    es: "Cancelar",
+    ja: "キャンセル"
+  },
+  locationDescription: {
+    en: "AI-generated location description. Accuracy not guaranteed.",
+    es: "Descripción de lugar generada por IA. La exactitud no está garantizada.",
+    ja: "AI生成の位置情報です。正確性は保証されません。"
+  },
+  selectedLocation: {
+    en: "Selected Location",
+    es: "Ubicación Seleccionada",
+    ja: "選択した場所"
+  },
+  remove: {
+    en: "Remove",
+    es: "Eliminar",
+    ja: "削除"
+  },
+  latitude: {
+    en: "Latitude",
+    es: "Latitud",
+    ja: "緯度"
+  },
+  longitude: {
+    en: "Longitude",
+    es: "Longitud",
+    ja: "経度"
+  },
+  generating: {
+    en: "Generating...",
+    es: "Generando...",
+    ja: "生成中..."
+  },
+  generateDescription: {
+    en: "Generate location description",
+    es: "Generar descripción del lugar",
+    ja: "場所の説明を生成"
+  },
+  errorGeneratingDescription: {
+    en: "Failed to generate description. Please try again.",
+    es: "Error al generar descripción. Por favor, inténtelo de nuevo.",
+    ja: "説明の生成に失敗しました。もう一度お試しください。"
   }
 };

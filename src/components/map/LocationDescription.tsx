@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { motion } from 'framer-motion';
@@ -25,7 +24,7 @@ interface LocationDescriptionProps {
  * with visually appealing section-based card designs
  */
 const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }) => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   
   // Determine appropriate icon and color scheme based on section type
   const getSectionInfo = (text: string): { 
@@ -149,7 +148,7 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
           borderColor: 'border-purple-200',
           headingColor: 'text-purple-700'
         };
-      if (lowerText.includes('みどころ') || lowerText.includes('観光')) 
+      if (lowerText.includes('見どころ') || lowerText.includes('観光')) 
         return { 
           icon: <Camera className="w-4 h-4" />, 
           color: 'text-green-600',
@@ -195,11 +194,7 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
                 </h1>
                 <div className="bg-blue-50 p-2 rounded-md border border-blue-100 shadow-sm">
                   <p className="text-xs text-blue-800 italic">
-                    {language === 'es'
-                      ? 'Descripción de lugar generada por IA. La exactitud no está garantizada.'
-                      : language === 'ja'
-                      ? 'AIによって生成された場所の説明。正確性は保証されません。'
-                      : 'AI-generated location description. Accuracy not guaranteed.'}
+                    {t('locationDescription')}
                   </p>
                 </div>
               </div>
