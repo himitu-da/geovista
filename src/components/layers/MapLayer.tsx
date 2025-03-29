@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import WorldMap from '@/components/WorldMap';
 import Footer from '@/components/layout/Footer';
-import { CountryData, DataMetric } from '@/types/country';
+import { CountryData } from '@/types/country';
 
 // アニメーション設定
 const itemVariants = {
@@ -15,19 +15,16 @@ const itemVariants = {
 };
 
 /**
- * マップレイヤーコンポーネント
- * マップとレジェンドを表示
+ * マップレイヤーコンポーネント - シンプル化バージョン
  */
 const MapLayer = ({ 
   countries, 
   loading, 
-  selectedMetric, 
   selectedCountry, 
   onCountrySelect
 }: {
   countries: CountryData[];
   loading: boolean;
-  selectedMetric: DataMetric;
   selectedCountry: string | null;
   onCountrySelect: (countryId: string | null) => void;
 }) => {
@@ -39,7 +36,6 @@ const MapLayer = ({
       <WorldMap 
         countries={countries} 
         loading={loading} 
-        selectedMetric={selectedMetric}
         onCountrySelect={onCountrySelect}
         selectedCountry={selectedCountry}
       />

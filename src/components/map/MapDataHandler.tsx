@@ -1,26 +1,26 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { GeoJSON, useMap } from 'react-leaflet';
-import { CountryData, DataMetric } from '@/types/country';
+import { CountryData } from '@/types/country';
 import { fitMapToCountry } from './handlers/GeoJsonTransformer';
 import { createMouseOverHandler, createMouseOutHandler, createClickHandler } from './handlers/MouseEventHandlers';
 import MapPopup from './MapPopup';
 import HighlightEffect from './effects/HighlightEffect';
 import { AnimatePresence } from 'framer-motion';
+import { COUNTRY_COLOR, COUNTRY_BORDER_COLOR, SELECTED_COUNTRY_COLOR } from '@/utils/mapUtils';
 
 interface MapDataHandlerProps {
   countries: CountryData[];
-  selectedMetric: DataMetric;
   selectedCountry: string | null;
   onCountrySelect: (countryId: string | null) => void;
 }
 
 /**
  * マップデータを処理し表示するコンポーネント
+ * シンプル化バージョン
  */
 const MapDataHandler: React.FC<MapDataHandlerProps> = ({
   countries,
-  selectedMetric,
   selectedCountry,
   onCountrySelect
 }) => {
@@ -62,8 +62,8 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
   
   // インタラクションイベントハンドラーの作成
   const onFeatureMouseover = useMemo(() => 
-    createMouseOverHandler(map, selectedMetric, setPopupInfo), 
-    [map, selectedMetric]
+    createMouseOverHandler(map, 'population', setPopupInfo), 
+    [map]
   );
   
   const onFeatureMouseout = useMemo(() => 
@@ -76,15 +76,15 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     [map, selectedCountry, onCountrySelect]
   );
   
-  // シンプルなスタイル関数（色塗り機能を削除）
+  // シンプルなスタイル関数
   const applyFeatureStyle = (feature: any) => {
     const isSelected = feature.properties.id === selectedCountry;
     
     return {
-      fillColor: '#e8e8e8', // すべての国に同じ色を使用
+      fillColor: COUNTRY_COLOR,
       weight: isSelected ? 2 : 1,
       opacity: 1,
-      color: isSelected ? '#0071e3' : '#666',
+      color: isSelected ? SELECTED_COUNTRY_COLOR : COUNTRY_BORDER_COLOR,
       fillOpacity: isSelected ? 0.7 : 0.5,
       dashArray: isSelected ? '' : '1'
     };

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { CountryData, DataMetric } from '@/types/country';
+import { CountryData } from '@/types/country';
 import MapDataHandler from './map/MapDataHandler';
 import L from 'leaflet';
 import MapControls from './map/MapControls';
@@ -14,7 +14,6 @@ initializeLeafletIcons();
 
 /**
  * マップのコントローラーコンポーネント
- * マップの参照を設定する
  */
 function MapController({ setMapRef }: { setMapRef: React.Dispatch<React.SetStateAction<L.Map | null>> }) {
   const map = useMap();
@@ -45,19 +44,16 @@ function MapController({ setMapRef }: { setMapRef: React.Dispatch<React.SetState
 interface WorldMapProps {
   countries: CountryData[];
   loading: boolean;
-  selectedMetric: DataMetric;
   onCountrySelect: (countryId: string | null) => void;
   selectedCountry: string | null;
 }
 
 /**
- * 世界地図コンポーネント
- * 国のデータを地図上に表示し、ユーザーとのインタラクションを管理
+ * 世界地図コンポーネント - シンプル化バージョン
  */
 const WorldMap: React.FC<WorldMapProps> = ({ 
   countries, 
   loading, 
-  selectedMetric,
   onCountrySelect,
   selectedCountry 
 }) => {
@@ -78,11 +74,10 @@ const WorldMap: React.FC<WorldMapProps> = ({
         style={{ height: '100%', width: '100%' }}
         zoomControl={false}
         className="z-0"
-        minZoom={1}  // 最小ズームレベルを小さく設定
-        maxZoom={10} // 最大ズームレベルを大きく設定
-        worldCopyJump={true} // 日付変更線を超えても世界地図を表示できるようにする
+        minZoom={1}
+        maxZoom={10}
+        worldCopyJump={true}
         attributionControl={false}
-        // 以下の制限を取り外す
         scrollWheelZoom={true}
         dragging={true}
         touchZoom={true}
@@ -101,7 +96,6 @@ const WorldMap: React.FC<WorldMapProps> = ({
         {!loading && countries.length > 0 && (
           <MapDataHandler
             countries={countries}
-            selectedMetric={selectedMetric}
             selectedCountry={selectedCountry}
             onCountrySelect={onCountrySelect}
           />

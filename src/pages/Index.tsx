@@ -3,10 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useCountryData } from '@/hooks/useCountryData';
 import { initializeSentry } from '@/lib/sentry';
-import { DataMetric } from '@/types/country';
 import ErrorMessage from '@/components/ErrorMessage';
 import MapLayer from '@/components/layers/MapLayer';
-import MetricDropdown from '@/components/controls/MetricDropdown';
 import { useIsMobile } from '@/hooks/use-mobile';
 import Header from '@/components/layout/Header';
 
@@ -23,8 +21,7 @@ const containerVariants = {
 };
 
 /**
- * インデックスページコンポーネント
- * アプリケーションのメインページとして機能し、地図とコントロールを表示
+ * インデックスページコンポーネント - シンプル化バージョン
  */
 const Index = () => {
   // Sentryの初期化
@@ -33,7 +30,6 @@ const Index = () => {
   }, []);
 
   // UIの状態
-  const [selectedMetric, setSelectedMetric] = useState<DataMetric>('population_density');
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const isMobile = useIsMobile();
 
@@ -42,12 +38,7 @@ const Index = () => {
 
   return (
     <>
-      {isMobile && (
-        <Header
-          selectedMetric={selectedMetric}
-          onMetricChange={setSelectedMetric}
-        />
-      )}
+      {isMobile && <Header />}
       <motion.div 
         className="fixed inset-0 w-screen h-screen overflow-hidden"
         variants={containerVariants}
@@ -61,20 +52,9 @@ const Index = () => {
         <MapLayer 
           countries={countries} 
           loading={loading} 
-          selectedMetric={selectedMetric}
           selectedCountry={selectedCountry}
           onCountrySelect={setSelectedCountry}
         />
-        
-        {/* メトリック選択ドロップダウン - デスクトップ表示 */}
-        {!isMobile && (
-          <div className="absolute top-4 right-24 z-20">
-            <MetricDropdown 
-              selectedMetric={selectedMetric}
-              onMetricChange={setSelectedMetric}
-            />
-          </div>
-        )}
       </motion.div>
     </>
   );

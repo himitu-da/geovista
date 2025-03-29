@@ -24,8 +24,19 @@ export function useCountryData() {
         }
 
         if (data) {
-          // 受け取ったデータを設定
-          setCountries(data as CountryData[]);
+          // データを適切な形式に変換
+          const formattedData = data.map(item => ({
+            id: item.id,
+            name: item.name,
+            code: item.code,
+            population: item.population,
+            area_km2: item.area_km2,
+            gdp_per_capita: item.gdp_per_capita,
+            // GeoJSONの形式に変換
+            geometry: item.geometry as unknown as GeoJSON.Feature
+          }));
+          
+          setCountries(formattedData);
         }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch country data';
