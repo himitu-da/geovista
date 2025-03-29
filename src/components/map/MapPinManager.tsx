@@ -6,6 +6,16 @@ import { generateLocationDescription } from '@/utils/aiUtils';
 import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useIsMobile } from '@/hooks/use-mobile';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog';
 
 /**
  * Map pin manager component
@@ -13,6 +23,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
  */
 const MapPinManager: React.FC = () => {
   const [pins, setPins] = useState<[number, number][]>([]);
+  const [pendingPin, setPendingPin] = useState<[number, number] | null>(null);
   const { toast } = useToast();
   const { language } = useLanguage();
   const isMobile = useIsMobile();
@@ -21,12 +32,14 @@ const MapPinManager: React.FC = () => {
   const map = useMapEvents({
     // Handle right-click for desktop
     contextmenu: (e) => {
-      addPin(e.latlng.lat, e.latlng.lng);
+      // デスクトップの右クリックでピン追加確認ダイアログを表示
+      setPendingPin([e.latlng.lat, e.latlng.lng]);
     },
     // Handle tap/click for mobile
     click: (e) => {
       if (isMobile) {
-        addPin(e.latlng.lat, e.latlng.lng);
+        // モバイルのタップでピン追加確認ダイアログを表示
+        setPendingPin([e.latlng.lat, e.latlng.lng]);
       }
     }
   });
@@ -67,6 +80,19 @@ const MapPinManager: React.FC = () => {
     }
   };
 
+  // 確認ダイアログが閉じられたときのハンドラー
+  const handleDialogClose = () => {
+    setPendingPin(null);
+  };
+
+  // ピン追加の確認
+  const handleConfirmAddPin = () => {
+    if (pendingPin) {
+      addPin(pendingPin[0], pendingPin[1]);
+      setPendingPin(null);
+    }
+  };
+
   return (
     <>
       {pins.map((position, index) => (
@@ -77,6 +103,30 @@ const MapPinManager: React.FC = () => {
           onGenerateDescription={handleGenerateDescription}
         />
       ))}
+
+      {/* ピン追加確認ダイアログ */}
+      <AlertDialog open={pendingPin !== null} onOpenChange={handleDialogClose}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {language === 'es' ? 'Añadir un pin' : 'Add a pin'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {language === 'es' 
+                ? '¿Desea añadir un pin en esta ubicación?' 
+                : 'Do you want to add a pin at this location?'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>
+              {language === 'es' ? 'Cancelar' : 'Cancel'}
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmAddPin}>
+              {language === 'es' ? 'Añadir' : 'Add'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

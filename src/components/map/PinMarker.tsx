@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import { Loader2, MapPin, X } from 'lucide-react';
+import { Loader2, MapPin, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LocationDescription from './LocationDescription';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -65,12 +65,16 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
               {language === 'es' ? 'Ubicación Seleccionada' : 'Selected Location'}
             </h3>
             <Button 
-              variant="ghost"
+              variant="destructive"
               size="sm"
-              className="h-6 w-6 p-0"
-              onClick={onRemove}
+              className="h-6 px-2 py-0 flex items-center gap-1 text-xs"
+              onClick={(e) => {
+                e.stopPropagation(); // イベントの伝播を停止
+                onRemove();
+              }}
             >
-              <X className="h-4 w-4" />
+              <Trash2 className="h-3 w-3" />
+              {language === 'es' ? 'Eliminar' : 'Delete'}
             </Button>
           </div>
           

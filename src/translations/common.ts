@@ -48,7 +48,7 @@ export const commonTranslations: Record<string, TranslationRecord> = {
     es: "English"
   },
   addPin: {
-    en: "Tap or right-click on the map to add a pin",
-    es: "Toque o haga clic derecho en el mapa para añadir un pin"
+    en: "Right-click or tap to add a pin",
+    es: "Haga clic derecho o toque para añadir un pin"
   }
 };
