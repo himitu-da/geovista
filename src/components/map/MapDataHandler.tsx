@@ -1,8 +1,8 @@
-
+// src/components/map/MapDataHandler.tsx
 import React, { useEffect, useMemo, useState } from 'react';
 import { GeoJSON, useMap } from 'react-leaflet';
 import { CountryData, DataMetric } from '@/types/country';
-import { styleFeature, generateCountryTooltip, resetLayerStyle } from './handlers/FeatureHandlers';
+import { styleFeature } from './handlers/FeatureHandlers';
 import { transformToGeoJson, fitMapToCountry } from './handlers/GeoJsonTransformer';
 import { createMouseOverHandler, createMouseOutHandler, createClickHandler } from './handlers/MouseEventHandlers';
 import MapPopup from './MapPopup';
@@ -32,12 +32,11 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     isOpen: boolean;
   } | null>(null);
   
-  // 選択された国にズームする効果（飛行時間を短くしてよりスムーズに）
+  // 選択された国にズームする効果
   useEffect(() => {
     if (selectedCountry && countries.length > 0) {
       const country = countries.find(c => c.id === selectedCountry);
       
-      // スムーズにズームするために飛行時間を短縮
       if (country) {
         fitMapToCountry(country, map, { duration: 0.5 });
       }
@@ -49,7 +48,7 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     return transformToGeoJson(countries);
   }, [countries]);
   
-  // インタラクションイベントハンドラーの作成（動きをスムーズにするように更新）
+  // インタラクションイベントハンドラーの作成
   const onFeatureMouseover = useMemo(() => 
     createMouseOverHandler(map, selectedMetric, setPopupInfo), 
     [map, selectedMetric]
@@ -74,6 +73,7 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     <>
       {countryGeoJson && (
         <GeoJSON
+          key={`geojson-${selectedMetric}`} // メトリック変更時に強制的に再レンダリング
           data={countryGeoJson as any}
           style={applyFeatureStyle}
           onEachFeature={(feature, layer) => {

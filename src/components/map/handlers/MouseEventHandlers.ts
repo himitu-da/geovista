@@ -1,20 +1,16 @@
-
+// src/components/map/handlers/MouseEventHandlers.ts
 import L from 'leaflet';
 import { generateCountryTooltip, resetLayerStyle } from './FeatureHandlers';
 import { DataMetric } from '@/types/country';
 
 /**
- * Leafletのフィーチャータイプ定義
+ * Leafletの拡張レイヤー型定義
  */
-interface LeafletFeature {
-  properties: {
-    id: string;
-    name: string;
-    code: string;
-    population: number;
-    area_km2: number | null;
-    gdp_per_capita: number;
-  };
+interface ExtendedLayer extends L.Layer {
+  feature?: any;
+  getBounds?: () => L.LatLngBounds;
+  setStyle?: (style: L.PathOptions) => void;
+  bringToFront?: () => void;
 }
 
 /**
@@ -26,9 +22,18 @@ export const createMouseOverHandler = (
   setPopupInfo: (info: { position: [number, number]; content: string; isOpen: boolean; } | null) => void
 ) => {
   return (event: L.LeafletEvent) => {
-    const layer = event.target as L.GeoJSON;
-    const feature = layer.feature as LeafletFeature;
-    const props = feature.properties;
+    const layer = event.target as ExtendedLayer;
+    
+    if (!layer.feature) {
+      console.warn('Invalid feature in mouseover event');
+      return;
+    }
+    
+    const props = layer.feature.properties;
+    if (!props) {
+      console.warn('Invalid properties in feature');
+      return;
+    }
     
     map.getContainer().style.cursor = 'pointer';
     
@@ -36,6 +41,11 @@ export const createMouseOverHandler = (
     const tooltipInfo = generateCountryTooltip(props, selectedMetric);
     
     // レイヤーの境界から中心点を計算
+    if (!layer.getBounds) {
+      console.warn('Layer does not have getBounds method');
+      return;
+    }
+    
     const bounds = layer.getBounds();
     const center = bounds.getCenter();
     
@@ -51,14 +61,16 @@ export const createMouseOverHandler = (
       isOpen: true
     });
     
-    // ホバースタイルの適用
-    layer.setStyle({
-      weight: 2,
-      fillOpacity: 0.85,
-      dashArray: ''
-    });
+    // ホバースタイルの適用（setStyleメソッドがあることを確認）
+    if (layer.setStyle) {
+      layer.setStyle({
+        weight: 2,
+        fillOpacity: 0.85,
+        dashArray: ''
+      });
+    }
     
-    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+    if (layer.bringToFront && !L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
       layer.bringToFront();
     }
   };
@@ -73,11 +85,11 @@ export const createMouseOutHandler = (
   setPopupInfo: (info: { position: [number, number]; content: string; isOpen: boolean; } | null) => void
 ) => {
   return (event: L.LeafletEvent) => {
-    const layer = event.target as L.GeoJSON;
+    const layer = event.target as ExtendedLayer;
     
     map.getContainer().style.cursor = '';
     
-    // 関数型を修正 - 直接オブジェクトを返すようにする
+    // ポップアップを閉じる
     setPopupInfo(null);
     
     // 選択されていない国はスタイルをリセット
@@ -94,9 +106,19 @@ export const createClickHandler = (
   onCountrySelect: (countryId: string | null) => void
 ) => {
   return (event: L.LeafletEvent) => {
-    const layer = event.target as L.GeoJSON;
-    const feature = layer.feature as LeafletFeature;
-    const countryId = feature.properties.id;
+    const layer = event.target as ExtendedLayer;
+    
+    if (!layer.feature || !layer.feature.properties) {
+      console.warn('Invalid feature in click event');
+      return;
+    }
+    
+    const countryId = layer.feature.properties.id;
+    
+    if (!countryId) {
+      console.warn('Country ID not found in feature properties');
+      return;
+    }
     
     // クリックアニメーション
     map.getContainer().style.cursor = 'pointer';
