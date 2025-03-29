@@ -24,6 +24,8 @@ export const landingTranslations: LandingTranslations = {
     feature1: 'Clear visualization of global metrics and indicators',
     feature2: 'Access to comprehensive datasets from trusted sources',
     feature3: 'AI-powered insights to reveal hidden patterns',
+    feature4: 'Navigate global trends with precision',
+    worldwideData: 'Worldwide Data',
     dataDashboard: 'Data Dashboard',
     keyFeatures: 'Key Features In Action',
     experienceFeatures: 'See how our tools can help you gain valuable insights from complex global data.',
@@ -32,7 +34,11 @@ export const landingTranslations: LandingTranslations = {
     readyToExplore: 'Ready to Explore Our World?',
     startYourJourney: 'Start your journey of discovery with our powerful data visualization tools.',
     globalDataVisualization: 'Global Data Visualization Platform',
-    allRightsReserved: 'All Rights Reserved'
+    allRightsReserved: 'All Rights Reserved',
+    geographicalPatterns: 'Geographical Patterns',
+    geographicalPatternsDesc: 'Discover geographical patterns and correlations across the globe with our advanced mapping tools.',
+    globalExploration: 'Global Exploration',
+    globalExplorationDesc: 'Navigate through global data with precision and uncover insights about our interconnected world.'
   },
   ja: {
     launchExplorer: 'エクスプローラーを起動',
@@ -56,6 +62,8 @@ export const landingTranslations: LandingTranslations = {
     feature1: 'グローバル指標の明確な可視化',
     feature2: '信頼できる情報源からの包括的なデータセットにアクセス',
     feature3: '隠れたパターンを明らかにするAI駆動の洞察',
+    feature4: '精度の高いグローバルトレンドナビゲーション',
+    worldwideData: '世界規模のデータ',
     dataDashboard: 'データダッシュボード',
     keyFeatures: '主要機能の実演',
     experienceFeatures: '複雑なグローバルデータから価値ある洞察を得るためのツールをご覧ください。',
@@ -64,6 +72,10 @@ export const landingTranslations: LandingTranslations = {
     readyToExplore: '世界を探索する準備はできましたか？',
     startYourJourney: '強力なデータ可視化ツールで発見の旅を始めましょう。',
     globalDataVisualization: 'グローバルデータビジュアライゼーションプラットフォーム',
-    allRightsReserved: '無断複写・転載を禁じます'
+    allRightsReserved: '無断複写・転載を禁じます',
+    geographicalPatterns: '地理的パターン',
+    geographicalPatternsDesc: '高度なマッピングツールで地球全体の地理的パターンと相関関係を発見します。',
+    globalExploration: 'グローバル探索',
+    globalExplorationDesc: '精度の高いグローバルデータをナビゲートし、相互接続された世界に関する洞察を明らかにします。'
   }
 };
