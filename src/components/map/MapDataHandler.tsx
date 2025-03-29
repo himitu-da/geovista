@@ -62,7 +62,7 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
   
   // インタラクションイベントハンドラーの作成
   const onFeatureMouseover = useMemo(() => 
-    createMouseOverHandler(map, 'population', setPopupInfo), 
+    createMouseOverHandler(map, setPopupInfo), 
     [map]
   );
   
