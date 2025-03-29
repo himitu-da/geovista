@@ -68,7 +68,7 @@ const Landing = () => {
       <main className="flex-grow relative z-10">
         {/* ヒーローセクション */}
         <section className="py-20 md:py-32 px-6 md:px-12 relative overflow-hidden">
-          {/* ヒーローセクションの背景画像と勾配のオーバーレイ */}
+          {/* ヒーローセクションの背景画像と勾配のオーバーレイ - 統一感のための調整 */}
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072')] bg-cover bg-center opacity-10 z-0"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/90 z-0"></div>
           
@@ -132,7 +132,7 @@ const Landing = () => {
           </motion.div>
         </section>
 
-        {/* 特徴セクション */}
+        {/* 特徴セクション - 統一されたカードのスタイル */}
         <section id="features" className="py-24 bg-white">
           <div className="container mx-auto px-6">
             <motion.div 
@@ -164,23 +164,23 @@ const Landing = () => {
                 color="blue"
               />
               <FeatureCard 
-                icon={<BarChart3 className="h-8 w-8 text-green-500" />}
+                icon={<BarChart3 className="h-8 w-8 text-blue-500" />}
                 title={t('dataAnalysis')}
                 description={t('dataAnalysisDesc')}
-                color="green"
+                color="blue"
               />
               <FeatureCard 
-                icon={<Users className="h-8 w-8 text-purple-500" />}
+                icon={<Users className="h-8 w-8 text-blue-500" />}
                 title={t('demographicInsights')}
                 description={t('demographicInsightsDesc')}
-                color="purple"
+                color="blue"
               />
             </motion.div>
           </div>
         </section>
 
-        {/* 詳細セクション */}
-        <section className="py-24 bg-gradient-to-b from-white to-gray-50">
+        {/* 詳細セクション - 背景色の統一 */}
+        <section className="py-24 bg-white">
           <div className="container mx-auto px-6">
             <motion.div 
               className="grid md:grid-cols-2 gap-16 items-center"
@@ -247,8 +247,8 @@ const Landing = () => {
           </div>
         </section>
 
-        {/* 機能デモセクション */}
-        <section className="py-20 bg-white">
+        {/* 機能デモセクション - 背景色と境界線の統一 */}
+        <section className="py-20 bg-gray-50">
           <div className="container mx-auto px-6">
             <motion.div 
               className="text-center mb-16"
@@ -266,13 +266,13 @@ const Landing = () => {
             </motion.div>
             
             <motion.div 
-              className="relative rounded-3xl overflow-hidden shadow-apple-lg border border-gray-100 aspect-video mb-12"
+              className="relative rounded-3xl overflow-hidden shadow-apple-lg border border-gray-100 aspect-video mb-12 bg-white"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+              <div className="w-full h-full bg-gradient-to-br from-blue-50 to-gray-50 flex items-center justify-center">
                 <motion.p 
                   className="text-2xl text-apple-gray-500 px-6 py-4 bg-white rounded-xl shadow-apple-sm"
                   initial={{ scale: 0.9, opacity: 0 }}
@@ -303,8 +303,8 @@ const Landing = () => {
           </div>
         </section>
 
-        {/* CTAセクション */}
-        <section className="py-24 px-6 text-center bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+        {/* CTAセクション - 背景の統一 */}
+        <section className="py-24 px-6 text-center bg-white relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072')] bg-cover bg-center opacity-5 z-0"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/90 z-0"></div>
           
@@ -332,8 +332,8 @@ const Landing = () => {
         </section>
       </main>
 
-      {/* フッター */}
-      <footer className="bg-white py-12 border-t border-gray-100">
+      {/* フッター - シャドウと境界線の統一 */}
+      <footer className="bg-white py-12 border-t border-gray-100 shadow-sm">
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
@@ -352,7 +352,7 @@ const Landing = () => {
 
 /**
  * 特徴カードコンポーネント
- * 各機能の紹介用カード
+ * 各機能の紹介用カード - 統一されたスタイル
  */
 const FeatureCard = ({ icon, title, description, color }: { 
   icon: React.ReactNode; 
@@ -365,22 +365,13 @@ const FeatureCard = ({ icon, title, description, color }: {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
   };
   
-  const getBackgroundColor = (color: string) => {
-    switch(color) {
-      case "blue": return "bg-blue-100";
-      case "green": return "bg-green-100";
-      case "purple": return "bg-purple-100";
-      default: return "bg-blue-100";
-    }
-  };
-  
   return (
     <motion.div 
-      className="p-8 rounded-3xl bg-gradient-to-br from-gray-50 to-white shadow-apple-md hover:shadow-apple-lg transition-all border border-gray-100 group"
+      className="p-8 rounded-3xl bg-white shadow-apple-md hover:shadow-apple-lg transition-all border border-gray-100 group"
       variants={fadeInUp}
       whileHover={{ y: -10, transition: { duration: 0.3 } }}
     >
-      <div className={`w-14 h-14 ${getBackgroundColor(color)} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+      <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
         {icon}
       </div>
       <h3 className="text-2xl font-semibold mb-4 text-apple-gray-700">{title}</h3>

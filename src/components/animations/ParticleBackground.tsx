@@ -9,6 +9,7 @@ interface Particle {
   speedX: number;
   speedY: number;
   opacity: number;
+  color: string;
 }
 
 /**
@@ -27,6 +28,13 @@ const ParticleBackground: React.FC = () => {
   const isMouseMovingRef = useRef(false);
   const mouseMovingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // 統一されたカラーパレット
+  const colorPalette = [
+    'rgba(101, 130, 255, opacity)', // メインブルー
+    'rgba(66, 103, 255, opacity)',  // ディープブルー
+    'rgba(133, 153, 255, opacity)'  // ライトブルー
+  ];
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -44,13 +52,18 @@ const ParticleBackground: React.FC = () => {
     const createParticles = () => {
       particlesRef.current = [];
       for (let i = 0; i < particleCount; i++) {
+        const opacity = Math.random() * 0.5 + 0.1;
+        const colorIndex = Math.floor(Math.random() * colorPalette.length);
+        const color = colorPalette[colorIndex].replace('opacity', opacity.toString());
+        
         particlesRef.current.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
           size: Math.random() * 2 + 1,
           speedX: (Math.random() - 0.5) * 0.5,
           speedY: (Math.random() - 0.5) * 0.5,
-          opacity: Math.random() * 0.5 + 0.1
+          opacity,
+          color
         });
       }
     };
@@ -93,7 +106,7 @@ const ParticleBackground: React.FC = () => {
         
         // パーティクルの描画
         ctx.beginPath();
-        ctx.fillStyle = `rgba(101, 130, 255, ${particle.opacity})`;
+        ctx.fillStyle = particle.color;
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fill();
         
@@ -106,6 +119,7 @@ const ParticleBackground: React.FC = () => {
             
             if (distance < 120) {
               ctx.beginPath();
+              // 接続線は一貫性のために同じブルー系統で、透明度のみ変化させる
               ctx.strokeStyle = `rgba(101, 130, 255, ${0.15 * (1 - distance / 120)})`;
               ctx.lineWidth = 0.5;
               ctx.moveTo(particle.x, particle.y);
