@@ -9,6 +9,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { MapPin, X } from 'lucide-react';
+import PinInstructionTooltip from './PinInstructionTooltip';
 
 // 半透明なピンアイコンを作成
 const ghostPinIcon = new L.Icon({
@@ -127,7 +128,9 @@ const MapPinManager: React.FC = () => {
             autoPan={false}
             autoClose={false}
             closeOnClick={false}
-            onClose={handleDialogClose}
+            eventHandlers={{
+              close: handleDialogClose
+            }}
           >
             <div 
               className="w-48 p-2" 
