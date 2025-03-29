@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
 import { CountryData, DataMetric } from '@/types/country';
-import { Info } from 'lucide-react';
+import { Info, Loader2, Lightbulb } from 'lucide-react';
 import InsightGenerator from './ai/InsightGenerator';
 import InsightReader from './ai/InsightReader';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface AIInsightsProps {
   country: CountryData | undefined;
@@ -30,17 +31,17 @@ const AIInsights: React.FC<AIInsightsProps> = ({ country, metric }) => {
       let insightText = '';
       
       if (metric === 'population_density') {
-        insightText = `${country.name} has a population density of ${Math.round((country.population / (country.area_km2 || 1)))} people per square kilometer. This is ${(country.population / (country.area_km2 || 1)) > 100 ? 'relatively high' : 'relatively low'} compared to global averages, which is often influenced by geographic features and historical settlement patterns.`;
+        insightText = `${country.name}の人口密度は1平方キロメートルあたり${Math.round((country.population / (country.area_km2 || 1)))}人です。これは世界平均と比較して${(country.population / (country.area_km2 || 1)) > 100 ? '比較的高い' : '比較的低い'}値であり、地理的特徴や歴史的な居住パターンに影響されています。`;
       } else if (metric === 'population') {
-        insightText = `With a population of ${country.population.toLocaleString()} people, ${country.name} ranks among the ${country.population > 50000000 ? 'most populous' : 'less populated'} countries in its region. Population trends are often shaped by birth rates, migration patterns, and economic opportunities.`;
+        insightText = `${country.population.toLocaleString()}人の人口を持つ${country.name}は、その地域の${country.population > 50000000 ? '最も人口が多い' : '人口が少ない'}国々の中に位置しています。人口動向は出生率、移民パターン、経済的機会によって形成されることがよくあります。`;
       } else if (metric === 'gdp_per_capita') {
-        insightText = `${country.name}'s GDP per capita reflects its economic output divided by population. This metric is influenced by factors like natural resources, industrial development, education levels, and trade relationships.`;
+        insightText = `${country.name}の一人当たりGDPは、人口で割った経済生産を反映しています。この指標は天然資源、産業発展、教育レベル、貿易関係などの要因に影響されます。`;
       }
       
       setInsight(insightText);
     } catch (error) {
       console.error('Error generating insights:', error);
-      setInsight('Failed to generate insights. Please try again later.');
+      setInsight('インサイトの生成に失敗しました。後でもう一度お試しください。');
     } finally {
       setLoading(false);
     }
@@ -86,11 +87,16 @@ const AIInsights: React.FC<AIInsightsProps> = ({ country, metric }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.2 }}
+      className="bg-white rounded-xl shadow-sm border border-gray-100 p-4"
+    >
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-sm font-medium text-gray-700 flex items-center">
-          <Info className="mr-2 h-4 w-4 text-blue-500" />
-          AI Insights
+          <Lightbulb className="mr-2 h-4 w-4 text-amber-500" />
+          AIインサイト
         </h3>
         
         <InsightGenerator 
@@ -102,21 +108,35 @@ const AIInsights: React.FC<AIInsightsProps> = ({ country, metric }) => {
         />
       </div>
       
-      {insight ? (
-        <div className="text-sm text-gray-600">
-          <p className="mb-2">{insight}</p>
-          <InsightReader 
-            insight={insight}
-            isPlaying={isPlaying}
-            onTogglePlay={toggleAudio}
-          />
-        </div>
-      ) : (
-        <p className="text-xs text-gray-500 italic">
-          {country ? 'Click "Generate Insights" to get AI-powered analysis about this country.' : 'Select a country on the map to get AI-powered insights.'}
-        </p>
-      )}
-    </div>
+      <AnimatePresence mode="wait">
+        {insight ? (
+          <motion.div 
+            key="insight"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="text-sm text-gray-600"
+          >
+            <p className="mb-3 leading-relaxed">{insight}</p>
+            <InsightReader 
+              insight={insight}
+              isPlaying={isPlaying}
+              onTogglePlay={toggleAudio}
+            />
+          </motion.div>
+        ) : (
+          <motion.p 
+            key="prompt"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="text-xs text-gray-500 italic"
+          >
+            {country ? '「インサイトを生成」をクリックして、この国に関するAI駆動の分析を取得します。' : '地図上で国を選択して、AI駆動のインサイトを取得します。'}
+          </motion.p>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 

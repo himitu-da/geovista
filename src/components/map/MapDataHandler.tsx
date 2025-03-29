@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GeoJSON, Popup, useMap } from 'react-leaflet';
 import { CountryData, DataMetric } from '@/types/country';
 import { getColorForValue } from '@/utils/mapUtils';
 import { captureException } from '@/lib/sentry';
 import L from 'leaflet';
+import { motion } from 'framer-motion';
 
 interface MapDataHandlerProps {
   countries: CountryData[];
@@ -25,6 +26,31 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     content: string;
     isOpen: boolean;
   } | null>(null);
+  
+  // Effect to handle zooming to the selected country
+  useEffect(() => {
+    if (selectedCountry && countries.length > 0) {
+      const country = countries.find(c => c.id === selectedCountry);
+      
+      if (country && country.geometry && country.geometry.geometry) {
+        try {
+          // Create a GeoJSON object
+          const geoJSON = L.geoJSON(country.geometry.geometry as any);
+          
+          // Get bounds and fit map to these bounds
+          const bounds = geoJSON.getBounds();
+          map.flyToBounds(bounds, { 
+            padding: [50, 50], 
+            maxZoom: 5, 
+            duration: 1, 
+            easeLinearity: 0.25
+          });
+        } catch (error) {
+          console.error('Error fitting bounds:', error);
+        }
+      }
+    }
+  }, [selectedCountry, countries, map]);
   
   // Style function for GeoJSON features
   const styleFeature = (feature: any) => {
@@ -48,7 +74,7 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
       weight: isSelected ? 2 : 1,
       opacity: 1,
       color: isSelected ? '#0071e3' : '#86868b',
-      fillOpacity: isSelected ? 0.8 : (selectedCountry ? 0.4 : 0.65),
+      fillOpacity: isSelected ? 0.85 : (selectedCountry ? 0.45 : 0.75),
       dashArray: isSelected ? '' : '2'
     };
   };
@@ -59,9 +85,13 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     const feature = layer.feature;
     const countryId = feature.properties.id;
     
+    // Animate click
+    map.getContainer().style.cursor = 'pointer';
+    
     // Toggle selection
     if (countryId === selectedCountry) {
       onCountrySelect(null);
+      map.flyTo([20, 0], 2, { duration: 1 });
     } else {
       onCountrySelect(countryId);
     }
@@ -73,14 +103,21 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     const feature = layer.feature;
     const props = feature.properties;
     
+    map.getContainer().style.cursor = 'pointer';
+    
     let valueToShow = '';
+    let formattedValue = '';
+    
     if (selectedMetric === 'population_density' && props.area_km2) {
       const density = props.population / props.area_km2;
-      valueToShow = `Density: ${density.toFixed(2)} people/km²`;
+      valueToShow = `人口密度`;
+      formattedValue = `${density.toFixed(1)} 人/km²`;
     } else if (selectedMetric === 'gdp_per_capita' && props.gdp_per_capita) {
-      valueToShow = `GDP Per Capita: $${Number(props.gdp_per_capita).toLocaleString()}`;
+      valueToShow = `一人当たりGDP`;
+      formattedValue = `$${Number(props.gdp_per_capita).toLocaleString()}`;
     } else {
-      valueToShow = `Population: ${Number(props.population).toLocaleString()}`;
+      valueToShow = `人口`;
+      formattedValue = `${Number(props.population).toLocaleString()} 人`;
     }
     
     const bounds = layer.getBounds();
@@ -89,9 +126,9 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     setPopupInfo({
       position: [center.lat, center.lng],
       content: `
-        <div class="py-2 px-3">
-          <h3 class="font-medium text-base text-gray-900">${props.name}</h3>
-          <p class="text-sm text-gray-600">${valueToShow}</p>
+        <div class="py-1 px-2">
+          <h3 class="font-medium text-sm text-gray-900">${props.name}</h3>
+          <p class="text-xs text-gray-700">${valueToShow}: <span class="font-medium">${formattedValue}</span></p>
         </div>
       `,
       isOpen: true
@@ -99,7 +136,7 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     
     layer.setStyle({
       weight: 2,
-      fillOpacity: 0.8,
+      fillOpacity: 0.85,
       dashArray: ''
     });
     
@@ -112,13 +149,14 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
   const onFeatureMouseout = (event: any) => {
     const layer = event.target;
     
+    map.getContainer().style.cursor = '';
     setPopupInfo(prev => prev ? { ...prev, isOpen: false } : null);
     
     // Reset style unless it's the selected country
     if (layer.feature.properties.id !== selectedCountry) {
       layer.setStyle({
         weight: 1,
-        fillOpacity: selectedCountry ? 0.4 : 0.65,
+        fillOpacity: selectedCountry ? 0.45 : 0.75,
         dashArray: '2'
       });
     }
@@ -172,7 +210,7 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
       {popupInfo && popupInfo.isOpen && (
         <Popup
           position={popupInfo.position}
-          className="country-popup"
+          className="country-popup map-tooltip"
         >
           <div dangerouslySetInnerHTML={{ __html: popupInfo.content }} />
         </Popup>
