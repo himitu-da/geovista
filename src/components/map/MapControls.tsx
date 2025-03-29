@@ -40,44 +40,48 @@ const MapControls: React.FC<MapControlsProps> = ({
   };
 
   return (
-    <div className="absolute top-4 right-4 z-[400] flex flex-col gap-2">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="absolute top-20 right-4 z-[400] flex flex-col gap-2"
+    >
       <motion.button 
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={handleResetView}
-        className="bg-white rounded-full p-2 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
+        className="bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
         title={t('homeView')}
       >
-        <Home size={16} />
+        <Home size={18} />
       </motion.button>
       <motion.button 
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={handleZoomIn}
-        className="bg-white rounded-full p-2 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
+        className="bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
         title={t('zoomIn')}
       >
-        <ZoomIn size={16} />
+        <ZoomIn size={18} />
       </motion.button>
       <motion.button 
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={handleZoomOut}
-        className="bg-white rounded-full p-2 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
+        className="bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
         title={t('zoomOut')}
       >
-        <ZoomOut size={16} />
+        <ZoomOut size={18} />
       </motion.button>
       <motion.button 
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setShowSearch(!showSearch)}
-        className="bg-white rounded-full p-2 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
+        className="bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
         title={t('searchByCountry')}
       >
-        <Search size={16} />
+        <Search size={18} />
       </motion.button>
-    </div>
+    </motion.div>
   );
 };
 

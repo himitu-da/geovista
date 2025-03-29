@@ -89,7 +89,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
   };
 
   return (
-    <div className="relative w-full h-full rounded-xl overflow-hidden border border-gray-100 shadow-apple-md bg-white">
+    <div className="w-full h-full overflow-hidden">
       {/* Loading Overlay */}
       {loading && <LoadingOverlay />}
       
@@ -118,6 +118,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
         />
       )}
       
+      {/* Full screen map */}
       <MapContainer 
         center={[20, 0]} 
         zoom={2} 
@@ -127,6 +128,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
         minZoom={2}
         maxZoom={8}
         maxBounds={[[-90, -180], [90, 180]]}
+        attributionControl={false}
       >
         {/* Map controller to get reference to the map */}
         <MapController setMapRef={setMapRef} />
@@ -145,6 +147,11 @@ const WorldMap: React.FC<WorldMapProps> = ({
           />
         )}
       </MapContainer>
+      
+      {/* Attribution overlay in bottom right */}
+      <div className="absolute bottom-0 right-0 z-[400] text-xs text-gray-500 bg-white/70 px-2 py-1 rounded-tl-md">
+        &copy; <a href="https://www.openstreetmap.org/copyright" className="hover:text-blue-500">OpenStreetMap</a> contributors
+      </div>
     </div>
   );
 };
