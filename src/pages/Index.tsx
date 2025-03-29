@@ -1,16 +1,24 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import WorldMap from '@/components/WorldMap';
 import Legend from '@/components/Legend';
 import { useCountryData } from '@/hooks/useCountryData';
 import { initializeSentry } from '@/lib/sentry';
-import { Map, BarChart3 } from 'lucide-react';
+import { Map, BarChart3, MicIcon, Info } from 'lucide-react';
+import { DataMetric } from '@/types/country';
+import AIInsights from '@/components/AIInsights';
+import DataChart from '@/components/DataChart';
 
 const Index = () => {
   // Initialize Sentry
   useEffect(() => {
     initializeSentry();
   }, []);
+
+  // State for UI
+  const [visualizationType, setVisualizationType] = useState<'map' | 'chart'>('map');
+  const [selectedMetric, setSelectedMetric] = useState<DataMetric>('population_density');
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
 
   // Fetch countries data
   const { countries, loading, error } = useCountryData();
@@ -21,7 +29,7 @@ const Index = () => {
       <header className="bg-white shadow-sm py-4 px-6">
         <div className="container mx-auto">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-blue-900">World Map Mosaic</h1>
+            <h1 className="text-2xl font-bold text-blue-900">World Data Explorer</h1>
             <div className="text-sm text-gray-500">
               Interactive Global Data Visualization
             </div>
@@ -54,11 +62,21 @@ const Index = () => {
                     Visualization Type
                   </label>
                   <div className="flex space-x-2">
-                    <button className="flex items-center justify-center px-4 py-2 bg-blue-100 rounded-md text-blue-700 font-medium text-sm hover:bg-blue-200 transition-colors">
+                    <button 
+                      className={`flex items-center justify-center px-4 py-2 ${
+                        visualizationType === 'map' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'
+                      } rounded-md font-medium text-sm hover:bg-blue-200 transition-colors`}
+                      onClick={() => setVisualizationType('map')}
+                    >
                       <Map className="mr-2 h-4 w-4" />
                       Map
                     </button>
-                    <button className="flex items-center justify-center px-4 py-2 bg-gray-100 rounded-md text-gray-500 font-medium text-sm hover:bg-gray-200 transition-colors">
+                    <button 
+                      className={`flex items-center justify-center px-4 py-2 ${
+                        visualizationType === 'chart' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'
+                      } rounded-md font-medium text-sm hover:bg-gray-200 transition-colors`}
+                      onClick={() => setVisualizationType('chart')}
+                    >
                       <BarChart3 className="mr-2 h-4 w-4" />
                       Chart
                     </button>
@@ -74,7 +92,8 @@ const Index = () => {
                         name="metric"
                         type="radio"
                         className="h-4 w-4 text-blue-600 border-gray-300"
-                        defaultChecked
+                        checked={selectedMetric === 'population_density'}
+                        onChange={() => setSelectedMetric('population_density')}
                       />
                       <label htmlFor="population-density" className="ml-2 block text-sm text-gray-700">
                         Population Density
@@ -86,9 +105,24 @@ const Index = () => {
                         name="metric"
                         type="radio"
                         className="h-4 w-4 text-blue-600 border-gray-300"
+                        checked={selectedMetric === 'population'}
+                        onChange={() => setSelectedMetric('population')}
                       />
                       <label htmlFor="total-population" className="ml-2 block text-sm text-gray-700">
                         Total Population
+                      </label>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        id="gdp-per-capita"
+                        name="metric"
+                        type="radio"
+                        className="h-4 w-4 text-blue-600 border-gray-300"
+                        checked={selectedMetric === 'gdp_per_capita'}
+                        onChange={() => setSelectedMetric('gdp_per_capita')}
+                      />
+                      <label htmlFor="gdp-per-capita" className="ml-2 block text-sm text-gray-700">
+                        GDP Per Capita
                       </label>
                     </div>
                   </div>
@@ -96,20 +130,43 @@ const Index = () => {
               </div>
             </div>
             
-            <Legend />
+            <Legend metric={selectedMetric} />
+            
+            {selectedCountry && countries.length > 0 && (
+              <AIInsights 
+                country={countries.find(c => c.id === selectedCountry)} 
+                metric={selectedMetric} 
+              />
+            )}
             
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-sm font-medium mb-2 text-gray-700">About the Data</h3>
               <p className="text-xs text-gray-600">
-                This visualization displays population density based on the latest 
-                available census data. Colors indicate the number of people per square kilometer.
+                This visualization displays global statistics based on the latest 
+                available data. Select different metrics and countries to explore patterns
+                and insights across the world.
               </p>
             </div>
           </div>
 
-          {/* Map container */}
+          {/* Map/Chart container */}
           <div className="lg:col-span-3 bg-white rounded-lg shadow-md overflow-hidden h-[calc(100vh-12rem)]">
-            <WorldMap countries={countries} loading={loading} />
+            {visualizationType === 'map' ? (
+              <WorldMap 
+                countries={countries} 
+                loading={loading} 
+                selectedMetric={selectedMetric}
+                onCountrySelect={setSelectedCountry}
+                selectedCountry={selectedCountry}
+              />
+            ) : (
+              <DataChart 
+                countries={countries}
+                loading={loading}
+                selectedMetric={selectedMetric}
+                selectedCountry={selectedCountry}
+              />
+            )}
           </div>
         </div>
       </main>
@@ -118,7 +175,7 @@ const Index = () => {
       <footer className="bg-white shadow-inner py-4 px-6 mt-auto">
         <div className="container mx-auto">
           <div className="text-center text-sm text-gray-500">
-            <p>World Map Mosaic &copy; {new Date().getFullYear()} | Data Visualization Project</p>
+            <p>World Data Explorer &copy; {new Date().getFullYear()} | Interactive Global Data Visualization Project</p>
           </div>
         </div>
       </footer>

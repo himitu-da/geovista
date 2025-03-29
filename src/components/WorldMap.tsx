@@ -2,15 +2,24 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { CountryData } from '@/types/country';
+import { CountryData, DataMetric } from '@/types/country';
 import { captureException } from '@/lib/sentry';
 
 interface WorldMapProps {
   countries: CountryData[];
   loading: boolean;
+  selectedMetric: DataMetric;
+  onCountrySelect: (countryId: string | null) => void;
+  selectedCountry: string | null;
 }
 
-const WorldMap: React.FC<WorldMapProps> = ({ countries, loading }) => {
+const WorldMap: React.FC<WorldMapProps> = ({ 
+  countries, 
+  loading, 
+  selectedMetric,
+  onCountrySelect,
+  selectedCountry 
+}) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapKey, setMapKey] = useState<string>('');
@@ -68,7 +77,63 @@ const WorldMap: React.FC<WorldMapProps> = ({ countries, loading }) => {
     }
   }, [mapKey]);
 
-  // Add GeoJSON data to map when countries data is loaded
+  // Function to get color based on metric
+  const getColorExpression = (metric: DataMetric) => {
+    if (metric === 'population_density') {
+      return [
+        'interpolate',
+        ['linear'],
+        ['get', 'population_density'],
+        0, '#e2f1ff',
+        10, '#c8e1ff',
+        50, '#94c8ff',
+        100, '#64a9ff',
+        500, '#3485ed',
+        1000, '#0061db'
+      ];
+    } 
+    else if (metric === 'population') {
+      return [
+        'interpolate',
+        ['linear'],
+        ['get', 'population'],
+        0, '#e2f1ff',
+        1000000, '#c8e1ff',
+        10000000, '#94c8ff',
+        50000000, '#64a9ff',
+        100000000, '#3485ed',
+        500000000, '#0061db'
+      ];
+    }
+    else if (metric === 'gdp_per_capita') {
+      return [
+        'interpolate',
+        ['linear'],
+        ['get', 'gdp_per_capita'],
+        0, '#e2f1ff',
+        1000, '#c8e1ff',
+        5000, '#94c8ff',
+        15000, '#64a9ff',
+        30000, '#3485ed',
+        50000, '#0061db'
+      ];
+    }
+    
+    // Default fallback
+    return [
+      'interpolate',
+      ['linear'],
+      ['get', 'population_density'],
+      0, '#e2f1ff',
+      10, '#c8e1ff',
+      50, '#94c8ff',
+      100, '#64a9ff',
+      500, '#3485ed',
+      1000, '#0061db'
+    ];
+  };
+
+  // Add GeoJSON data to map when countries data is loaded or metric changes
   useEffect(() => {
     if (!map.current || !mapKey || loading || countries.length === 0) return;
     
@@ -92,23 +157,31 @@ const WorldMap: React.FC<WorldMapProps> = ({ countries, loading }) => {
       // Create a GeoJSON feature collection from the countries data
       const geojson = {
         type: 'FeatureCollection',
-        features: countries.map(country => ({
-          type: 'Feature',
-          properties: {
-            id: country.id,
-            name: country.name,
-            code: country.code,
-            population: country.population,
-            population_density: country.area_km2 ? (country.population / country.area_km2) : null
-          },
-          geometry: country.geometry.geometry
-        }))
+        features: countries.map(country => {
+          // Calculate population density if needed
+          const population_density = country.area_km2 ? (country.population / country.area_km2) : null;
+          
+          return {
+            type: 'Feature',
+            properties: {
+              id: country.id,
+              name: country.name,
+              code: country.code,
+              population: country.population,
+              population_density: population_density,
+              gdp_per_capita: country.gdp_per_capita || 0,
+              selected: country.id === selectedCountry
+            },
+            geometry: country.geometry.geometry
+          };
+        })
       };
       
       // Remove existing layers and sources if they exist
       if (map.current.getSource('countries')) {
         map.current.removeLayer('countries-fill');
         map.current.removeLayer('countries-line');
+        map.current.removeLayer('countries-selected');
         map.current.removeSource('countries');
       }
       
@@ -124,18 +197,28 @@ const WorldMap: React.FC<WorldMapProps> = ({ countries, loading }) => {
         type: 'fill',
         source: 'countries',
         paint: {
-          'fill-color': [
-            'interpolate',
-            ['linear'],
-            ['get', 'population_density'],
-            0, '#e2f1ff',
-            10, '#c8e1ff',
-            50, '#94c8ff',
-            100, '#64a9ff',
-            500, '#3485ed',
-            1000, '#0061db'
-          ],
-          'fill-opacity': 0.8
+          'fill-color': getColorExpression(selectedMetric),
+          'fill-opacity': [
+            'case',
+            ['boolean', ['get', 'selected'], false],
+            1,
+            ['boolean', ['to-boolean', selectedCountry], false],
+            0.5,
+            0.8
+          ]
+        }
+      });
+      
+      // Add a highlighting layer for selected country
+      map.current.addLayer({
+        id: 'countries-selected',
+        type: 'fill',
+        source: 'countries',
+        filter: ['==', 'selected', true],
+        paint: {
+          'fill-color': getColorExpression(selectedMetric),
+          'fill-outline-color': '#000000',
+          'fill-opacity': 1
         }
       });
       
@@ -146,7 +229,12 @@ const WorldMap: React.FC<WorldMapProps> = ({ countries, loading }) => {
         source: 'countries',
         paint: {
           'line-color': '#627BC1',
-          'line-width': 1
+          'line-width': [
+            'case',
+            ['boolean', ['get', 'selected'], false],
+            2,
+            1
+          ]
         }
       });
       
@@ -166,13 +254,19 @@ const WorldMap: React.FC<WorldMapProps> = ({ countries, loading }) => {
         
         const coordinates = e.lngLat;
         
+        let valueToShow = '';
+        if (selectedMetric === 'population_density' && props.population_density) {
+          valueToShow = `Density: ${Number(props.population_density).toFixed(2)} people/km²`;
+        } else if (selectedMetric === 'gdp_per_capita' && props.gdp_per_capita) {
+          valueToShow = `GDP Per Capita: $${Number(props.gdp_per_capita).toLocaleString()}`;
+        } else {
+          valueToShow = `Population: ${Number(props.population).toLocaleString()}`;
+        }
+        
         const popupContent = `
           <div class="p-2">
             <h3 class="font-bold text-lg">${props.name}</h3>
-            <p>Population: ${props.population.toLocaleString()}</p>
-            ${props.population_density ? 
-              `<p>Density: ${props.population_density.toFixed(2)} people/km²</p>` : 
-              ''}
+            <p>${valueToShow}</p>
           </div>
         `;
         
@@ -184,8 +278,23 @@ const WorldMap: React.FC<WorldMapProps> = ({ countries, loading }) => {
         map.current.getCanvas().style.cursor = '';
         popup.remove();
       });
+      
+      // Add click event for selecting a country
+      map.current.on('click', 'countries-fill', (e) => {
+        if (!map.current || !e.features || e.features.length === 0) return;
+        
+        const feature = e.features[0];
+        const props = feature.properties;
+        
+        // Toggle selection if already selected
+        if (props.id === selectedCountry) {
+          onCountrySelect(null);
+        } else {
+          onCountrySelect(props.id);
+        }
+      });
     }
-  }, [countries, loading, mapKey]);
+  }, [countries, loading, mapKey, selectedMetric, selectedCountry, onCountrySelect]);
 
   if (!mapKey) {
     return (

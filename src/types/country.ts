@@ -6,6 +6,7 @@ export interface CountryData {
   population: number;
   area_km2: number | null;
   geometry: GeoJSON.Feature;
+  gdp_per_capita?: number;
 }
 
 export interface CountryDataState {
@@ -13,3 +14,5 @@ export interface CountryDataState {
   loading: boolean;
   error: string | null;
 }
+
+export type DataMetric = 'population_density' | 'population' | 'gdp_per_capita';
