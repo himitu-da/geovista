@@ -120,11 +120,9 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
                 </h1>
                 <div className="bg-blue-50 p-2 rounded-md border border-blue-100">
                   <p className="text-xs text-blue-800 italic">
-                    {language === 'ja' 
-                      ? 'AI生成による場所の説明です。正確性は保証されません。'
-                      : language === 'es'
-                        ? 'Descripción de lugar generada por IA. La exactitud no está garantizada.'
-                        : 'AI-generated location description. Accuracy not guaranteed.'}
+                    {language === 'es' 
+                      ? 'Descripción de lugar generada por IA. La exactitud no está garantizada.'
+                      : 'AI-generated location description. Accuracy not guaranteed.'}
                   </p>
                 </div>
               </div>
