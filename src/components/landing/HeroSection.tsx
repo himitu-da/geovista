@@ -105,6 +105,9 @@ const HeroDescription = ({ t }: { t: (key: string) => string }) => (
   </motion.p>
 );
 
+// ボタンスタイルの共通クラス
+const BUTTON_COMMON_CLASSES = "h-14 px-8 text-lg font-medium rounded-full transition-all w-full sm:w-auto flex items-center justify-center";
+
 /**
  * ヒーローセクションのボタン群
  */
@@ -113,11 +116,11 @@ const HeroButtons = ({ t }: { t: (key: string) => string }) => (
     variants={ANIMATION_VARIANTS.fadeIn}
     className="flex flex-col sm:flex-row gap-4 mt-8"
   >
-    <Link to="/explore">
+    <Link to="/explore" className="w-full sm:w-auto">
       <ButtonAnimation>
         <Button 
           size="lg" 
-          className="px-8 py-6 rounded-full text-lg shadow-apple-md hover:shadow-apple-lg transition-all bg-primary hover:bg-primary/90 w-full sm:w-auto"
+          className={`${BUTTON_COMMON_CLASSES} shadow-apple-md hover:shadow-apple-lg bg-primary hover:bg-primary/90`}
         >
           {t('startExploring')}
         </Button>
@@ -126,7 +129,7 @@ const HeroButtons = ({ t }: { t: (key: string) => string }) => (
     <ButtonAnimation>
       <a 
         href="#features" 
-        className="inline-flex items-center justify-center px-8 py-6 text-lg font-medium text-apple-gray-700 bg-white border border-gray-200 rounded-full shadow-apple-sm hover:shadow-apple-md transition-all w-full sm:w-auto"
+        className={`${BUTTON_COMMON_CLASSES} text-apple-gray-700 bg-white border border-gray-200 shadow-apple-sm hover:shadow-apple-md`}
       >
         {t('viewFeatures')}
       </a>
