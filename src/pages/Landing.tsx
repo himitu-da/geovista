@@ -7,6 +7,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import LanguageToggle from '@/components/LanguageToggle';
 import { motion } from 'framer-motion';
 import { ButtonAnimation } from '@/components/animations/ButtonAnimation';
+import ParticleBackground from '@/components/animations/ParticleBackground';
 
 // アニメーション変数の定義
 const fadeIn = {
@@ -42,7 +43,10 @@ const Landing = () => {
   }, []);
   
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+      {/* パーティクル背景 */}
+      <ParticleBackground />
+      
       {/* ヘッダーセクション */}
       <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -61,9 +65,10 @@ const Landing = () => {
       </header>
 
       {/* メインコンテンツ */}
-      <main className="flex-grow">
+      <main className="flex-grow relative z-10">
         {/* ヒーローセクション */}
         <section className="py-20 md:py-32 px-6 md:px-12 relative overflow-hidden">
+          {/* ヒーローセクションの背景画像と勾配のオーバーレイ */}
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072')] bg-cover bg-center opacity-10 z-0"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/90 z-0"></div>
           
