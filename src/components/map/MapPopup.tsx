@@ -9,7 +9,7 @@ interface MapPopupProps {
 }
 
 /**
- * マップ上のポップアップコンポーネント
+ * マップ上のポップアップコンポーネント - 改善版
  */
 const MapPopup: React.FC<MapPopupProps> = ({ position, content, isOpen }) => {
   if (!isOpen) return null;
@@ -18,6 +18,8 @@ const MapPopup: React.FC<MapPopupProps> = ({ position, content, isOpen }) => {
     <Popup
       position={position}
       className="country-popup map-tooltip"
+      closeButton={false}
+      autoPan={false}
     >
       <div dangerouslySetInnerHTML={{ __html: content }} />
     </Popup>

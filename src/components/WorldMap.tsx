@@ -15,7 +15,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 initializeLeafletIcons();
 
 /**
- * Map controller component
+ * Map controller component - コントロールの改善
  */
 function MapController({ setMapRef }: { setMapRef: React.Dispatch<React.SetStateAction<L.Map | null>> }) {
   const map = useMap();
@@ -51,7 +51,7 @@ interface WorldMapProps {
 }
 
 /**
- * World map component - simplified version
+ * World map component - 改善版
  */
 const WorldMap: React.FC<WorldMapProps> = ({ 
   countries, 
@@ -63,7 +63,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
   const { language } = useLanguage();
 
   return (
-    <div className="w-full h-full overflow-hidden">
+    <div className="w-full h-full overflow-hidden relative">
       {/* Loading overlay */}
       {loading && <LoadingOverlay />}
       

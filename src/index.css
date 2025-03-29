@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -97,11 +98,11 @@
   
   /* Apple風スタイリング - コンポーネント向け */
   .country-popup .leaflet-popup-content-wrapper {
-    @apply rounded-xl shadow-lg border border-gray-200 bg-white/95 backdrop-blur-sm; /* より明確な境界線 */
+    @apply rounded-xl shadow-lg border border-gray-200 bg-white/95 backdrop-blur-sm dark:bg-gray-800/95 dark:border-gray-700; /* より明確な境界線 */
   }
   
   .country-popup .leaflet-popup-tip {
-    @apply bg-white/95;
+    @apply bg-white/95 dark:bg-gray-800/95;
   }
   
   /* ツールチップから境界線を削除 */
@@ -112,6 +113,21 @@
   /* 場所の説明のスタイル */
   .location-popup .leaflet-popup-content {
     margin: 5px;
+    width: auto !important;
+  }
+
+  /* ピン確認ポップアップのスタイル */
+  .pin-confirmation-popup .leaflet-popup-content-wrapper {
+    @apply rounded-lg shadow-md border border-gray-200 bg-white/95 backdrop-blur-sm dark:bg-gray-800/95 dark:border-gray-700;
+    padding: 1px;
+  }
+  
+  .pin-confirmation-popup .leaflet-popup-tip {
+    @apply bg-white/95 dark:bg-gray-800/95;
+  }
+  
+  .pin-confirmation-popup .leaflet-popup-content {
+    margin: 0;
     width: auto !important;
   }
 

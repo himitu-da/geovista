@@ -2,10 +2,11 @@
 import React, { useState } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import { Loader2, MapPin, Trash2 } from 'lucide-react';
+import { Loader2, MapPin, Trash2, MapPinOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LocationDescription from './LocationDescription';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { motion } from 'framer-motion';
 
 interface PinMarkerProps {
   position: [number, number];
@@ -24,7 +25,7 @@ const customPinIcon = new L.Icon({
 });
 
 /**
- * Pin marker component
+ * Pin marker component - 改善版
  */
 const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDescription }) => {
   const [description, setDescription] = useState<string>('');
@@ -57,28 +58,33 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
         popupclose: () => setIsPopupOpen(false),
       }}
     >
-      <Popup className="location-popup">
-        <div className="w-72 p-1 max-w-full">
+      <Popup className="location-popup" autoPan={true}>
+        <motion.div 
+          className="w-72 p-1.5 max-w-full"
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+        >
           <div className="flex justify-between items-center mb-2 border-b pb-2">
             <h3 className="text-sm font-medium flex items-center">
               <MapPin className="w-4 h-4 mr-1.5 text-red-500" />
               {language === 'es' ? 'Ubicación Seleccionada' : 'Selected Location'}
             </h3>
             <Button 
-              variant="destructive"
+              variant="ghost"
               size="sm"
-              className="h-6 px-2 py-0 flex items-center gap-1 text-xs"
+              className="h-6 px-1.5 py-0 flex items-center gap-1 text-xs hover:bg-red-50 hover:text-red-600 text-red-500"
               onClick={(e) => {
                 e.stopPropagation(); // イベントの伝播を停止
                 onRemove();
               }}
             >
-              <Trash2 className="h-3 w-3" />
-              {language === 'es' ? 'Eliminar' : 'Delete'}
+              <MapPinOff className="h-3 w-3" />
+              {language === 'es' ? 'Eliminar' : 'Remove'}
             </Button>
           </div>
           
-          <div className="text-xs mb-2 bg-gray-50 p-2 rounded">
+          <div className="text-xs mb-3 bg-gray-50 p-2 rounded">
             <div className="grid grid-cols-2 gap-1">
               <div>{language === 'es' ? 'Latitud' : 'Latitude'}: <span className="font-medium">{position[0].toFixed(4)}</span></div>
               <div>{language === 'es' ? 'Longitud' : 'Longitude'}: <span className="font-medium">{position[1].toFixed(4)}</span></div>
@@ -103,11 +109,16 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
               )}
             </Button>
           ) : (
-            <div className="bg-white p-2 rounded border max-h-[350px] overflow-y-auto">
+            <motion.div 
+              className="bg-white p-2 rounded border max-h-[350px] overflow-y-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
               <LocationDescription description={description} />
-            </div>
+            </motion.div>
           )}
-        </div>
+        </motion.div>
       </Popup>
     </Marker>
   );

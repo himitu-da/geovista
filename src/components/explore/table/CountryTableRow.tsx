@@ -1,11 +1,17 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Eye } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CountryData, DataMetric } from '@/types/country';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLanguage } from '@/contexts/LanguageContext';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface CountryTableRowProps {
   country: CountryData;
@@ -68,7 +74,7 @@ const CountryTableRow = ({
       initial="hidden"
       animate="visible"
       exit="exit"
-      className={isSelected ? "bg-blue-50 dark:bg-blue-900/20" : ""}
+      className={`${isSelected ? "bg-blue-50 dark:bg-blue-900/20" : "hover:bg-gray-50 dark:hover:bg-gray-800/50"} transition-colors`}
     >
       <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
         <div className="flex items-center">
@@ -91,19 +97,34 @@ const CountryTableRow = ({
         </td>
       )}
       <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-right text-xs sm:text-sm font-medium">
-        <Button
-          size={isMobile ? "sm" : "default"}
-          variant={isSelected ? "default" : "ghost"}
-          className="h-6 sm:h-8 py-0.5 sm:py-1 px-1.5 sm:px-3"
-          onClick={() => onCountrySelect(isSelected ? null : country.id)}
-        >
-          <Eye className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-0.5 sm:mr-1" />
-          <span className="text-[8px] sm:text-xs">
-            {isSelected 
-              ? (language === 'es' ? 'Ocultar' : 'Hide') 
-              : (language === 'es' ? 'Mostrar' : 'Show')}
-          </span>
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="sm"
+                variant={isSelected ? "default" : "ghost"}
+                className={`h-6 sm:h-7 py-0.5 sm:py-1 px-2 sm:px-3 ${isSelected ? "" : "border border-gray-200 dark:border-gray-700"}`}
+                onClick={() => onCountrySelect(isSelected ? null : country.id)}
+              >
+                {isSelected ? (
+                  <EyeOff className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-0.5 sm:mr-1" />
+                ) : (
+                  <Eye className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-0.5 sm:mr-1" />
+                )}
+                <span className="text-[8px] sm:text-xs">
+                  {isSelected 
+                    ? (language === 'es' ? 'Ocultar' : 'Hide') 
+                    : (language === 'es' ? 'Mostrar' : 'Show')}
+                </span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="left">
+              {isSelected 
+                ? (language === 'es' ? 'Ocultar país' : 'Hide country') 
+                : (language === 'es' ? 'Mostrar país en el mapa' : 'Show country on map')}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </td>
     </motion.tr>
   );
