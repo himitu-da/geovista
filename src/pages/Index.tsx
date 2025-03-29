@@ -4,7 +4,7 @@ import WorldMap from '@/components/WorldMap';
 import Legend from '@/components/Legend';
 import { useCountryData } from '@/hooks/useCountryData';
 import { initializeSentry } from '@/lib/sentry';
-import { MapSearch, BarChart3 } from 'lucide-react';
+import { Map, BarChart3 } from 'lucide-react';
 
 const Index = () => {
   // Initialize Sentry
@@ -55,7 +55,7 @@ const Index = () => {
                   </label>
                   <div className="flex space-x-2">
                     <button className="flex items-center justify-center px-4 py-2 bg-blue-100 rounded-md text-blue-700 font-medium text-sm hover:bg-blue-200 transition-colors">
-                      <MapSearch className="mr-2 h-4 w-4" />
+                      <Map className="mr-2 h-4 w-4" />
                       Map
                     </button>
                     <button className="flex items-center justify-center px-4 py-2 bg-gray-100 rounded-md text-gray-500 font-medium text-sm hover:bg-gray-200 transition-colors">
