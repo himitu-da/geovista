@@ -30,21 +30,21 @@ const Index = () => {
   const { countries, loading, error } = useCountryData();
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-50 to-white">
+    <div className="h-screen w-screen flex flex-col bg-gradient-to-b from-slate-50 to-white overflow-hidden">
       {/* Header */}
       <Header />
 
-      {/* Main content */}
+      {/* Main content - Full screen with sidebar */}
       <motion.main 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="flex-grow container mx-auto px-4 py-6"
+        className="flex-grow flex w-full h-[calc(100vh-10rem)] overflow-hidden"
       >
         <ErrorMessage error={error} />
 
         <SidebarProvider>
-          <div className="flex min-h-[calc(100vh-12rem)] w-full">
+          <div className="flex h-full w-full overflow-hidden">
             {/* Sidebar with controls */}
             <ExplorerSidebar 
               visualizationType={visualizationType}
@@ -55,8 +55,8 @@ const Index = () => {
               countries={countries}
             />
 
-            {/* Main content area */}
-            <div className="flex-1 bg-white rounded-xl shadow-apple-md overflow-hidden h-[calc(100vh-12rem)] ml-4">
+            {/* Main content area - full screen map or chart */}
+            <div className="flex-1 h-full overflow-hidden">
               <AnimatePresence mode="wait">
                 {visualizationType === 'map' ? (
                   <motion.div
@@ -65,7 +65,7 @@ const Index = () => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="h-full"
+                    className="h-full w-full"
                   >
                     <WorldMap 
                       countries={countries} 
@@ -82,7 +82,7 @@ const Index = () => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="h-full"
+                    className="h-full w-full"
                   >
                     <DataChart 
                       countries={countries}

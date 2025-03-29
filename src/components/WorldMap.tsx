@@ -7,6 +7,10 @@ import MapDataHandler from './map/MapDataHandler';
 import L from 'leaflet';
 import { motion } from 'framer-motion';
 import { Search, ZoomIn, ZoomOut, Maximize, Home } from 'lucide-react';
+import MapControls from './map/MapControls';
+import SearchOverlay from './map/SearchOverlay';
+import CountryInfoOverlay from './map/CountryInfoOverlay';
+import LoadingOverlay from './map/LoadingOverlay';
 
 // Fix Leaflet default icon issue
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -55,28 +59,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
 
-  // Function to reset map view
-  const handleResetView = () => {
-    if (mapRef) {
-      mapRef.setView([20, 0], 2, { animate: true });
-    }
-  };
-
-  // Function to zoom in
-  const handleZoomIn = () => {
-    if (mapRef) {
-      mapRef.zoomIn(1, { animate: true });
-    }
-  };
-
-  // Function to zoom out
-  const handleZoomOut = () => {
-    if (mapRef) {
-      mapRef.zoomOut(1, { animate: true });
-    }
-  };
-
-  // Function to search for a country
+  // Function to handle country search
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -107,108 +90,32 @@ const WorldMap: React.FC<WorldMapProps> = ({
 
   return (
     <div className="relative w-full h-full rounded-xl overflow-hidden border border-gray-100 shadow-apple-md bg-white">
-      {loading && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 backdrop-blur-sm z-[1000]"
-        >
-          <motion.div 
-            className="flex flex-col items-center"
-            animate={{ scale: [0.95, 1, 0.95] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-          >
-            <div className="h-10 w-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-3"></div>
-            <p className="text-apple-gray-600 font-medium tracking-tight">地図データを読み込み中...</p>
-          </motion.div>
-        </motion.div>
-      )}
+      {/* Loading Overlay */}
+      {loading && <LoadingOverlay />}
       
       {/* Map Controls */}
-      <div className="absolute top-4 right-4 z-[400] flex flex-col gap-2">
-        <motion.button 
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleResetView}
-          className="bg-white rounded-full p-2 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
-          title="ホームビュー"
-        >
-          <Home size={16} />
-        </motion.button>
-        <motion.button 
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleZoomIn}
-          className="bg-white rounded-full p-2 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
-          title="ズームイン"
-        >
-          <ZoomIn size={16} />
-        </motion.button>
-        <motion.button 
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleZoomOut}
-          className="bg-white rounded-full p-2 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
-          title="ズームアウト"
-        >
-          <ZoomOut size={16} />
-        </motion.button>
-        <motion.button 
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setShowSearch(!showSearch)}
-          className="bg-white rounded-full p-2 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
-          title="国名で検索"
-        >
-          <Search size={16} />
-        </motion.button>
-      </div>
+      <MapControls 
+        mapRef={mapRef} 
+        setShowSearch={setShowSearch} 
+        showSearch={showSearch} 
+      />
       
-      {/* Search Input */}
+      {/* Search Overlay */}
       {showSearch && (
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          className="absolute top-4 left-4 z-[400]"
-        >
-          <form onSubmit={handleSearch} className="flex">
-            <input 
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="国名を検索..."
-              className="py-2 px-3 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
-            />
-            <button 
-              type="submit" 
-              className="bg-blue-500 text-white py-2 px-3 rounded-r-lg hover:bg-blue-600 transition-colors"
-            >
-              <Search size={16} />
-            </button>
-          </form>
-        </motion.div>
+        <SearchOverlay 
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          handleSearch={handleSearch}
+        />
       )}
       
-      {/* Selected Country Overlay */}
+      {/* Selected Country Info Overlay */}
       {selectedCountry && countries.length > 0 && (
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          className="absolute left-4 bottom-4 z-[400] bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-3 max-w-xs"
-        >
-          <h3 className="font-medium text-gray-800">
-            {countries.find(c => c.id === selectedCountry)?.name}
-          </h3>
-          <button 
-            onClick={() => onCountrySelect(null)}
-            className="absolute top-1 right-1 text-gray-500 hover:text-gray-700 p-1"
-          >
-            ✕
-          </button>
-        </motion.div>
+        <CountryInfoOverlay 
+          countries={countries}
+          selectedCountry={selectedCountry}
+          onCountrySelect={onCountrySelect}
+        />
       )}
       
       <MapContainer 
