@@ -56,9 +56,8 @@ export const fitMapToCountry = (
     const bounds = geoJSON.getBounds();
     
     // デフォルトのオプションを設定し、ユーザーが提供したオプションで上書き
-    // paddingをPointExpression型(L.Point | [number, number])に変更
     const flyOptions = {
-      padding: [20, 20] as L.PointTuple, // 型キャストで明示的に指定
+      padding: [20, 20],
       maxZoom: options?.maxZoom || 5,
       duration: options?.duration || 0.75,
       easeLinearity: 0.25

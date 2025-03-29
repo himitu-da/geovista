@@ -25,8 +25,8 @@ const SidebarVisualizationSection: React.FC<SidebarVisualizationSectionProps> = 
   const { t } = useLanguage();
   
   return (
-    <div className="w-full flex flex-col space-y-2">
-      <Card className="border-none shadow-none w-full">
+    <>
+      <Card className="border-none shadow-none">
         <CardContent className="p-1">
           <div className="flex p-0.5 bg-gray-100 dark:bg-gray-800 rounded-lg">
             <button 
@@ -39,7 +39,7 @@ const SidebarVisualizationSection: React.FC<SidebarVisualizationSectionProps> = 
               aria-pressed={visualizationType === 'map'}
             >
               <Map className="mr-1 h-3 w-3" />
-              <span className="truncate">{t('map')}</span>
+              {t('map')}
             </button>
             <button 
               className={`flex items-center justify-center px-2 py-1 ${
@@ -51,7 +51,7 @@ const SidebarVisualizationSection: React.FC<SidebarVisualizationSectionProps> = 
               aria-pressed={visualizationType === 'chart'}
             >
               <BarChart3 className="mr-1 h-3 w-3" />
-              <span className="truncate">{t('chart')}</span>
+              {t('chart')}
             </button>
           </div>
         </CardContent>
@@ -61,11 +61,11 @@ const SidebarVisualizationSection: React.FC<SidebarVisualizationSectionProps> = 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="w-full"
+        className="scale-90 origin-top-left"
       >
         <Legend metric={selectedMetric} />
       </motion.div>
-    </div>
+    </>
   );
 };
 

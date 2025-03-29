@@ -42,7 +42,7 @@ const MapControls: React.FC<MapControlsProps> = ({
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="absolute bottom-2 right-2 z-[400] flex flex-col gap-0.5"
+      className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3 z-[400] flex flex-col gap-0.5 sm:gap-1"
     >
       <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full shadow-md p-0.5 flex flex-col gap-0.5">
         {[
@@ -55,11 +55,11 @@ const MapControls: React.FC<MapControlsProps> = ({
             onClick={() => handleMapAction(button.action as 'reset' | 'zoomIn' | 'zoomOut')}
             className={cn(
               "flex items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors",
-              "w-4 h-4 sm:w-5 sm:h-5"
+              isMobile ? "w-5 h-5" : "w-6 h-6"
             )}
             title={t(button.title)}
           >
-            <button.icon size={isMobile ? 10 : 12} />
+            <button.icon size={isMobile ? 12 : 14} />
           </button>
         ))}
       </div>
@@ -68,14 +68,14 @@ const MapControls: React.FC<MapControlsProps> = ({
         onClick={() => setShowSearch(!showSearch)}
         className={cn(
           "flex items-center justify-center rounded-full shadow-md transition-colors",
-          "w-5 h-5 sm:w-6 sm:h-6",
+          isMobile ? "w-6 h-6" : "w-7 h-7",
           showSearch 
             ? "bg-blue-600 text-white hover:bg-blue-700" 
             : "bg-white/90 dark:bg-gray-800/90 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
         )}
         title={t('searchByCountry')}
       >
-        <Search size={isMobile ? 10 : 12} />
+        <Search size={isMobile ? 12 : 14} />
       </button>
     </motion.div>
   );
