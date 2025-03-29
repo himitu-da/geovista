@@ -1,3 +1,4 @@
+
 import { TranslationRecord } from './types';
 
 // Explorer page translations
@@ -226,5 +227,42 @@ export const explorerTranslations: Record<string, TranslationRecord> = {
     en: "Failed to generate description. Please try again.",
     es: "Error al generar descripción. Por favor, inténtelo de nuevo.",
     ja: "説明の生成に失敗しました。もう一度お試しください。"
+  },
+  // 音声読み上げ関連の翻訳を追加
+  textToSpeech: {
+    en: "Text to speech",
+    es: "Texto a voz",
+    ja: "テキスト読み上げ"
+  },
+  listen: {
+    en: "Listen",
+    es: "Escuchar",
+    ja: "聴く"
+  },
+  play: {
+    en: "Play",
+    es: "Reproducir",
+    ja: "再生"
+  },
+  pause: {
+    en: "Pause",
+    es: "Pausar",
+    ja: "一時停止"
+  },
+  mute: {
+    en: "Mute",
+    es: "Silenciar",
+    ja: "ミュート"
+  },
+  unmute: {
+    en: "Unmute",
+    es: "Activar sonido",
+    ja: "ミュート解除"
+  },
+  errorGeneratingSpeech: {
+    en: "Failed to generate speech. Please try again.",
+    es: "Error al generar voz. Por favor, inténtelo de nuevo.",
+    ja: "音声の生成に失敗しました。もう一度お試しください。"
   }
 };
+

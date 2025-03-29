@@ -2,11 +2,13 @@
 import React, { useState } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import { Loader2, MapPin, MapPinOff, Check } from 'lucide-react';
+import { Loader2, MapPin, MapPinOff, Check, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LocationDescription from './LocationDescription';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
+import { generateSpeech } from '@/utils/speechUtils';
+import AudioPlayer from './AudioPlayer';
 
 interface PinMarkerProps {
   position: [number, number];
@@ -31,6 +33,8 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
   const [description, setDescription] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(true);
+  const [speechLoading, setSpeechLoading] = useState<boolean>(false);
+  const [speechData, setSpeechData] = useState<string | null>(null);
   const { language, t } = useLanguage();
 
   // 説明文を生成する
@@ -44,6 +48,21 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
       setDescription(t('errorGeneratingDescription'));
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 音声を生成する
+  const handleGenerateSpeech = async () => {
+    if (!description || speechLoading) return;
+    
+    setSpeechLoading(true);
+    try {
+      const audio = await generateSpeech(description, language);
+      setSpeechData(audio);
+    } catch (error) {
+      console.error('Failed to generate speech:', error);
+    } finally {
+      setSpeechLoading(false);
     }
   };
 
@@ -120,7 +139,19 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              <LocationDescription description={description} />
+              <LocationDescription 
+                description={description}
+                onTextToSpeech={handleGenerateSpeech}
+                speechLoading={speechLoading}
+              />
+              
+              {speechData && (
+                <div className="p-2 border-t">
+                  <AudioPlayer 
+                    audioBase64={speechData}
+                  />
+                </div>
+              )}
             </motion.div>
           )}
         </motion.div>

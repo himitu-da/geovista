@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { motion } from 'framer-motion';
@@ -10,20 +11,29 @@ import {
   Users, 
   Building, 
   Mountain, 
-  Star
+  Star,
+  Volume2,
+  Loader2
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 
 interface LocationDescriptionProps {
   description: string;
+  onTextToSpeech?: () => void;
+  speechLoading?: boolean;
 }
 
 /**
  * Enhanced location description component that displays structured information
  * with visually appealing section-based card designs
  */
-const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }) => {
+const LocationDescription: React.FC<LocationDescriptionProps> = ({ 
+  description, 
+  onTextToSpeech,
+  speechLoading = false
+}) => {
   const { language, t } = useLanguage();
   
   // Determine appropriate icon and color scheme based on section type
@@ -188,10 +198,30 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
           h1: ({ node, children, ...props }) => {
             return (
               <div className="mb-3">
-                <h1 className="text-sm font-bold text-blue-600 border-b pb-1.5 mb-2 flex items-center" {...props}>
-                  <Star className="w-4 h-4 mr-1.5 text-blue-500" />
-                  {children}
-                </h1>
+                <div className="text-sm font-bold text-blue-600 border-b pb-1.5 mb-2 flex items-center justify-between">
+                  <h1 className="flex items-center" {...props}>
+                    <Star className="w-4 h-4 mr-1.5 text-blue-500" />
+                    {children}
+                  </h1>
+                  
+                  {onTextToSpeech && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-6 px-1.5 py-0 text-xs flex items-center gap-1 text-blue-600"
+                      onClick={onTextToSpeech}
+                      disabled={speechLoading}
+                      title={t('textToSpeech')}
+                    >
+                      {speechLoading ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <Volume2 className="h-3 w-3" />
+                      )}
+                      {speechLoading ? t('generating') : t('listen')}
+                    </Button>
+                  )}
+                </div>
                 <div className="bg-blue-50 p-2 rounded-md border border-blue-100 shadow-sm">
                   <p className="text-xs text-blue-800 italic">
                     {t('locationDescription')}
