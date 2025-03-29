@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import LocationDescription from './LocationDescription';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
-import { Tooltip } from '@/components/ui/tooltip';
 
 interface PinMarkerProps {
   position: [number, number];
@@ -26,7 +25,7 @@ const customPinIcon = new L.Icon({
 });
 
 /**
- * Pin marker component - より視覚的に魅力的なバージョン
+ * Pin marker component
  */
 const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDescription }) => {
   const [description, setDescription] = useState<string>('');
@@ -44,9 +43,7 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
       console.error('Failed to generate description:', error);
       setDescription(language === 'es' 
         ? 'Error al generar descripción. Por favor, inténtelo de nuevo.' 
-        : language === 'ja'
-          ? '説明の生成に失敗しました。もう一度お試しください。'
-          : 'Failed to generate description. Please try again.');
+        : 'Failed to generate description. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -61,42 +58,38 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
         popupclose: () => setIsPopupOpen(false),
       }}
     >
-      <Popup className="location-popup" autoPan={true} minWidth={280} maxWidth={320}>
+      <Popup className="location-popup" autoPan={true} minWidth={300} maxWidth={350}>
         <motion.div 
-          className="p-2 max-w-full"
+          className="p-3 max-w-full"
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <div className="flex justify-between items-center mb-2 border-b pb-2">
+          <div className="flex justify-between items-center mb-3 border-b pb-2">
             <h3 className="text-sm font-medium flex items-center">
               <MapPin className="w-4 h-4 mr-1.5 text-red-500" />
-              {language === 'es' ? 'Ubicación Seleccionada' : 
-               language === 'ja' ? '選択された位置' : 'Selected Location'}
+              {language === 'es' ? 'Ubicación Seleccionada' : 'Selected Location'}
             </h3>
             <Button 
               variant="ghost"
               size="sm"
               className="h-6 px-1.5 py-0 flex items-center gap-1 text-xs hover:bg-red-50 hover:text-red-600 text-red-500"
               onClick={(e) => {
-                e.stopPropagation(); // イベントの伝播を停止
+                e.stopPropagation();
                 onRemove();
               }}
             >
               <MapPinOff className="h-3 w-3" />
-              {language === 'es' ? 'Eliminar' : 
-               language === 'ja' ? '削除' : 'Remove'}
+              {language === 'es' ? 'Eliminar' : 'Remove'}
             </Button>
           </div>
           
-          <div className="text-xs mb-3 bg-gray-50 p-2 rounded-md border border-gray-200">
+          <div className="text-xs mb-3 bg-gray-50 p-2 rounded-md border border-gray-200 shadow-sm">
             <div className="grid grid-cols-2 gap-2">
-              <div>{language === 'es' ? 'Latitud' : 
-                    language === 'ja' ? '緯度' : 'Latitude'}: 
+              <div>{language === 'es' ? 'Latitud' : 'Latitude'}: 
                 <span className="font-medium ml-1">{position[0].toFixed(4)}</span>
               </div>
-              <div>{language === 'es' ? 'Longitud' : 
-                    language === 'ja' ? '経度' : 'Longitude'}: 
+              <div>{language === 'es' ? 'Longitud' : 'Longitude'}: 
                 <span className="font-medium ml-1">{position[1].toFixed(4)}</span>
               </div>
             </div>
@@ -113,20 +106,18 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
               {loading ? (
                 <>
                   <Loader2 className="mr-1.5 h-3 w-3 animate-spin" />
-                  {language === 'es' ? 'Generando...' : 
-                   language === 'ja' ? '生成中...' : 'Generating...'}
+                  {language === 'es' ? 'Generando...' : 'Generating...'}
                 </>
               ) : (
                 <>
                   <Check className="mr-1.5 h-3 w-3" />
-                  {language === 'es' ? 'Generar descripción del lugar' : 
-                   language === 'ja' ? '場所の説明を生成' : 'Generate location description'}
+                  {language === 'es' ? 'Generar descripción del lugar' : 'Generate location description'}
                 </>
               )}
             </Button>
           ) : (
             <motion.div 
-              className="bg-white p-2 rounded-md border border-gray-200 max-h-[350px] overflow-y-auto"
+              className="bg-white rounded-md border border-gray-200 max-h-[400px] overflow-y-auto shadow-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}

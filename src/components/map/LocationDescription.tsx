@@ -21,120 +21,112 @@ interface LocationDescriptionProps {
 }
 
 /**
- * 場所の説明を構造化して表示するコンポーネント（改良版）
+ * 場所の説明を構造化して表示するコンポーネント
  */
 const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }) => {
   const { language } = useLanguage();
   
-  // セクションタイプに基づいてアイコンと色を決定する関数
-  const getSectionInfo = (text: string): { icon: JSX.Element; color: string; bgColor: string } => {
+  // セクションタイプに基づいてアイコンと色のスタイル情報を決定する関数
+  const getSectionInfo = (text: string): { 
+    icon: JSX.Element; 
+    borderColor: string; 
+    bgColor: string;
+    headingColor: string;
+    iconColor: string;
+  } => {
     const lowerText = text.toLowerCase();
     
     // 英語の見出しキーワード
-    if (language === 'en') {
-      if (lowerText.includes('geography')) 
-        return { 
-          icon: <Map className="w-4 h-4 mr-1.5" />, 
-          color: 'text-blue-600', 
-          bgColor: 'bg-blue-50'
-        };
-      if (lowerText.includes('history')) 
-        return { 
-          icon: <Clock className="w-4 h-4 mr-1.5" />, 
-          color: 'text-amber-600', 
-          bgColor: 'bg-amber-50'
-        };
-      if (lowerText.includes('culture')) 
-        return { 
-          icon: <Users className="w-4 h-4 mr-1.5" />, 
-          color: 'text-purple-600', 
-          bgColor: 'bg-purple-50'
-        };
-      if (lowerText.includes('points of interest') || lowerText.includes('attractions')) 
-        return { 
-          icon: <Camera className="w-4 h-4 mr-1.5" />, 
-          color: 'text-green-600', 
-          bgColor: 'bg-green-50'
-        };
-      if (lowerText.includes('overview')) 
-        return { 
-          icon: <Book className="w-4 h-4 mr-1.5" />, 
-          color: 'text-gray-600', 
-          bgColor: 'bg-gray-50'
-        };
-    } 
+    if (lowerText.includes('geography')) 
+      return { 
+        icon: <Map className="w-4 h-4" />, 
+        borderColor: 'border-blue-500',
+        bgColor: 'bg-blue-50',
+        headingColor: 'text-blue-700',
+        iconColor: 'text-blue-500'
+      };
+    if (lowerText.includes('history')) 
+      return { 
+        icon: <Clock className="w-4 h-4" />, 
+        borderColor: 'border-amber-500',
+        bgColor: 'bg-amber-50',
+        headingColor: 'text-amber-700',
+        iconColor: 'text-amber-500'
+      };
+    if (lowerText.includes('culture')) 
+      return { 
+        icon: <Users className="w-4 h-4" />, 
+        borderColor: 'border-purple-500',
+        bgColor: 'bg-purple-50',
+        headingColor: 'text-purple-700',
+        iconColor: 'text-purple-500'
+      };
+    if (lowerText.includes('points of interest') || lowerText.includes('attractions')) 
+      return { 
+        icon: <Camera className="w-4 h-4" />, 
+        borderColor: 'border-emerald-500',
+        bgColor: 'bg-emerald-50',
+        headingColor: 'text-emerald-700',
+        iconColor: 'text-emerald-500'
+      };
+    if (lowerText.includes('overview')) 
+      return { 
+        icon: <Book className="w-4 h-4" />, 
+        borderColor: 'border-gray-500',
+        bgColor: 'bg-gray-50',
+        headingColor: 'text-gray-700',
+        iconColor: 'text-gray-500'
+      };
+    
     // スペイン語の見出しキーワード
-    else if (language === 'es') {
-      if (lowerText.includes('geografía')) 
-        return { 
-          icon: <Map className="w-4 h-4 mr-1.5" />, 
-          color: 'text-blue-600', 
-          bgColor: 'bg-blue-50'
-        };
-      if (lowerText.includes('historia')) 
-        return { 
-          icon: <Clock className="w-4 h-4 mr-1.5" />, 
-          color: 'text-amber-600', 
-          bgColor: 'bg-amber-50'
-        };
-      if (lowerText.includes('cultura')) 
-        return { 
-          icon: <Users className="w-4 h-4 mr-1.5" />, 
-          color: 'text-purple-600', 
-          bgColor: 'bg-purple-50'
-        };
-      if (lowerText.includes('puntos de interés') || lowerText.includes('atracciones')) 
-        return { 
-          icon: <Camera className="w-4 h-4 mr-1.5" />, 
-          color: 'text-green-600', 
-          bgColor: 'bg-green-50'
-        };
-      if (lowerText.includes('resumen')) 
-        return { 
-          icon: <Book className="w-4 h-4 mr-1.5" />, 
-          color: 'text-gray-600', 
-          bgColor: 'bg-gray-50'
-        };
-    }
-    // 日本語の見出しキーワード
-    else {
-      if (lowerText.includes('地理')) 
-        return { 
-          icon: <Map className="w-4 h-4 mr-1.5" />, 
-          color: 'text-blue-600', 
-          bgColor: 'bg-blue-50'
-        };
-      if (lowerText.includes('歴史')) 
-        return { 
-          icon: <Clock className="w-4 h-4 mr-1.5" />, 
-          color: 'text-amber-600', 
-          bgColor: 'bg-amber-50'
-        };
-      if (lowerText.includes('文化')) 
-        return { 
-          icon: <Users className="w-4 h-4 mr-1.5" />, 
-          color: 'text-purple-600', 
-          bgColor: 'bg-purple-50'
-        };
-      if (lowerText.includes('見どころ') || lowerText.includes('観光')) 
-        return { 
-          icon: <Camera className="w-4 h-4 mr-1.5" />, 
-          color: 'text-green-600', 
-          bgColor: 'bg-green-50'
-        };
-      if (lowerText.includes('概要')) 
-        return { 
-          icon: <Book className="w-4 h-4 mr-1.5" />, 
-          color: 'text-gray-600', 
-          bgColor: 'bg-gray-50'
-        };
-    }
+    if (lowerText.includes('geografía')) 
+      return { 
+        icon: <Map className="w-4 h-4" />, 
+        borderColor: 'border-blue-500',
+        bgColor: 'bg-blue-50',
+        headingColor: 'text-blue-700',
+        iconColor: 'text-blue-500'
+      };
+    if (lowerText.includes('historia')) 
+      return { 
+        icon: <Clock className="w-4 h-4" />, 
+        borderColor: 'border-amber-500',
+        bgColor: 'bg-amber-50',
+        headingColor: 'text-amber-700',
+        iconColor: 'text-amber-500'
+      };
+    if (lowerText.includes('cultura')) 
+      return { 
+        icon: <Users className="w-4 h-4" />, 
+        borderColor: 'border-purple-500',
+        bgColor: 'bg-purple-50',
+        headingColor: 'text-purple-700',
+        iconColor: 'text-purple-500'
+      };
+    if (lowerText.includes('puntos de interés') || lowerText.includes('atracciones')) 
+      return { 
+        icon: <Camera className="w-4 h-4" />, 
+        borderColor: 'border-emerald-500',
+        bgColor: 'bg-emerald-50',
+        headingColor: 'text-emerald-700',
+        iconColor: 'text-emerald-500'
+      };
+    if (lowerText.includes('resumen')) 
+      return { 
+        icon: <Book className="w-4 h-4" />, 
+        borderColor: 'border-gray-500',
+        bgColor: 'bg-gray-50',
+        headingColor: 'text-gray-700',
+        iconColor: 'text-gray-500'
+      };
     
     // デフォルト値
     return { 
-      icon: <MapPin className="w-4 h-4 mr-1.5" />, 
-      color: 'text-red-600', 
-      bgColor: 'bg-red-50'
+      icon: <MapPin className="w-4 h-4" />, 
+      borderColor: 'border-red-500',
+      bgColor: 'bg-red-50',
+      headingColor: 'text-red-700',
+      iconColor: 'text-red-500'
     };
   };
 
@@ -143,55 +135,70 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="text-xs location-description"
+      className="text-xs location-description space-y-4"
     >
       <ReactMarkdown
         components={{
           h1: ({ node, children, ...props }) => {
             return (
-              <div className="mb-3">
-                <h1 className="text-sm font-bold text-blue-600 border-b pb-1.5 mb-2 flex items-center" {...props}>
-                  <Star className="w-4 h-4 mr-1.5 text-blue-500" />
-                  {children}
-                </h1>
-                <div className="bg-blue-50 p-2 rounded-md border border-blue-100">
+              <div className="mb-4">
+                <div className="bg-blue-50 p-3 rounded-t-lg border-l-4 border-blue-500 flex items-center">
+                  <Star className="w-5 h-5 mr-2 text-blue-500" />
+                  <h1 className="text-sm font-bold text-blue-700" {...props}>
+                    {children}
+                  </h1>
+                </div>
+                <div className="bg-white p-3 rounded-b-lg border border-t-0 border-blue-100 shadow-sm">
                   <p className="text-xs text-blue-800 italic">
-                    {language === 'ja' 
-                      ? 'AI生成による場所の説明です。正確性は保証されません。'
-                      : language === 'es'
-                        ? 'Descripción de lugar generada por IA. La exactitud no está garantizada.'
-                        : 'AI-generated location description. Accuracy not guaranteed.'}
+                    {language === 'es'
+                      ? 'Descripción de lugar generada por IA. La exactitud no está garantizada.'
+                      : 'AI-generated location description. Accuracy not guaranteed.'}
                   </p>
                 </div>
               </div>
             );
           },
           h2: ({ node, children, ...props }) => {
-            // 見出しテキストを取得し、適切なアイコンを選択
+            // 見出しテキストを取得し、適切なアイコンとスタイルを選択
             const headingText = children ? children.toString() : '';
-            const { icon, color, bgColor } = getSectionInfo(headingText);
+            const { icon, borderColor, bgColor, headingColor, iconColor } = getSectionInfo(headingText);
             
             return (
-              <div className={cn("mt-4 mb-2", bgColor, "rounded-t-md border-l-2", `border-l-${color.replace('text-', '')}`)} {...props}>
-                <h2 className={cn("text-xs font-semibold py-1.5 px-2 flex items-center", color)}>
-                  {icon}
-                  {children}
-                </h2>
+              <div className="mb-4 location-section">
+                <div className={cn("section-heading px-3 py-2 rounded-t-lg border-l-4", borderColor, bgColor, "flex items-center")} {...props}>
+                  <span className={cn("mr-2", iconColor)}>
+                    {icon}
+                  </span>
+                  <h2 className={cn("text-sm font-semibold", headingColor)}>
+                    {children}
+                  </h2>
+                </div>
               </div>
             );
           },
           p: ({ node, children, ...props }) => {
+            // 前の見出しのスタイル情報を取得するロジック
+            // 実際の実装ではこれは難しいので、親要素のcontextを使うか、
+            // ReactMarkdownの処理プロセスをカスタマイズする必要があります
+            // ここではシンプルな実装にします
+            
             return (
-              <p className="mb-2 leading-relaxed text-gray-700 pl-3 pr-2 text-xs" {...props}>
-                {children}
-              </p>
+              <div className="bg-white px-3 py-2 rounded-b-lg border border-t-0 border-gray-200 shadow-sm mb-4">
+                <p className="leading-relaxed text-gray-700 text-xs" {...props}>
+                  {children}
+                </p>
+              </div>
             );
           },
-          ul: ({ node, ...props }) => (
-            <ul className="mb-3 pl-3 list-none space-y-1" {...props} />
+          ul: ({ node, children, ...props }) => (
+            <div className="bg-white px-3 py-2 rounded-b-lg border border-t-0 border-gray-200 shadow-sm mb-4">
+              <ul className="space-y-1 list-none" {...props}>
+                {children}
+              </ul>
+            </div>
           ),
           li: ({ node, children, ...props }) => (
-            <li className="mb-1 text-gray-700 flex items-start" {...props}>
+            <li className="flex items-start text-gray-700 text-xs" {...props}>
               <span className="inline-block mr-1.5 mt-0.5 text-green-500">•</span>
               <span>{children}</span>
             </li>
