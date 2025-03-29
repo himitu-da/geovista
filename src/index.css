@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -108,6 +107,38 @@
   /* ツールチップから境界線を削除 */
   .country-popup .leaflet-popup-content {
     @apply m-0 p-0;
+  }
+  
+  /* 場所の説明のスタイル */
+  .location-popup .leaflet-popup-content {
+    margin: 5px;
+    width: auto !important;
+  }
+
+  .location-description h1 {
+    font-size: 0.95rem;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .location-description h2 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    color: #4b5563;
+  }
+
+  .location-description p {
+    line-height: 1.4;
+  }
+
+  .location-description ul {
+    padding-left: 1rem;
+  }
+
+  .location-description li {
+    margin-bottom: 0.25rem;
   }
 }
 

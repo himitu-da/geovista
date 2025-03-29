@@ -4,6 +4,7 @@ import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import LocationDescription from './LocationDescription';
 
 interface PinMarkerProps {
   position: [number, number];
@@ -52,8 +53,8 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
         popupclose: () => setIsPopupOpen(false),
       }}
     >
-      <Popup>
-        <div className="w-56 p-1">
+      <Popup className="location-popup">
+        <div className="w-64 p-1">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-sm font-medium">選択された場所</h3>
             <Button 
@@ -89,8 +90,8 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
               )}
             </Button>
           ) : (
-            <div className="text-xs bg-gray-50 p-2 rounded border">
-              <p className="leading-relaxed">{description}</p>
+            <div className="bg-gray-50 p-2 rounded border max-h-[300px] overflow-y-auto">
+              <LocationDescription description={description} />
             </div>
           )}
         </div>
