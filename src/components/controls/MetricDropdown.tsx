@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { ChevronDown } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface MetricDropdownProps {
   selectedMetric: DataMetric;
@@ -23,6 +24,7 @@ const MetricDropdown: React.FC<MetricDropdownProps> = ({
   onMetricChange
 }) => {
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
   
   // メトリックのラベルを取得
   const getMetricLabel = (metric: DataMetric): string => {
@@ -40,11 +42,11 @@ const MetricDropdown: React.FC<MetricDropdownProps> = ({
   
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2.5 bg-white rounded-lg shadow-md text-sm font-medium">
+      <DropdownMenuTrigger className={`flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-md text-sm font-medium ${isMobile ? 'w-full justify-center' : ''}`}>
         {getMetricLabel(selectedMetric)}
         <ChevronDown className="h-4 w-4" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-white shadow-lg border-0">
+      <DropdownMenuContent align="center" className="bg-white shadow-lg border-0 z-50">
         <DropdownMenuItem onClick={() => onMetricChange('population_density')} className="hover:bg-gray-100">
           {t('populationDensity')}
         </DropdownMenuItem>
