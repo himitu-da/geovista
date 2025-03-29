@@ -6,11 +6,8 @@ import { CountryData, DataMetric } from '@/types/country';
 import MapDataHandler from './map/MapDataHandler';
 import L from 'leaflet';
 import MapControls from './map/MapControls';
-import SearchOverlay from './map/SearchOverlay';
-import CountryInfoOverlay from './map/CountryInfoOverlay';
 import LoadingOverlay from './map/LoadingOverlay';
 import { initializeLeafletIcons } from './map/leafletUtils';
-import { fitMapToCountry } from './map/handlers/GeoJsonTransformer';
 import Legend from './Legend';
 
 // Leafletのデフォルトアイコンの問題を修正
@@ -66,35 +63,6 @@ const WorldMap: React.FC<WorldMapProps> = ({
   selectedCountry 
 }) => {
   const [mapRef, setMapRef] = useState<L.Map | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showSearch, setShowSearch] = useState(false);
-
-  /**
-   * 国の検索を処理する関数
-   */
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!searchQuery.trim() || !countries.length) return;
-    
-    const searchLower = searchQuery.toLowerCase();
-    const foundCountry = countries.find(country => 
-      country.name.toLowerCase().includes(searchLower)
-    );
-    
-    if (foundCountry) {
-      onCountrySelect(foundCountry.id);
-      navigateToCountry(foundCountry);
-    }
-  };
-
-  /**
-   * 指定された国に地図を移動する関数
-   */
-  const navigateToCountry = (country: CountryData) => {
-    if (!mapRef) return;
-    fitMapToCountry(country, mapRef);
-  };
 
   return (
     <div className="w-full h-full overflow-hidden">
@@ -102,29 +70,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
       {loading && <LoadingOverlay />}
       
       {/* 地図コントロール */}
-      <MapControls 
-        mapRef={mapRef} 
-        setShowSearch={setShowSearch} 
-        showSearch={showSearch} 
-      />
-      
-      {/* 検索オーバーレイ */}
-      {showSearch && (
-        <SearchOverlay 
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          handleSearch={handleSearch}
-        />
-      )}
-      
-      {/* 選択された国の情報オーバーレイ */}
-      {selectedCountry && countries.length > 0 && (
-        <CountryInfoOverlay 
-          countries={countries}
-          selectedCountry={selectedCountry}
-          onCountrySelect={onCountrySelect}
-        />
-      )}
+      <MapControls mapRef={mapRef} />
       
       {/* フルスクリーンマップ */}
       <MapContainer 
@@ -164,7 +110,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
       </MapContainer>
       
       {/* 左下に凡例を表示 */}
-      <div className="absolute bottom-2 left-2 z-[400]">
+      <div className="absolute bottom-4 left-4 z-[400]">
         <Legend metric={selectedMetric} />
       </div>
       

@@ -3,7 +3,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import WorldMap from '@/components/WorldMap';
 import { CountryData, DataMetric } from '@/types/country';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 // アニメーション設定
 const itemVariants = {
@@ -16,7 +15,7 @@ const itemVariants = {
 
 /**
  * マップレイヤーコンポーネント
- * マップとそのコントロールを表示
+ * マップとレジェンドを表示
  */
 const MapLayer = ({ 
   countries, 
@@ -31,8 +30,6 @@ const MapLayer = ({
   selectedCountry: string | null;
   onCountrySelect: (countryId: string | null) => void;
 }) => {
-  const isMobile = useIsMobile();
-  
   return (
     <motion.div 
       className="absolute inset-0 z-0 scale-105 origin-center"

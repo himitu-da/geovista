@@ -6,8 +6,7 @@ import { initializeSentry } from '@/lib/sentry';
 import { DataMetric } from '@/types/country';
 import ErrorMessage from '@/components/ErrorMessage';
 import MapLayer from '@/components/layers/MapLayer';
-import UILayer from '@/components/layers/UILayer';
-import { DataCategory } from '@/components/explore/DataCategoryNav';
+import MetricDropdown from '@/components/controls/MetricDropdown';
 
 // アニメーション設定
 const containerVariants = {
@@ -34,7 +33,6 @@ const Index = () => {
   // UIの状態
   const [selectedMetric, setSelectedMetric] = useState<DataMetric>('population_density');
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
-  const [activeCategory, setActiveCategory] = useState<DataCategory>('overview');
 
   // 国データのフェッチ
   const { countries, loading, error } = useCountryData();
@@ -58,16 +56,13 @@ const Index = () => {
         onCountrySelect={setSelectedCountry}
       />
       
-      {/* UIレイヤー */}
-      <UILayer 
-        selectedMetric={selectedMetric}
-        selectedCountry={selectedCountry}
-        countries={countries}
-        onMetricChange={setSelectedMetric}
-        activeCategory={activeCategory}
-        onCategoryChange={setActiveCategory}
-        onCountrySelect={setSelectedCountry}
-      />
+      {/* シンプルなドロップダウンコントロール */}
+      <div className="absolute top-4 right-4 z-20">
+        <MetricDropdown 
+          selectedMetric={selectedMetric}
+          onMetricChange={setSelectedMetric}
+        />
+      </div>
     </motion.div>
   );
 };
