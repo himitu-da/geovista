@@ -11,6 +11,27 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ErrorMessage from '@/components/ErrorMessage';
 
+// アニメーション設定
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: { 
+      duration: 0.5,
+      staggerChildren: 0.1 
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { 
+    y: 0, 
+    opacity: 1,
+    transition: { duration: 0.5 }
+  }
+};
+
 /**
  * インデックスページコンポーネント
  * アプリケーションのメインページとして機能し、地図とコントロールを表示
@@ -30,7 +51,12 @@ const Index = () => {
   const { countries, loading, error } = useCountryData();
 
   return (
-    <div className="fixed inset-0 w-screen h-screen overflow-hidden">
+    <motion.div 
+      className="fixed inset-0 w-screen h-screen overflow-hidden"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* エラーメッセージ */}
       <ErrorMessage error={error} />
       
@@ -52,7 +78,7 @@ const Index = () => {
         onVisualizationTypeChange={setVisualizationType}
         onMetricChange={setSelectedMetric}
       />
-    </div>
+    </motion.div>
   );
 };
 
@@ -73,7 +99,10 @@ const MapLayer = ({
   selectedCountry: string | null;
   onCountrySelect: (countryId: string | null) => void;
 }) => (
-  <div className="absolute inset-0 z-0">
+  <motion.div 
+    className="absolute inset-0 z-0"
+    variants={itemVariants}
+  >
     <WorldMap 
       countries={countries} 
       loading={loading} 
@@ -81,7 +110,7 @@ const MapLayer = ({
       onCountrySelect={onCountrySelect}
       selectedCountry={selectedCountry}
     />
-  </div>
+  </motion.div>
 );
 
 /**
@@ -105,9 +134,7 @@ const UILayer = ({
 }) => (
   <div className="absolute inset-0 z-10 pointer-events-none">
     <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
+      variants={itemVariants}
       className="flex flex-col h-full pointer-events-none"
     >
       {/* ヘッダー - ポインターイベント有効 */}

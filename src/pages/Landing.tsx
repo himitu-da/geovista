@@ -34,8 +34,25 @@ const Landing = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
+  // ページ進入アニメーション設定
+  const pageAnimation = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        duration: 0.8,
+        staggerChildren: 0.2
+      }
+    }
+  };
+  
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={pageAnimation}
+      className="flex flex-col min-h-screen bg-gradient-to-b from-white to-gray-50 relative overflow-hidden"
+    >
       {/* パーティクル背景 */}
       <ParticleBackground />
       
@@ -65,7 +82,7 @@ const Landing = () => {
 
       {/* フッター */}
       <LandingFooter />
-    </div>
+    </motion.div>
   );
 };
 
