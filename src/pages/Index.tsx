@@ -92,6 +92,7 @@ const Index = () => {
         onCategoryChange={setActiveCategory}
         activeTab={activeTab}
         onTabChange={setActiveTab}
+        onCountrySelect={setSelectedCountry}
       />
     </motion.div>
   );
@@ -155,7 +156,8 @@ const UILayer = ({
   activeCategory,
   onCategoryChange,
   activeTab,
-  onTabChange
+  onTabChange,
+  onCountrySelect
 }: {
   visualizationType: 'map' | 'chart';
   selectedMetric: DataMetric;
@@ -167,6 +169,7 @@ const UILayer = ({
   onCategoryChange: (category: DataCategory) => void;
   activeTab: string;
   onTabChange: (tab: string) => void;
+  onCountrySelect: (countryId: string | null) => void;
 }) => {
   const { t } = useLanguage();
   
