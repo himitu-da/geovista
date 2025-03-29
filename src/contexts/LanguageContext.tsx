@@ -1,6 +1,6 @@
 
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import { Language, TranslationsMap } from '@/translations/types';
+import { Language, Translations } from '@/translations/types';
 import { translations } from '@/translations';
 
 // LanguageContextの型定義

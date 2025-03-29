@@ -21,12 +21,13 @@ interface LocationDescriptionProps {
 }
 
 /**
- * 場所の説明を構造化して表示するコンポーネント
+ * Enhanced location description component that displays structured information
+ * with visually appealing section-based card designs
  */
 const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }) => {
   const { language } = useLanguage();
   
-  // セクションタイプに基づいてアイコンと色のスタイル情報を決定する関数
+  // Determine appropriate icon and color scheme based on section type
   const getSectionInfo = (text: string): { 
     icon: JSX.Element; 
     color: string; 
@@ -36,7 +37,7 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
   } => {
     const lowerText = text.toLowerCase();
     
-    // 英語の見出しキーワード
+    // English section keywords
     if (language === 'en') {
       if (lowerText.includes('geography')) 
         return { 
@@ -79,7 +80,7 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
           headingColor: 'text-gray-700'
         };
     } 
-    // スペイン語の見出しキーワード
+    // Spanish section keywords
     else if (language === 'es') {
       if (lowerText.includes('geografía')) 
         return { 
@@ -122,7 +123,7 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
           headingColor: 'text-gray-700'
         };
     }
-    // 日本語の見出しキーワード
+    // Japanese section keywords
     else if (language === 'ja') {
       if (lowerText.includes('地理')) 
         return { 
@@ -148,7 +149,7 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
           borderColor: 'border-purple-200',
           headingColor: 'text-purple-700'
         };
-      if (lowerText.includes('見どころ') || lowerText.includes('観光')) 
+      if (lowerText.includes('みどころ') || lowerText.includes('観光')) 
         return { 
           icon: <Camera className="w-4 h-4" />, 
           color: 'text-green-600',
@@ -166,7 +167,7 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
         };
     }
     
-    // デフォルト値
+    // Default styling for unrecognized sections
     return { 
       icon: <MapPin className="w-4 h-4" />, 
       color: 'text-gray-600',
@@ -197,7 +198,7 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
                     {language === 'es'
                       ? 'Descripción de lugar generada por IA. La exactitud no está garantizada.'
                       : language === 'ja'
-                      ? 'AI生成の場所の説明です。正確性は保証されていません。'
+                      ? 'AIによって生成された場所の説明。正確性は保証されません。'
                       : 'AI-generated location description. Accuracy not guaranteed.'}
                   </p>
                 </div>
@@ -205,17 +206,27 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
             );
           },
           h2: ({ node, children, ...props }) => {
-            // 見出しテキストを取得し、適切なアイコンとスタイルを選択
+            // Get the heading text and select appropriate styling
             const headingText = children ? children.toString() : '';
-            const { icon, borderColor, bgColor, headingColor, iconColor } = getSectionInfo(headingText);
+            const { icon, color, bgColor, borderColor, headingColor } = getSectionInfo(headingText);
             
             return (
-              <div className="mb-4 location-section">
-                <div className={cn("section-heading px-3 py-2 rounded-t-lg border-l-4", borderColor, bgColor, "flex items-center")} {...props}>
-                  <span className={cn("mr-2", iconColor)}>
-                    {icon}
-                  </span>
-                  <h2 className={cn("text-sm font-semibold", headingColor)}>
+              <div className="mt-4 mb-2" {...props}>
+                <div className={cn(
+                  "rounded-t-lg border", 
+                  borderColor,
+                  "border-b-0",
+                  "shadow-sm"
+                )}>
+                  {/* Section heading with icon and colored background */}
+                  <h2 className={cn(
+                    "text-sm font-semibold py-2 px-3 flex items-center gap-2",
+                    bgColor,
+                    headingColor
+                  )}>
+                    <span className={cn("rounded-full p-1", bgColor, color)}>
+                      {icon}
+                    </span>
                     {children}
                   </h2>
                 </div>
@@ -223,30 +234,32 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
             );
           },
           p: ({ node, children, ...props }) => {
-            // 前の見出しのスタイル情報を取得するロジック
-            // 実際の実装ではこれは難しいので、親要素のcontextを使うか、
-            // ReactMarkdownの処理プロセスをカスタマイズする必要があります
-            // ここではシンプルな実装にします
-            
             return (
-              <div className="bg-white px-3 py-2 rounded-b-lg border border-t-0 border-gray-200 shadow-sm mb-4">
+              <div className={cn(
+                "bg-white px-3 py-2.5 border",
+                "border-gray-100",
+                "rounded-b-lg mb-5",
+                "shadow-sm",
+              )}>
                 <p className="leading-relaxed text-gray-700 text-xs" {...props}>
                   {children}
                 </p>
               </div>
             );
           },
-          ul: ({ node, children, ...props }) => (
-            <div className="bg-white px-3 py-2 rounded-b-lg border border-t-0 border-gray-200 shadow-sm mb-4">
-              <ul className="space-y-1 list-none" {...props}>
-                {children}
-              </ul>
+          ul: ({ node, ...props }) => (
+            <div className={cn(
+              "bg-white px-3 py-2 border mb-5 rounded-b-lg",
+              "border-gray-100",
+              "shadow-sm"
+            )}>
+              <ul className="mb-0 pl-3 list-none space-y-1.5" {...props} />
             </div>
           ),
           li: ({ node, children, ...props }) => (
-            <li className="flex items-start text-gray-700 text-xs" {...props}>
-              <span className="inline-block mr-1.5 mt-0.5 text-green-500">•</span>
-              <span>{children}</span>
+            <li className="mb-0.5 text-gray-700 flex items-start" {...props}>
+              <span className="inline-block mr-1.5 text-blue-500">•</span>
+              <span className="text-xs">{children}</span>
             </li>
           ),
         }}
