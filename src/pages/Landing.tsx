@@ -1,13 +1,45 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Globe, BarChart3, Users, BarChart2, Database, Brain } from 'lucide-react';
+import { ArrowRight, Globe, BarChart3, Users, BarChart2, Database, Brain, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import LanguageToggle from '@/components/LanguageToggle';
+import { motion } from 'framer-motion';
+import { ButtonAnimation } from '@/components/animations/ButtonAnimation';
 
+// アニメーション変数の定義
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+};
+
+const staggeredContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15
+    }
+  }
+};
+
+/**
+ * LPメインコンポーネント
+ * ユーザーに直感的にサービスの価値を伝える
+ */
 const Landing = () => {
   const { t } = useLanguage();
+  
+  // スクロールイベントを管理
+  useEffect(() => {
+    const handleScroll = () => {
+      // スクロール位置に応じたアニメーション管理（必要に応じて実装）
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-white to-gray-50">
@@ -18,9 +50,11 @@ const Landing = () => {
           <div className="flex items-center gap-3">
             <LanguageToggle />
             <Link to="/explore">
-              <Button variant="outline" className="flex items-center gap-2 rounded-full hover:bg-primary hover:text-white transition-all">
-                {t('launchExplorer')} <ArrowRight className="h-4 w-4" />
-              </Button>
+              <ButtonAnimation>
+                <Button variant="outline" className="flex items-center gap-2 rounded-full hover:bg-primary hover:text-white transition-all">
+                  {t('launchExplorer')} <ArrowRight className="h-4 w-4" />
+                </Button>
+              </ButtonAnimation>
             </Link>
           </div>
         </div>
@@ -33,143 +67,234 @@ const Landing = () => {
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072')] bg-cover bg-center opacity-10 z-0"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/90 z-0"></div>
           
-          <div className="max-w-4xl mx-auto relative z-10">
-            <span className="inline-block px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-sm font-medium mb-6 animate-fade-in">{t('dataVizPlatform')}</span>
-            <h1 className="text-5xl md:text-6xl font-bold text-apple-gray-700 tracking-tight mb-6 leading-tight">
+          <motion.div 
+            className="max-w-4xl mx-auto relative z-10"
+            initial="hidden"
+            animate="visible"
+            variants={staggeredContainer}
+          >
+            <motion.span 
+              variants={fadeIn}
+              className="inline-block px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-sm font-medium mb-6"
+            >
+              {t('dataVizPlatform')}
+            </motion.span>
+            
+            <motion.h1 
+              variants={fadeIn}
+              className="text-5xl md:text-6xl font-bold text-apple-gray-700 tracking-tight mb-6 leading-tight"
+            >
               {t('exploreWorldData')}<br className="hidden md:block" />
               <span className="text-gradient-primary">{t('intuitively')}</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-apple-gray-500 mb-8 leading-relaxed max-w-2xl">
+            </motion.h1>
+            
+            <motion.p 
+              variants={fadeIn}
+              className="text-xl md:text-2xl text-apple-gray-500 mb-8 leading-relaxed max-w-2xl"
+            >
               {t('landingDescription')}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 mt-8">
+            </motion.p>
+            
+            <motion.div 
+              variants={fadeIn}
+              className="flex flex-col sm:flex-row gap-4 mt-8"
+            >
               <Link to="/explore">
-                <Button size="lg" className="px-8 py-6 rounded-full text-lg shadow-apple-md hover:shadow-apple-lg transition-all bg-primary hover:bg-primary/90">
-                  {t('startExploring')}
-                </Button>
+                <ButtonAnimation>
+                  <Button size="lg" className="px-8 py-6 rounded-full text-lg shadow-apple-md hover:shadow-apple-lg transition-all bg-primary hover:bg-primary/90">
+                    {t('startExploring')}
+                  </Button>
+                </ButtonAnimation>
               </Link>
-              <a href="#features" className="inline-flex items-center justify-center px-8 py-6 text-lg font-medium text-apple-gray-700 bg-white rounded-full shadow-apple-sm hover:shadow-apple-md transition-all">
-                {t('viewFeatures')}
+              <ButtonAnimation>
+                <a href="#features" className="inline-flex items-center justify-center px-8 py-6 text-lg font-medium text-apple-gray-700 bg-white rounded-full shadow-apple-sm hover:shadow-apple-md transition-all">
+                  {t('viewFeatures')}
+                </a>
+              </ButtonAnimation>
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2, duration: 0.5 }}
+              className="flex justify-center mt-16"
+            >
+              <a href="#features" className="flex flex-col items-center text-apple-gray-500 animate-bounce">
+                <span className="text-sm mb-1">{t('scrollToExplore')}</span>
+                <ChevronDown className="h-5 w-5" />
               </a>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </section>
 
         {/* 特徴セクション */}
         <section id="features" className="py-24 bg-white">
           <div className="container mx-auto px-6">
-            <div className="text-center mb-16">
+            <motion.div 
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6 }}
+            >
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-apple-gray-700 mb-4">
                 {t('intuitiveDataViz')}
               </h2>
               <p className="text-xl text-apple-gray-500 max-w-2xl mx-auto">
                 {t('powerfulTools')}
               </p>
-            </div>
+            </motion.div>
             
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="p-8 rounded-3xl bg-gradient-to-br from-gray-50 to-white shadow-apple-md hover:shadow-apple-lg transition-all border border-gray-100">
-                <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mb-6">
-                  <Globe className="h-8 w-8 text-blue-500" />
-                </div>
-                <h3 className="text-2xl font-semibold mb-4 text-apple-gray-700">{t('interactiveMap')}</h3>
-                <p className="text-apple-gray-500 text-lg">
-                  {t('interactiveMapDesc')}
-                </p>
-              </div>
-              <div className="p-8 rounded-3xl bg-gradient-to-br from-gray-50 to-white shadow-apple-md hover:shadow-apple-lg transition-all border border-gray-100">
-                <div className="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-6">
-                  <BarChart3 className="h-8 w-8 text-green-500" />
-                </div>
-                <h3 className="text-2xl font-semibold mb-4 text-apple-gray-700">{t('dataAnalysis')}</h3>
-                <p className="text-apple-gray-500 text-lg">
-                  {t('dataAnalysisDesc')}
-                </p>
-              </div>
-              <div className="p-8 rounded-3xl bg-gradient-to-br from-gray-50 to-white shadow-apple-md hover:shadow-apple-lg transition-all border border-gray-100">
-                <div className="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center mb-6">
-                  <Users className="h-8 w-8 text-purple-500" />
-                </div>
-                <h3 className="text-2xl font-semibold mb-4 text-apple-gray-700">{t('demographicInsights')}</h3>
-                <p className="text-apple-gray-500 text-lg">
-                  {t('demographicInsightsDesc')}
-                </p>
-              </div>
-            </div>
+            <motion.div 
+              className="grid md:grid-cols-3 gap-8"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              variants={staggeredContainer}
+            >
+              <FeatureCard 
+                icon={<Globe className="h-8 w-8 text-blue-500" />}
+                title={t('interactiveMap')}
+                description={t('interactiveMapDesc')}
+                color="blue"
+              />
+              <FeatureCard 
+                icon={<BarChart3 className="h-8 w-8 text-green-500" />}
+                title={t('dataAnalysis')}
+                description={t('dataAnalysisDesc')}
+                color="green"
+              />
+              <FeatureCard 
+                icon={<Users className="h-8 w-8 text-purple-500" />}
+                title={t('demographicInsights')}
+                description={t('demographicInsightsDesc')}
+                color="purple"
+              />
+            </motion.div>
           </div>
         </section>
 
         {/* 詳細セクション */}
         <section className="py-24 bg-gradient-to-b from-white to-gray-50">
           <div className="container mx-auto px-6">
-            <div className="grid md:grid-cols-2 gap-16 items-center">
+            <motion.div 
+              className="grid md:grid-cols-2 gap-16 items-center"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.8 }}
+            >
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-apple-gray-700 mb-6 tracking-tight">
+                <motion.h2 
+                  className="text-3xl md:text-4xl font-bold text-apple-gray-700 mb-6 tracking-tight"
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                >
                   {t('simplifyComplexData')}<br />
-                </h2>
-                <p className="text-xl text-apple-gray-500 mb-8">
+                </motion.h2>
+                <motion.p 
+                  className="text-xl text-apple-gray-500 mb-8"
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                >
                   {t('designedFor')}
-                </p>
-                <ul className="space-y-4">
-                  <li className="flex items-start">
-                    <div className="bg-blue-100 rounded-full p-1 mr-3 mt-1">
-                      <BarChart2 className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <span className="text-lg text-apple-gray-600">{t('feature1')}</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="bg-blue-100 rounded-full p-1 mr-3 mt-1">
-                      <Database className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <span className="text-lg text-apple-gray-600">{t('feature2')}</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="bg-blue-100 rounded-full p-1 mr-3 mt-1">
-                      <Brain className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <span className="text-lg text-apple-gray-600">{t('feature3')}</span>
-                  </li>
-                </ul>
+                </motion.p>
+                <motion.ul 
+                  className="space-y-4"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={staggeredContainer}
+                >
+                  <FeatureListItem 
+                    icon={<BarChart2 className="h-5 w-5 text-blue-600" />}
+                    text={t('feature1')}
+                  />
+                  <FeatureListItem 
+                    icon={<Database className="h-5 w-5 text-blue-600" />}
+                    text={t('feature2')}
+                  />
+                  <FeatureListItem 
+                    icon={<Brain className="h-5 w-5 text-blue-600" />}
+                    text={t('feature3')}
+                  />
+                </motion.ul>
               </div>
-              <div className="relative rounded-3xl overflow-hidden shadow-apple-lg border border-gray-100">
+              <motion.div 
+                className="relative rounded-3xl overflow-hidden shadow-apple-lg border border-gray-100"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
+              >
                 <img 
                   src="https://images.unsplash.com/photo-1521295121783-8a321d551ad2?q=80&w=2070" 
                   alt={t('dataDashboard')} 
                   className="w-full h-auto rounded-3xl" 
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-3xl"></div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </section>
 
         {/* 機能デモセクション */}
         <section className="py-20 bg-white">
           <div className="container mx-auto px-6">
-            <div className="text-center mb-16">
+            <motion.div 
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6 }}
+            >
               <h2 className="text-3xl md:text-4xl font-bold text-apple-gray-700 mb-4 tracking-tight">
                 {t('keyFeatures')}
               </h2>
               <p className="text-xl text-apple-gray-500 max-w-2xl mx-auto">
                 {t('experienceFeatures')}
               </p>
-            </div>
+            </motion.div>
             
-            <div className="relative rounded-3xl overflow-hidden shadow-apple-lg border border-gray-100 aspect-video mb-12">
+            <motion.div 
+              className="relative rounded-3xl overflow-hidden shadow-apple-lg border border-gray-100 aspect-video mb-12"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
               <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                <p className="text-2xl text-apple-gray-500 px-6 py-4 bg-white rounded-xl shadow-apple-sm">
+                <motion.p 
+                  className="text-2xl text-apple-gray-500 px-6 py-4 bg-white rounded-xl shadow-apple-sm"
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.5, duration: 0.5 }}
+                >
                   {t('demoPlaceholder')}
-                </p>
+                </motion.p>
               </div>
-            </div>
+            </motion.div>
             
-            <div className="text-center">
+            <motion.div 
+              className="text-center"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
               <Link to="/explore">
-                <Button size="lg" className="px-8 py-6 rounded-full text-lg shadow-apple-md hover:shadow-apple-lg transition-all bg-primary hover:bg-primary/90">
-                  {t('launchExplorerNow')}
-                </Button>
+                <ButtonAnimation>
+                  <Button size="lg" className="px-8 py-6 rounded-full text-lg shadow-apple-md hover:shadow-apple-lg transition-all bg-primary hover:bg-primary/90">
+                    {t('launchExplorerNow')}
+                  </Button>
+                </ButtonAnimation>
               </Link>
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -178,19 +303,27 @@ const Landing = () => {
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072')] bg-cover bg-center opacity-5 z-0"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/90 z-0"></div>
           
-          <div className="max-w-3xl mx-auto relative z-10">
+          <motion.div 
+            className="max-w-3xl mx-auto relative z-10"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8 }}
+          >
             <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight text-apple-gray-700">
               {t('readyToExplore')}
             </h2>
             <p className="text-xl text-apple-gray-500 mb-8 leading-relaxed">
               {t('startYourJourney')}
             </p>
-            <Link to="/explore">
-              <Button size="lg" className="px-10 py-7 text-xl rounded-full shadow-apple-lg hover:shadow-apple-xl transition-all bg-primary hover:bg-primary/90">
-                {t('launchExplorer')} <ArrowRight className="ml-2 h-6 w-6" />
-              </Button>
-            </Link>
-          </div>
+            <ButtonAnimation>
+              <Link to="/explore">
+                <Button size="lg" className="px-10 py-7 text-xl rounded-full shadow-apple-lg hover:shadow-apple-xl transition-all bg-primary hover:bg-primary/90">
+                  {t('launchExplorer')} <ArrowRight className="ml-2 h-6 w-6" />
+                </Button>
+              </Link>
+            </ButtonAnimation>
+          </motion.div>
         </section>
       </main>
 
@@ -209,6 +342,70 @@ const Landing = () => {
         </div>
       </footer>
     </div>
+  );
+};
+
+/**
+ * 特徴カードコンポーネント
+ * 各機能の紹介用カード
+ */
+const FeatureCard = ({ icon, title, description, color }: { 
+  icon: React.ReactNode; 
+  title: string; 
+  description: string;
+  color: "blue" | "green" | "purple";
+}) => {
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  };
+  
+  const getBackgroundColor = (color: string) => {
+    switch(color) {
+      case "blue": return "bg-blue-100";
+      case "green": return "bg-green-100";
+      case "purple": return "bg-purple-100";
+      default: return "bg-blue-100";
+    }
+  };
+  
+  return (
+    <motion.div 
+      className="p-8 rounded-3xl bg-gradient-to-br from-gray-50 to-white shadow-apple-md hover:shadow-apple-lg transition-all border border-gray-100 group"
+      variants={fadeInUp}
+      whileHover={{ y: -10, transition: { duration: 0.3 } }}
+    >
+      <div className={`w-14 h-14 ${getBackgroundColor(color)} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+        {icon}
+      </div>
+      <h3 className="text-2xl font-semibold mb-4 text-apple-gray-700">{title}</h3>
+      <p className="text-apple-gray-500 text-lg">
+        {description}
+      </p>
+    </motion.div>
+  );
+};
+
+/**
+ * 特徴リストアイテムコンポーネント
+ * 機能の詳細リスト項目
+ */
+const FeatureListItem = ({ icon, text }: { icon: React.ReactNode; text: string }) => {
+  const fadeIn = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.4 } }
+  };
+  
+  return (
+    <motion.li 
+      className="flex items-start"
+      variants={fadeIn}
+    >
+      <div className="bg-blue-100 rounded-full p-1 mr-3 mt-1">
+        {icon}
+      </div>
+      <span className="text-lg text-apple-gray-600">{text}</span>
+    </motion.li>
   );
 };
 

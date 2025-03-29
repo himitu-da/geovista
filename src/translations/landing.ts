@@ -1,122 +1,69 @@
 
-import { TranslationRecord } from './types';
+import { LandingTranslations } from './types';
 
-// ランディングページ用の翻訳
-export const landingTranslations: Record<string, TranslationRecord> = {
-  launchApp: {
-    en: "Launch Explorer",
-    ja: "エクスプローラーを起動"
+export const landingTranslations: LandingTranslations = {
+  en: {
+    launchExplorer: 'Launch Explorer',
+    dataVizPlatform: 'Data Visualization Platform',
+    exploreWorldData: 'Explore World Data',
+    intuitively: 'Intuitively',
+    landingDescription: 'Discover global trends, analyze demographic data, and gain valuable insights from around the world through interactive visualizations.',
+    startExploring: 'Start Exploring',
+    viewFeatures: 'View Features',
+    scrollToExplore: 'Scroll to explore',
+    intuitiveDataViz: 'Intuitive Data Visualization',
+    powerfulTools: 'Powerful tools at your fingertips to understand global data patterns.',
+    interactiveMap: 'Interactive Map',
+    interactiveMapDesc: 'Explore countries around the world with an interactive and responsive mapping interface.',
+    dataAnalysis: 'Data Analysis',
+    dataAnalysisDesc: 'Analyze key metrics and compare data across different regions and time periods.',
+    demographicInsights: 'Demographic Insights',
+    demographicInsightsDesc: 'Understand population trends, economic indicators, and social factors.',
+    simplifyComplexData: 'Simplify Complex Data',
+    designedFor: 'Designed for researchers, students, and curious minds who want to understand our world better.',
+    feature1: 'Clear visualization of global metrics and indicators',
+    feature2: 'Access to comprehensive datasets from trusted sources',
+    feature3: 'AI-powered insights to reveal hidden patterns',
+    dataDashboard: 'Data Dashboard',
+    keyFeatures: 'Key Features In Action',
+    experienceFeatures: 'See how our tools can help you gain valuable insights from complex global data.',
+    demoPlaceholder: 'Interactive Demo Coming Soon',
+    launchExplorerNow: 'Launch Explorer Now',
+    readyToExplore: 'Ready to Explore Our World?',
+    startYourJourney: 'Start your journey of discovery with our powerful data visualization tools.',
+    globalDataVisualization: 'Global Data Visualization Platform',
+    allRightsReserved: 'All Rights Reserved'
   },
-  dataVizPlatform: {
-    en: "Data Visualization Platform",
-    ja: "データビジュアライゼーション・プラットフォーム"
-  },
-  exploreWorldData: {
-    en: "Explore World Data",
-    ja: "世界のデータを"
-  },
-  intuitively: {
-    en: "Intuitively",
-    ja: "直感的に探索する"
-  },
-  landingDescription: {
-    en: "Interactive visualization of diverse global data including demographics and economic indicators. Discover patterns and insights from a global perspective.",
-    ja: "人口統計、経済指標など、世界の多様なデータをインタラクティブに可視化。グローバルな視点からパターンや洞察を発見しましょう。"
-  },
-  startExploring: {
-    en: "Start Exploring Now",
-    ja: "今すぐ探索を始める"
-  },
-  viewFeatures: {
-    en: "View Features",
-    ja: "機能を見る"
-  },
-  intuitiveDataViz: {
-    en: "Intuitive Data Visualization",
-    ja: "直感的なデータビジュアライゼーション"
-  },
-  powerfulTools: {
-    en: "Powerful tools to easily understand and analyze complex global data",
-    ja: "複雑なグローバルデータを簡単に理解し、分析するための強力なツール"
-  },
-  interactiveMap: {
-    en: "Interactive Map",
-    ja: "インタラクティブマップ"
-  },
-  interactiveMapDesc: {
-    en: "Explore with an interactive world map featuring color-coded metrics and detailed country information.",
-    ja: "カラーコード化されたメトリクスと詳細な国別情報を備えたインタラクティブな世界地図で探索できます。"
-  },
-  dataAnalysis: {
-    en: "Data Analysis",
-    ja: "データ分析"
-  },
-  dataAnalysisDesc: {
-    en: "Analyze trends with interactive charts that reveal patterns and comparative insights.",
-    ja: "パターンや比較洞察を明らかにするインタラクティブなチャートでトレンドを分析できます。"
-  },
-  demographicInsights: {
-    en: "Demographic Insights",
-    ja: "人口統計インサイト"
-  },
-  demographicInsightsDesc: {
-    en: "Understand global demographics through detailed population density and distribution data.",
-    ja: "詳細な人口密度および分布データにより、世界の人口統計を理解できます。"
-  },
-  simplifyComplexData: {
-    en: "Simplify Complex Data Visualization",
-    ja: "複雑なデータをシンプルに可視化"
-  },
-  designedFor: {
-    en: "World Data Explorer is designed to make global datasets intuitively understandable. Ideal for researchers, educators, and data enthusiasts.",
-    ja: "World Data Explorerは、世界規模のデータセットを直感的に理解できるように設計されています。研究者、教育者、データ愛好家の方々に最適なツールです。"
-  },
-  feature1: {
-    en: "Data covering over 200 countries and territories",
-    ja: "200以上の国と地域のデータを網羅"
-  },
-  feature2: {
-    en: "Switch between multiple datasets and metrics",
-    ja: "複数のデータセットと指標を切り替え可能"
-  },
-  feature3: {
-    en: "Advanced data analysis powered by AI",
-    ja: "AIを活用した高度なデータ分析"
-  },
-  dataDashboard: {
-    en: "Data Analysis Dashboard",
-    ja: "データ分析ダッシュボード"
-  },
-  keyFeatures: {
-    en: "Key Features",
-    ja: "主要機能"
-  },
-  experienceFeatures: {
-    en: "Experience the ease of use and functionality of World Data Explorer",
-    ja: "World Data Explorerの使いやすさと機能性をご覧ください"
-  },
-  demoPlaceholder: {
-    en: "Place demo video or image here",
-    ja: "デモ映像や画像をここに配置"
-  },
-  launchExplorerNow: {
-    en: "Launch Explorer Now",
-    ja: "今すぐエクスプローラーを起動"
-  },
-  readyToExplore: {
-    en: "Ready to Start Exploring?",
-    ja: "探索を始めませんか？"
-  },
-  startYourJourney: {
-    en: "Start your journey to visualize world data and discover global insights today.",
-    ja: "世界のデータを視覚化し、グローバルな洞察を発見する旅を今すぐ始めましょう。"
-  },
-  launchExplorer: {
-    en: "Launch Explorer",
-    ja: "エクスプローラーを起動"
-  },
-  allRightsReserved: {
-    en: "All Rights Reserved",
-    ja: "全ての権利を保有"
+  ja: {
+    launchExplorer: 'エクスプローラーを起動',
+    dataVizPlatform: 'データビジュアライゼーションプラットフォーム',
+    exploreWorldData: '世界のデータを',
+    intuitively: '直感的に探索',
+    landingDescription: 'インタラクティブな可視化を通じて、世界的なトレンドを発見し、人口統計データを分析し、貴重な洞察を得ることができます。',
+    startExploring: '探索を始める',
+    viewFeatures: '機能を見る',
+    scrollToExplore: 'スクロールして詳細を見る',
+    intuitiveDataViz: '直感的なデータの可視化',
+    powerfulTools: 'グローバルデータパターンを理解するための強力なツールを指先で。',
+    interactiveMap: 'インタラクティブマップ',
+    interactiveMapDesc: 'インタラクティブかつレスポンシブなマッピングインターフェースで世界中の国々を探索します。',
+    dataAnalysis: 'データ分析',
+    dataAnalysisDesc: '主要な指標を分析し、異なる地域や時間帯のデータを比較します。',
+    demographicInsights: '人口統計学的洞察',
+    demographicInsightsDesc: '人口動向、経済指標、社会的要因を理解します。',
+    simplifyComplexData: '複雑なデータを簡素化',
+    designedFor: '世界をより良く理解したい研究者、学生、好奇心旺盛な人々のためにデザインされています。',
+    feature1: 'グローバル指標の明確な可視化',
+    feature2: '信頼できる情報源からの包括的なデータセットにアクセス',
+    feature3: '隠れたパターンを明らかにするAI駆動の洞察',
+    dataDashboard: 'データダッシュボード',
+    keyFeatures: '主要機能の実演',
+    experienceFeatures: '複雑なグローバルデータから価値ある洞察を得るためのツールをご覧ください。',
+    demoPlaceholder: 'インタラクティブデモ近日公開',
+    launchExplorerNow: '今すぐエクスプローラーを起動',
+    readyToExplore: '世界を探索する準備はできましたか？',
+    startYourJourney: '強力なデータ可視化ツールで発見の旅を始めましょう。',
+    globalDataVisualization: 'グローバルデータビジュアライゼーションプラットフォーム',
+    allRightsReserved: '無断複写・転載を禁じます'
   }
 };
