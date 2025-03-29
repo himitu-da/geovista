@@ -83,4 +83,52 @@ export const explorerTranslations: Record<string, TranslationRecord> = {
     en: "Interactive Global Data Visualization",
     ja: "インタラクティブなグローバルデータビジュアライゼーション"
   },
+  featuredInsights: {
+    en: "Featured Insights",
+    ja: "注目のインサイト"
+  },
+  searchCountries: {
+    en: "Search countries...",
+    ja: "国を検索..."
+  },
+  country: {
+    en: "Country",
+    ja: "国名"
+  },
+  actions: {
+    en: "Actions",
+    ja: "アクション"
+  },
+  viewOnMap: {
+    en: "View on Map",
+    ja: "地図で見る"
+  },
+  viewing: {
+    en: "Viewing",
+    ja: "表示中"
+  },
+  mapExplorer: {
+    en: "Map Explorer",
+    ja: "マップエクスプローラー"
+  },
+  dataExplorer: {
+    en: "Data Explorer",
+    ja: "データエクスプローラー"
+  },
+  overview: {
+    en: "Overview",
+    ja: "概要"
+  },
+  geography: {
+    en: "Geography",
+    ja: "地理"
+  },
+  demographics: {
+    en: "Demographics",
+    ja: "人口統計"
+  },
+  economy: {
+    en: "Economy",
+    ja: "経済"
+  },
 };

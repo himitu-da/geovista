@@ -6,6 +6,7 @@ import L from 'leaflet';
 import { styleFeature, generateCountryTooltip, resetLayerStyle } from './handlers/FeatureHandlers';
 import { transformToGeoJson, fitMapToCountry } from './handlers/GeoJsonTransformer';
 import MapPopup from './MapPopup';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface MapDataHandlerProps {
   countries: CountryData[];
@@ -116,6 +117,71 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     return styleFeature(feature, selectedCountry, selectedMetric);
   };
   
+  // 選択されている国が画面の焦点に来るようにアニメーション
+  useEffect(() => {
+    if (selectedCountry && map) {
+      const highlightPulse = () => {
+        const selectedFeature = countryGeoJson?.features.find(
+          (feature: any) => feature.properties.id === selectedCountry
+        );
+        
+        if (selectedFeature) {
+          const geoJSON = L.geoJSON(selectedFeature.geometry as any);
+          const bounds = geoJSON.getBounds();
+          const center = bounds.getCenter();
+          
+          // ハイライトマーカーを追加
+          const marker = L.circleMarker([center.lat, center.lng], {
+            radius: 15,
+            color: '#4299e1',
+            fillColor: '#4299e1',
+            fillOpacity: 0.4,
+            weight: 2,
+            opacity: 0.8
+          }).addTo(map);
+          
+          // パルスアニメーション
+          let scale = 1;
+          let opacity = 0.4;
+          let growing = false;
+          
+          const animate = () => {
+            if (growing) {
+              scale += 0.05;
+              opacity -= 0.01;
+              if (scale >= 2) {
+                growing = false;
+              }
+            } else {
+              scale -= 0.05;
+              opacity += 0.01;
+              if (scale <= 1) {
+                growing = true;
+              }
+            }
+            
+            marker.setStyle({
+              radius: 15 * scale,
+              fillOpacity: Math.max(0.1, opacity)
+            });
+            
+            setTimeout(animate, 50);
+          };
+          
+          animate();
+          
+          // クリーンアップ
+          return () => {
+            map.removeLayer(marker);
+          };
+        }
+      };
+      
+      const cleanup = highlightPulse();
+      return cleanup;
+    }
+  }, [selectedCountry, map, countryGeoJson]);
+  
   return (
     <>
       {countryGeoJson && (
@@ -132,13 +198,15 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
         />
       )}
       
-      {popupInfo && (
-        <MapPopup
-          position={popupInfo.position}
-          content={popupInfo.content}
-          isOpen={popupInfo.isOpen}
-        />
-      )}
+      <AnimatePresence>
+        {popupInfo && (
+          <MapPopup
+            position={popupInfo.position}
+            content={popupInfo.content}
+            isOpen={popupInfo.isOpen}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };
