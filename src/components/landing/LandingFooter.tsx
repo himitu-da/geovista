@@ -11,12 +11,12 @@ export const LandingFooter = () => {
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0">
             <h3 className="text-xl font-bold text-apple-gray-700 mb-2 bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
-              World Data Explorer
+              GeoVista
             </h3>
             <p className="text-apple-gray-500">{t('globalDataVisualization')}</p>
           </div>
           <div className="text-apple-gray-500">
-            &copy; {new Date().getFullYear()} World Data Explorer | {t('allRightsReserved')}
+            &copy; {new Date().getFullYear()} GeoVista | {t('allRightsReserved')}
           </div>
         </div>
       </div>

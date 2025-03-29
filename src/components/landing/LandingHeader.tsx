@@ -14,7 +14,7 @@ export const LandingHeader = () => {
     <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-gray-100">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <h1 className="text-2xl font-bold tracking-tight text-apple-gray-700 bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
-          World Data Explorer
+          GeoVista
         </h1>
         <div className="flex items-center gap-3">
           <LanguageToggle />

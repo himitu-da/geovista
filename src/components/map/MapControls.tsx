@@ -70,7 +70,7 @@ const MapControls: React.FC<MapControlsProps> = ({ mapRef }) => {
           aria-label="Home"
         >
           <Database size={16} />
-          <span className="text-xs font-medium">World Data</span>
+          <span className="text-xs font-medium">GeoVista</span>
         </Link>
       </div>
       

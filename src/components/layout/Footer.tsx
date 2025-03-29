@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
         </Link>
       </div>
       <div className="text-[9px] text-gray-500">
-        <p>© {new Date().getFullYear()}</p>
+        <p>© {new Date().getFullYear()} GeoVista</p>
       </div>
     </footer>
   );

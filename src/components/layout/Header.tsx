@@ -22,7 +22,7 @@ const Header: React.FC = () => {
           className="text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-400 tracking-tight flex items-center"
         >
           <Database className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
-          <span className={isMobile ? "hidden" : "inline"}>World Data Explorer</span>
+          <span className={isMobile ? "hidden" : "inline"}>GeoVista</span>
         </Link>
       </div>
 
