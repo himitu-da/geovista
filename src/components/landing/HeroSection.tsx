@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
@@ -21,6 +21,18 @@ const ANIMATION_VARIANTS = {
         staggerChildren: 0.15
       }
     }
+  },
+  rotate: {
+    initial: { rotate: 0 },
+    animate: { rotate: 360, transition: { duration: 20, repeat: Infinity, ease: "linear" } }
+  },
+  float: {
+    initial: { y: 0 },
+    animate: { y: [0, -15, 0], transition: { duration: 5, repeat: Infinity, ease: "easeInOut" } }
+  },
+  pulse: {
+    initial: { scale: 1 },
+    animate: { scale: [1, 1.05, 1], transition: { duration: 3, repeat: Infinity, ease: "easeInOut" } }
   }
 };
 
@@ -34,10 +46,28 @@ export const HeroSection = () => {
   return (
     <section className="py-20 md:py-32 px-6 md:px-12 relative overflow-hidden">
       <BackgroundElements />
+      <GlobeAnimation />
       <HeroContent t={t} />
     </section>
   );
 };
+
+/**
+ * グローブアニメーション
+ * 3Dの地球の回転アニメーション
+ */
+const GlobeAnimation = () => (
+  <div className="absolute right-0 top-1/2 transform -translate-y-1/2 opacity-20 -z-1 hidden lg:block">
+    <motion.div
+      variants={ANIMATION_VARIANTS.rotate}
+      initial="initial"
+      animate="animate"
+      className="relative"
+    >
+      <Globe className="w-96 h-96 text-blue-500 opacity-30" strokeWidth={0.5} />
+    </motion.div>
+  </div>
+);
 
 /**
  * ヒーローセクションの背景要素
@@ -47,6 +77,26 @@ const BackgroundElements = () => (
   <>
     <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072')] bg-cover bg-center opacity-10 z-0"></div>
     <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/90 z-0"></div>
+    <motion.div 
+      className="absolute left-10 top-20 w-8 h-8 rounded-full bg-blue-400 opacity-20"
+      variants={ANIMATION_VARIANTS.float}
+      initial="initial"
+      animate="animate"
+    />
+    <motion.div 
+      className="absolute right-20 bottom-40 w-12 h-12 rounded-full bg-blue-300 opacity-20"
+      variants={ANIMATION_VARIANTS.float}
+      initial="initial"
+      animate="animate"
+      transition={{ delay: 1 }}
+    />
+    <motion.div 
+      className="absolute left-1/3 bottom-20 w-10 h-10 rounded-full bg-blue-500 opacity-10"
+      variants={ANIMATION_VARIANTS.float}
+      initial="initial"
+      animate="animate"
+      transition={{ delay: 2 }}
+    />
   </>
 );
 
@@ -76,7 +126,14 @@ const HeroBadge = ({ t }: { t: (key: string) => string }) => (
     variants={ANIMATION_VARIANTS.fadeIn}
     className="inline-block px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-sm font-medium mb-6 border border-blue-100 shadow-sm"
   >
-    {t('dataVizPlatform')}
+    <motion.span
+      variants={ANIMATION_VARIANTS.pulse}
+      initial="initial"
+      animate="animate"
+      className="inline-flex items-center"
+    >
+      <Globe className="w-4 h-4 mr-2" /> {t('dataVizPlatform')}
+    </motion.span>
   </motion.span>
 );
 
@@ -89,7 +146,15 @@ const HeroHeading = ({ t }: { t: (key: string) => string }) => (
     className="text-5xl md:text-6xl font-bold text-apple-gray-700 tracking-tight mb-6 leading-tight"
   >
     {t('exploreWorldData')}<br className="hidden md:block" />
-    <span className="text-gradient-primary">{t('intuitively')}</span>
+    <motion.span 
+      className="text-gradient-primary"
+      animate={{ 
+        backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+      }}
+      transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+    >
+      {t('intuitively')}
+    </motion.span>
   </motion.h1>
 );
 
@@ -123,6 +188,12 @@ const HeroButtons = ({ t }: { t: (key: string) => string }) => (
           className={`${BUTTON_COMMON_CLASSES} shadow-apple-md hover:shadow-apple-lg bg-primary hover:bg-primary/90`}
         >
           {t('startExploring')}
+          <motion.span
+            animate={{ x: [0, 5, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", repeatDelay: 1 }}
+          >
+            <Globe className="ml-2 h-5 w-5" />
+          </motion.span>
         </Button>
       </ButtonAnimation>
     </Link>
@@ -147,9 +218,15 @@ const ScrollIndicator = ({ t }: { t: (key: string) => string }) => (
     transition={{ delay: 1.2, duration: 0.5 }}
     className="flex justify-center mt-16"
   >
-    <a href="#features" className="flex flex-col items-center text-apple-gray-500 animate-bounce">
+    <a href="#features" className="flex flex-col items-center text-apple-gray-500">
       <span className="text-sm mb-1">{t('scrollToExplore')}</span>
-      <ChevronDown className="h-5 w-5" />
+      <motion.div
+        animate={{ y: [0, 5, 0] }}
+        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <ChevronDown className="h-5 w-5" />
+      </motion.div>
     </a>
   </motion.div>
 );
+

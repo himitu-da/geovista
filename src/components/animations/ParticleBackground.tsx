@@ -10,6 +10,7 @@ interface Particle {
   speedY: number;
   opacity: number;
   color: string;
+  isGlobeParticle?: boolean;
 }
 
 /**
@@ -23,16 +24,19 @@ const ParticleBackground: React.FC = () => {
   const animationRef = useRef<number>(0);
 
   // パーティクル数とマウス位置の状態
-  const particleCount = 80;
+  const particleCount = 90; // パーティクル数を増やす
   const mouseRef = useRef({ x: 0, y: 0 });
   const isMouseMovingRef = useRef(false);
   const mouseMovingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const globeRef = useRef<{x: number, y: number, radius: number} | null>(null);
 
-  // より高いコントラストを持つカラーパレット
+  // よりグローバルな印象を与えるカラーパレット
   const colorPalette = [
-    'rgba(79, 114, 255, opacity)',  // 明るいブルー
+    'rgba(79, 114, 255, opacity)',  // ブルー
     'rgba(46, 82, 218, opacity)',   // ミディアムブルー
-    'rgba(14, 52, 190, opacity)'    // ディープブルー
+    'rgba(14, 52, 190, opacity)',   // ディープブルー
+    'rgba(0, 128, 128, opacity)',   // ティール
+    'rgba(0, 150, 100, opacity)'    // グリーン
   ];
 
   useEffect(() => {
@@ -46,31 +50,126 @@ const ParticleBackground: React.FC = () => {
     const setCanvasSize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      
+      // 中央に地球を配置
+      globeRef.current = {
+        x: canvas.width * 0.85,
+        y: canvas.height * 0.5,
+        radius: Math.min(canvas.width, canvas.height) * 0.15
+      };
     };
 
     // 初期パーティクルの生成
     const createParticles = () => {
       particlesRef.current = [];
+      
+      // 通常のパーティクル
       for (let i = 0; i < particleCount; i++) {
-        const opacity = Math.random() * 0.6 + 0.2; // 透明度を高めて、コントラストを向上
+        const opacity = Math.random() * 0.6 + 0.2;
         const colorIndex = Math.floor(Math.random() * colorPalette.length);
         const color = colorPalette[colorIndex].replace('opacity', opacity.toString());
         
         particlesRef.current.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 3 + 1.5, // サイズを大きくして視認性を向上
+          size: Math.random() * 3 + 1.5,
           speedX: (Math.random() - 0.5) * 0.5,
           speedY: (Math.random() - 0.5) * 0.5,
           opacity,
           color
         });
       }
+      
+      // 地球の周りを回るパーティクル
+      if (globeRef.current) {
+        const globe = globeRef.current;
+        const orbitParticleCount = 30;
+        
+        for (let i = 0; i < orbitParticleCount; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const distance = globe.radius * (1 + Math.random() * 0.5);
+          const opacity = Math.random() * 0.8 + 0.2;
+          
+          particlesRef.current.push({
+            x: globe.x + Math.cos(angle) * distance,
+            y: globe.y + Math.sin(angle) * distance,
+            size: Math.random() * 2 + 0.8,
+            speedX: Math.cos(angle) * 0.2,
+            speedY: Math.sin(angle) * 0.2,
+            opacity,
+            color: 'rgba(255, 255, 255, opacity)'.replace('opacity', opacity.toString()),
+            isGlobeParticle: true
+          });
+        }
+      }
     };
 
     // パーティクルの描画と更新
     const render = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // 地球の描画
+      if (globeRef.current) {
+        const globe = globeRef.current;
+        
+        // 地球の背景グロー
+        const gradient = ctx.createRadialGradient(
+          globe.x, globe.y, 0,
+          globe.x, globe.y, globe.radius * 1.5
+        );
+        gradient.addColorStop(0, 'rgba(14, 52, 190, 0.15)');
+        gradient.addColorStop(1, 'rgba(14, 52, 190, 0)');
+        
+        ctx.beginPath();
+        ctx.fillStyle = gradient;
+        ctx.arc(globe.x, globe.y, globe.radius * 1.5, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // 地球本体
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(79, 114, 255, 0.1)';
+        ctx.lineWidth = 1;
+        ctx.arc(globe.x, globe.y, globe.radius, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        // 地球の経線と緯線
+        for (let i = 0; i < 8; i++) {
+          const angle = (i / 8) * Math.PI;
+          
+          ctx.beginPath();
+          ctx.strokeStyle = 'rgba(79, 114, 255, 0.05)';
+          ctx.lineWidth = 0.5;
+          
+          // 経線
+          ctx.beginPath();
+          ctx.arc(globe.x, globe.y, globe.radius, 0, Math.PI * 2, false);
+          ctx.stroke();
+          
+          // 緯線
+          ctx.beginPath();
+          ctx.moveTo(globe.x - globe.radius, globe.y);
+          ctx.lineTo(globe.x + globe.radius, globe.y);
+          ctx.stroke();
+          
+          // 縦線
+          ctx.beginPath();
+          ctx.moveTo(globe.x, globe.y - globe.radius);
+          ctx.lineTo(globe.x, globe.y + globe.radius);
+          ctx.stroke();
+          
+          // 斜め線
+          ctx.beginPath();
+          ctx.moveTo(
+            globe.x + Math.cos(angle) * globe.radius,
+            globe.y + Math.sin(angle) * globe.radius
+          );
+          ctx.lineTo(
+            globe.x - Math.cos(angle) * globe.radius,
+            globe.y - Math.sin(angle) * globe.radius
+          );
+          ctx.stroke();
+        }
+      }
       
       // パーティクルの更新と描画
       particlesRef.current.forEach((particle, index) => {
@@ -88,21 +187,55 @@ const ParticleBackground: React.FC = () => {
           }
         }
 
-        // パーティクルの移動
-        particle.x += particle.speedX;
-        particle.y += particle.speedY;
-        
-        // 画面端での反射
-        if (particle.x < 0 || particle.x > canvas.width) {
-          particle.speedX *= -1;
+        // 特別な処理: 地球の周りを回るパーティクル
+        if (particle.isGlobeParticle && globeRef.current) {
+          const globe = globeRef.current;
+          const dx = particle.x - globe.x;
+          const dy = particle.y - globe.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const angle = Math.atan2(dy, dx);
+          
+          // 地球を中心に円軌道を描く
+          const targetX = globe.x + Math.cos(angle + 0.01) * distance;
+          const targetY = globe.y + Math.sin(angle + 0.01) * distance;
+          
+          particle.x = targetX;
+          particle.y = targetY;
+          
+          // 軌道の半径を徐々に変化させる
+          const orbitChange = Math.sin(Date.now() * 0.001) * 0.3;
+          const targetDistance = globe.radius * (1 + Math.random() * 0.5 + orbitChange);
+          
+          // 軌道の補正
+          const currentDistance = Math.sqrt(
+            (particle.x - globe.x) ** 2 + (particle.y - globe.y) ** 2
+          );
+          
+          if (Math.abs(currentDistance - targetDistance) > 5) {
+            const correctionFactor = 0.02;
+            const correctionX = (targetDistance / currentDistance - 1) * (particle.x - globe.x) * correctionFactor;
+            const correctionY = (targetDistance / currentDistance - 1) * (particle.y - globe.y) * correctionFactor;
+            
+            particle.x += correctionX;
+            particle.y += correctionY;
+          }
+        } else {
+          // 通常のパーティクルの移動
+          particle.x += particle.speedX;
+          particle.y += particle.speedY;
+          
+          // 画面端での反射
+          if (particle.x < 0 || particle.x > canvas.width) {
+            particle.speedX *= -1;
+          }
+          if (particle.y < 0 || particle.y > canvas.height) {
+            particle.speedY *= -1;
+          }
+          
+          // 速度の減衰
+          particle.speedX *= 0.99;
+          particle.speedY *= 0.99;
         }
-        if (particle.y < 0 || particle.y > canvas.height) {
-          particle.speedY *= -1;
-        }
-        
-        // 速度の減衰
-        particle.speedX *= 0.99;
-        particle.speedY *= 0.99;
         
         // パーティクルの描画
         ctx.beginPath();
@@ -116,12 +249,16 @@ const ParticleBackground: React.FC = () => {
             const dx = particle.x - otherParticle.x;
             const dy = particle.y - otherParticle.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
+            const maxDistance = particle.isGlobeParticle || otherParticle.isGlobeParticle ? 60 : 120;
             
-            if (distance < 120) {
+            if (distance < maxDistance) {
               ctx.beginPath();
-              // より濃い青色を使用して接続線のコントラストを向上
-              ctx.strokeStyle = `rgba(79, 114, 255, ${0.25 * (1 - distance / 120)})`; // 透明度を上げてコントラスト向上
-              ctx.lineWidth = 0.7; // 線を太くして視認性を向上
+              const alpha = particle.isGlobeParticle || otherParticle.isGlobeParticle
+                ? 0.3 * (1 - distance / maxDistance)
+                : 0.25 * (1 - distance / maxDistance);
+              
+              ctx.strokeStyle = `rgba(79, 114, 255, ${alpha})`;
+              ctx.lineWidth = 0.7;
               ctx.moveTo(particle.x, particle.y);
               ctx.lineTo(otherParticle.x, otherParticle.y);
               ctx.stroke();
@@ -174,9 +311,9 @@ const ParticleBackground: React.FC = () => {
   return (
     <motion.canvas
       ref={canvasRef}
-      className="fixed inset-0 z-0 opacity-40 pointer-events-none" // 不透明度を上げてコントラストを向上
+      className="fixed inset-0 z-0 opacity-40 pointer-events-none"
       initial={{ opacity: 0 }}
-      animate={{ opacity: 0.4 }} // 不透明度を上げる
+      animate={{ opacity: 0.4 }}
       transition={{ duration: 1.5 }}
     />
   );

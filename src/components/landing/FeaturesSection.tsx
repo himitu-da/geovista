@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Globe, BarChart3, Users } from 'lucide-react';
+import { Globe, BarChart3, Users, Map, Compass } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
 import { FeatureCard } from './FeatureCard';
@@ -51,16 +51,38 @@ export const FeaturesSection = () => {
             color="blue"
           />
           <FeatureCard 
-            icon={<BarChart3 className="h-8 w-8 text-blue-500" />}
+            icon={<BarChart3 className="h-8 w-8 text-green-500" />}
             title={t('dataAnalysis')}
             description={t('dataAnalysisDesc')}
+            color="green"
+          />
+          <FeatureCard 
+            icon={<Users className="h-8 w-8 text-purple-500" />}
+            title={t('demographicInsights')}
+            description={t('demographicInsightsDesc')}
+            color="purple"
+          />
+        </motion.div>
+        
+        <motion.div 
+          className="grid md:grid-cols-2 gap-8 mt-12"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggeredContainer}
+          transition={{ delayChildren: 0.3 }}
+        >
+          <FeatureCard 
+            icon={<Map className="h-8 w-8 text-blue-500" />}
+            title={t('geographicalPatterns')}
+            description={t('geographicalPatternsDesc') || "Discover geographical patterns and correlations across the globe with our advanced mapping tools."}
             color="blue"
           />
           <FeatureCard 
-            icon={<Users className="h-8 w-8 text-blue-500" />}
-            title={t('demographicInsights')}
-            description={t('demographicInsightsDesc')}
-            color="blue"
+            icon={<Compass className="h-8 w-8 text-green-500" />}
+            title={t('globalExploration')}
+            description={t('globalExplorationDesc') || "Navigate through global data with precision and uncover insights about our interconnected world."}
+            color="green"
           />
         </motion.div>
       </div>
