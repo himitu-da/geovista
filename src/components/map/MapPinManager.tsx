@@ -8,8 +8,8 @@ import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
-import { MapPin, X } from 'lucide-react';
-import PinInstructionTooltip from './PinInstructionTooltip';
+import { MapPin, X, MousePointer2, Smartphone } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 // 半透明なピンアイコンを作成
 const ghostPinIcon = new L.Icon({
@@ -21,6 +21,66 @@ const ghostPinIcon = new L.Icon({
   shadowSize: [41, 41],
   className: 'ghost-pin-icon opacity-70'
 });
+
+/**
+ * ピン追加の説明ツールチップコンポーネント - MapPinManager内に統合
+ */
+const PinInstructionTooltip: React.FC = () => {
+  const { t } = useLanguage();
+  const isMobile = useIsMobile();
+
+  // 翻訳テキストを取得
+  const tooltipText = t('addPin');
+
+  // デバイスに適したアイコンを使用
+  const IconComponent = isMobile ? Smartphone : MousePointer2;
+
+  // アニメーションバリアント
+  const tooltipVariants = {
+    initial: { 
+      opacity: 0,
+      y: 10,
+      scale: 0.95
+    },
+    visible: { 
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { 
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    },
+    highlight: {
+      scale: [1, 1.05, 1],
+      boxShadow: [
+        "0 1px 2px rgba(0,0,0,0.1)",
+        "0 4px 8px rgba(0,0,0,0.15)",
+        "0 1px 2px rgba(0,0,0,0.1)"
+      ],
+      transition: {
+        duration: 1.2,
+        times: [0, 0.5, 1],
+        ease: "easeInOut",
+        delay: 0.5
+      }
+    }
+  };
+
+  return (
+    <motion.div 
+      className="fixed z-[500] left-4 bottom-4 px-3 py-2 rounded-lg bg-white/90 shadow-md border border-gray-200"
+      initial="initial"
+      animate={["visible", "highlight"]}
+      variants={tooltipVariants}
+    >
+      <div className="flex items-center gap-2 text-sm text-gray-700">
+        <IconComponent className="w-4 h-4 text-blue-500 flex-shrink-0" />
+        <span>{tooltipText}</span>
+      </div>
+    </motion.div>
+  );
+};
 
 /**
  * Map pin manager component
@@ -129,7 +189,7 @@ const MapPinManager: React.FC = () => {
             autoClose={false}
             closeOnClick={false}
             eventHandlers={{
-              close: handleDialogClose
+              popupclose: handleDialogClose
             }}
           >
             <div 
@@ -174,7 +234,7 @@ const MapPinManager: React.FC = () => {
         </Marker>
       )}
 
-      {/* 左下の説明ツールチップは残す */}
+      {/* 左下の説明ツールチップを表示 */}
       <PinInstructionTooltip />
     </>
   );

@@ -9,7 +9,6 @@ import MapControls from './map/MapControls';
 import LoadingOverlay from './map/LoadingOverlay';
 import { initializeLeafletIcons } from './map/leafletUtils';
 import MapPinManager from './map/MapPinManager';
-import PinInstructionTooltip from './map/PinInstructionTooltip';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 // Initialize Leaflet default icons
@@ -113,9 +112,6 @@ const WorldMap: React.FC<WorldMapProps> = ({
       <div className="absolute bottom-7 right-1 z-[400] text-[7px] sm:text-[8px] text-gray-700 bg-white/80 px-1.5 py-0.5 rounded-tl-md shadow-sm">
         &copy; <a href="https://www.openstreetmap.org/copyright" className="hover:text-blue-600 font-medium">OpenStreetMap</a>
       </div>
-      
-      {/* ピン追加の説明ツールチップ - 常に左下に表示 */}
-      <PinInstructionTooltip />
     </div>
   );
 };
