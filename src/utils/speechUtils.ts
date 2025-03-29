@@ -1,28 +1,29 @@
-
+// src/utils/speechUtils.ts
 import { supabase } from '@/integrations/supabase/client';
 
-// 言語ごとのデフォルトの声ID
+// Default voice IDs per language
 export const VOICE_IDS = {
-  en: 'pFZP5JQG7iQjIQuC4Bku', // Lily (英語)
-  es: 'pqHfZKP75CvOlQylNhV4', // Bill (スペイン語)
-  ja: 'XB0fDUnXU5powFXDhCwa', // Charlotte (日本語)
+  en: 'pFZP5JQG7iQjIQuC4Bku', // Lily (English)
+  es: 'pqHfZKP75CvOlQylNhV4', // Bill (Spanish)
 };
 
-// テキストから音声を生成する関数
+// Generate speech from text
 export const generateSpeech = async (
   text: string, 
   language: string = 'en'
 ): Promise<string | null> => {
   try {
-    // テキストを120字以下のチャンクに分割（APIの制限対策）
+    // Split text into chunks (API limitation)
     const chunks = splitTextIntoChunks(text, 4000);
     
     if (chunks.length === 0) return null;
     
-    // 最初のチャンクのみ読み上げる（APIコスト削減のため）
+    // Only process the first chunk (to reduce API costs)
     const firstChunk = chunks[0];
     
-    // Supabaseエッジ関数を呼び出して音声を生成
+    console.log('Generating speech for text:', firstChunk.substring(0, 100) + '...');
+    
+    // Call Supabase edge function to generate speech
     const { data, error } = await supabase.functions.invoke('elevenlabs-text-to-speech', {
       body: { 
         text: firstChunk,
@@ -32,25 +33,33 @@ export const generateSpeech = async (
     });
     
     if (error) {
-      console.error('Failed to generate speech:', error);
+      console.error('Supabase edge function error:', error);
       return null;
     }
     
-    return data.audio; // Base64エンコードされた音声データ
+    if (!data || !data.audio) {
+      console.error('No audio data returned from API');
+      return null;
+    }
+    
+    // For debugging
+    console.log('Audio data received, length:', data.audio.length);
+    
+    return data.audio; // Base64 encoded audio data
   } catch (error) {
     console.error('Error in speech generation:', error);
     return null;
   }
 };
 
-// テキストを指定されたサイズのチャンクに分割する関数
+// Split text into manageable chunks
 const splitTextIntoChunks = (text: string, maxLength: number): string[] => {
   if (!text) return [];
   
   const chunks: string[] = [];
   
-  // 文章単位で分割するために、ピリオドや句点で分ける
-  const sentences = text.split(/(?<=[.。!?！？])\s*/);
+  // Split by sentences for more natural breaks
+  const sentences = text.split(/(?<=[.!?])\s*/);
   let currentChunk = '';
   
   for (const sentence of sentences) {
@@ -61,7 +70,7 @@ const splitTextIntoChunks = (text: string, maxLength: number): string[] => {
         chunks.push(currentChunk);
       }
       
-      // 新しい文が長すぎる場合は再分割
+      // If a single sentence is too long, split it further
       if (sentence.length > maxLength) {
         const words = sentence.split(' ');
         currentChunk = '';
@@ -89,9 +98,32 @@ const splitTextIntoChunks = (text: string, maxLength: number): string[] => {
   return chunks;
 };
 
-// 音声を再生する関数
-export const playSpeech = (audioBase64: string): HTMLAudioElement => {
-  const audio = new Audio(`data:audio/mp3;base64,${audioBase64}`);
-  audio.play();
-  return audio;
+// Play audio from base64 string
+export const playSpeech = (audioBase64: string): HTMLAudioElement | null => {
+  try {
+    if (!audioBase64) {
+      console.error('No audio data provided to playSpeech');
+      return null;
+    }
+    
+    const audio = new Audio(`data:audio/mp3;base64,${audioBase64}`);
+    
+    // Add event listeners for debugging
+    audio.addEventListener('play', () => console.log('Audio playback started'));
+    audio.addEventListener('error', (e) => console.error('Audio playback error:', e));
+    
+    audio.play().catch(err => {
+      console.error('Failed to play audio:', err);
+    });
+    
+    return audio;
+  } catch (error) {
+    console.error('Error creating audio element:', error);
+    return null;
+  }
+};
+
+// Test if audio playback is supported
+export const isAudioSupported = (): boolean => {
+  return typeof Audio !== 'undefined';
 };

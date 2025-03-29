@@ -1,5 +1,5 @@
-
-import React, { useState } from 'react';
+// src/components/map/PinMarker.tsx
+import React, { useState, useEffect } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { Loader2, MapPin, MapPinOff, Check, Volume2 } from 'lucide-react';
@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button';
 import LocationDescription from './LocationDescription';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
-import { generateSpeech, playSpeech } from '@/utils/speechUtils';
+import { generateSpeech } from '@/utils/speechUtils';
 import AudioPlayer from './AudioPlayer';
+import { useToast } from '@/hooks/use-toast';
 
 interface PinMarkerProps {
   position: [number, number];
@@ -16,7 +17,7 @@ interface PinMarkerProps {
   onGenerateDescription: (position: [number, number], language: string) => Promise<string>;
 }
 
-// カスタムピンアイコン
+// Custom pin icon
 const customPinIcon = new L.Icon({
   iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -27,7 +28,7 @@ const customPinIcon = new L.Icon({
 });
 
 /**
- * ピンマーカーコンポーネント
+ * Pin marker component
  */
 const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDescription }) => {
   const [description, setDescription] = useState<string>('');
@@ -36,31 +37,73 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
   const [speechLoading, setSpeechLoading] = useState<boolean>(false);
   const [speechData, setSpeechData] = useState<string | null>(null);
   const { language, t } = useLanguage();
+  const { toast } = useToast();
 
-  // 説明文を生成する
+  // Generate location description
   const handleGenerateDescription = async () => {
     setLoading(true);
+    console.log("Generating description for location:", position);
+    
     try {
       const generatedDescription = await onGenerateDescription(position, language);
+      console.log("Description received, length:", generatedDescription?.length || 0);
       setDescription(generatedDescription);
+      
+      // Show success toast
+      toast({
+        title: language === 'es' ? 'Descripción generada' : 'Description generated',
+        duration: 2000,
+      });
     } catch (error) {
       console.error('Failed to generate description:', error);
       setDescription(t('errorGeneratingDescription'));
+      
+      // Show error toast
+      toast({
+        title: language === 'es' ? 'Error' : 'Error',
+        description: t('errorGeneratingDescription'),
+        variant: 'destructive',
+        duration: 3000,
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  // 音声を生成する
+  // Generate speech for text-to-speech functionality
   const handleGenerateSpeech = async () => {
     if (!description || speechLoading) return;
     
     setSpeechLoading(true);
+    console.log("Generating speech for description");
+    
     try {
       const audio = await generateSpeech(description, language);
+      
+      if (!audio) {
+        throw new Error("No audio data received");
+      }
+      
+      console.log("Speech generated successfully, setting audio data");
       setSpeechData(audio);
+      
+      // Show success toast
+      toast({
+        title: language === 'es' ? 'Audio generado' : 'Audio generated',
+        duration: 2000,
+      });
     } catch (error) {
       console.error('Failed to generate speech:', error);
+      
+      // Show error toast
+      toast({
+        title: language === 'es' ? 'Error' : 'Error',
+        description: language === 'es' 
+          ? 'Error al generar audio. Por favor, inténtelo de nuevo.' 
+          : 'Failed to generate audio. Please try again.',
+        variant: 'destructive',
+        duration: 3000,
+      });
     } finally {
       setSpeechLoading(false);
     }
@@ -75,7 +118,13 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
         popupclose: () => setIsPopupOpen(false),
       }}
     >
-      <Popup className="location-popup" autoPan={true} minWidth={300} maxWidth={350}>
+      <Popup 
+        className="location-popup" 
+        autoPan={true} 
+        minWidth={300} 
+        maxWidth={350}
+        keepInView={true}
+      >
         <motion.div 
           className="p-3 max-w-full"
           initial={{ opacity: 0, y: 5 }}
@@ -101,6 +150,7 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
             </Button>
           </div>
           
+          {/* Coordinates display */}
           <div className="text-xs mb-3 bg-gray-50 p-2 rounded-md border border-gray-200 shadow-sm">
             <div className="grid grid-cols-2 gap-2">
               <div>{t('latitude')}: 
@@ -139,16 +189,19 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
+              {/* Location description with text-to-speech button */}
               <LocationDescription 
                 description={description}
                 onTextToSpeech={handleGenerateSpeech}
                 speechLoading={speechLoading}
               />
               
+              {/* Audio player - render only when speech data is available */}
               {speechData && (
                 <div className="p-2 border-t">
                   <AudioPlayer 
                     audioBase64={speechData}
+                    onEnded={() => console.log("Audio playback ended")}
                   />
                 </div>
               )}

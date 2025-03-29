@@ -1,4 +1,4 @@
-
+// src/components/map/LocationDescription.tsx
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { motion } from 'framer-motion';
@@ -9,8 +9,6 @@ import {
   Camera, 
   Book, 
   Users, 
-  Building, 
-  Mountain, 
   Star,
   Volume2,
   Loader2
@@ -132,49 +130,6 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({
           headingColor: 'text-gray-700'
         };
     }
-    // Japanese section keywords
-    else if (language === 'ja') {
-      if (lowerText.includes('地理')) 
-        return { 
-          icon: <Map className="w-4 h-4" />, 
-          color: 'text-blue-600',
-          bgColor: 'bg-blue-50',
-          borderColor: 'border-blue-200',
-          headingColor: 'text-blue-700'
-        };
-      if (lowerText.includes('歴史')) 
-        return { 
-          icon: <Clock className="w-4 h-4" />, 
-          color: 'text-amber-600',
-          bgColor: 'bg-amber-50',
-          borderColor: 'border-amber-200',
-          headingColor: 'text-amber-700'
-        };
-      if (lowerText.includes('文化')) 
-        return { 
-          icon: <Users className="w-4 h-4" />, 
-          color: 'text-purple-600',
-          bgColor: 'bg-purple-50',
-          borderColor: 'border-purple-200',
-          headingColor: 'text-purple-700'
-        };
-      if (lowerText.includes('見どころ') || lowerText.includes('観光')) 
-        return { 
-          icon: <Camera className="w-4 h-4" />, 
-          color: 'text-green-600',
-          bgColor: 'bg-green-50',
-          borderColor: 'border-green-200',
-          headingColor: 'text-green-700'
-        };
-      if (lowerText.includes('概要')) 
-        return { 
-          icon: <Book className="w-4 h-4" />, 
-          color: 'text-gray-600',
-          bgColor: 'bg-gray-50',
-          borderColor: 'border-gray-200',
-          headingColor: 'text-gray-700'
-        };
-    }
     
     // Default styling for unrecognized sections
     return { 
@@ -204,12 +159,16 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({
                     {children}
                   </h1>
                   
+                  {/* Text-to-speech button - ensure it's always visible */}
                   {onTextToSpeech && (
                     <Button
                       variant="outline"
                       size="sm"
                       className="h-6 px-1.5 py-0 text-xs flex items-center gap-1 text-blue-600"
-                      onClick={onTextToSpeech}
+                      onClick={() => {
+                        console.log("Text-to-speech button clicked");
+                        onTextToSpeech();
+                      }}
                       disabled={speechLoading}
                       title={t('textToSpeech')}
                     >
