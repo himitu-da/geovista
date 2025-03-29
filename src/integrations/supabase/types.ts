@@ -14,28 +14,28 @@ export type Database = {
           area_km2: number | null
           code: string
           gdp_per_capita: number | null
-          geometry: Json | null
+          geometry: Json
           id: string
           name: string
-          population: number | null
+          population: number
         }
         Insert: {
           area_km2?: number | null
           code: string
           gdp_per_capita?: number | null
-          geometry?: Json | null
+          geometry: Json
           id: string
           name: string
-          population?: number | null
+          population: number
         }
         Update: {
           area_km2?: number | null
           code?: string
           gdp_per_capita?: number | null
-          geometry?: Json | null
+          geometry?: Json
           id?: string
           name?: string
-          population?: number | null
+          population?: number
         }
         Relationships: []
       }

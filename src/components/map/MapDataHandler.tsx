@@ -2,8 +2,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { GeoJSON, useMap } from 'react-leaflet';
 import { CountryData, DataMetric } from '@/types/country';
-import { styleFeature, generateCountryTooltip, resetLayerStyle } from './handlers/FeatureHandlers';
-import { transformToGeoJson, fitMapToCountry } from './handlers/GeoJsonTransformer';
+import { fitMapToCountry } from './handlers/GeoJsonTransformer';
 import { createMouseOverHandler, createMouseOutHandler, createClickHandler } from './handlers/MouseEventHandlers';
 import MapPopup from './MapPopup';
 import HighlightEffect from './effects/HighlightEffect';
@@ -32,12 +31,11 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     isOpen: boolean;
   } | null>(null);
   
-  // 選択された国にズームする効果（飛行時間を短くしてよりスムーズに）
+  // 選択された国にズームする効果
   useEffect(() => {
     if (selectedCountry && countries.length > 0) {
       const country = countries.find(c => c.id === selectedCountry);
       
-      // スムーズにズームするために飛行時間を短縮
       if (country) {
         fitMapToCountry(country, map, { duration: 0.5 });
       }
@@ -46,10 +44,23 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
   
   // GeoJSONデータの変換
   const countryGeoJson = useMemo(() => {
-    return transformToGeoJson(countries);
+    return {
+      type: 'FeatureCollection',
+      features: countries.map(country => ({
+        type: 'Feature',
+        properties: {
+          id: country.id,
+          name: country.name,
+          population: country.population,
+          area_km2: country.area_km2,
+          gdp_per_capita: country.gdp_per_capita
+        },
+        geometry: country.geometry
+      }))
+    };
   }, [countries]);
   
-  // インタラクションイベントハンドラーの作成（動きをスムーズにするように更新）
+  // インタラクションイベントハンドラーの作成
   const onFeatureMouseover = useMemo(() => 
     createMouseOverHandler(map, selectedMetric, setPopupInfo), 
     [map, selectedMetric]
@@ -65,9 +76,18 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     [map, selectedCountry, onCountrySelect]
   );
   
-  // 各フィーチャーのスタイル関数
+  // シンプルなスタイル関数（色塗り機能を削除）
   const applyFeatureStyle = (feature: any) => {
-    return styleFeature(feature, selectedCountry, selectedMetric);
+    const isSelected = feature.properties.id === selectedCountry;
+    
+    return {
+      fillColor: '#e8e8e8', // すべての国に同じ色を使用
+      weight: isSelected ? 2 : 1,
+      opacity: 1,
+      color: isSelected ? '#0071e3' : '#666',
+      fillOpacity: isSelected ? 0.7 : 0.5,
+      dashArray: isSelected ? '' : '1'
+    };
   };
   
   return (

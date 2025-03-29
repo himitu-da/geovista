@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import supabase from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { CountryData } from '@/types/country';
 import { captureException } from '@/lib/sentry';
 

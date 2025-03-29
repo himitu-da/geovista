@@ -8,7 +8,6 @@ import L from 'leaflet';
 import MapControls from './map/MapControls';
 import LoadingOverlay from './map/LoadingOverlay';
 import { initializeLeafletIcons } from './map/leafletUtils';
-import Legend from './Legend';
 
 // Leafletのデフォルトアイコンの問題を修正
 initializeLeafletIcons();
@@ -108,11 +107,6 @@ const WorldMap: React.FC<WorldMapProps> = ({
           />
         )}
       </MapContainer>
-      
-      {/* 左下に凡例を表示 */}
-      <div className="absolute bottom-12 left-4 z-[400]">
-        <Legend metric={selectedMetric} />
-      </div>
       
       {/* 帰属表示オーバーレイ */}
       <div className="absolute bottom-7 right-1 z-[400] text-[7px] sm:text-[8px] text-gray-700 bg-white/80 px-1.5 py-0.5 rounded-tl-md shadow-sm">
