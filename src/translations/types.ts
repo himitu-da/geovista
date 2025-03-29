@@ -1,4 +1,5 @@
-// ��語タイプ
+
+// 言語タイプ
 export type Language = 'en' | 'ja';
 
 // 翻訳レコード型
@@ -10,6 +11,7 @@ export type TranslationRecord = {
 // 翻訳全体のマップ型
 export type TranslationsMap = Record<string, TranslationRecord>;
 
+// ランディングページの翻訳用インターフェース
 export interface LandingTranslations {
   [key: string]: {
     launchExplorer: string;

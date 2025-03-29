@@ -8,7 +8,14 @@ import { landingTranslations } from './landing';
 export const translations: TranslationsMap = {
   ...commonTranslations,
   ...explorerTranslations,
-  ...landingTranslations
+  // landingTranslations を TranslationsMap 形式に変換
+  ...Object.entries(landingTranslations.en).reduce<Record<string, { en: string; ja: string }>>((acc, [key, value]) => {
+    acc[key] = {
+      en: landingTranslations.en[key],
+      ja: landingTranslations.ja[key]
+    };
+    return acc;
+  }, {})
 };
 
 export * from './types';
