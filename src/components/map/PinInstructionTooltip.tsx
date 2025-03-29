@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { MousePointer2, TapIcon } from 'lucide-react';
+import { MousePointer2, Smartphone, TouchpadOff } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 /**
@@ -80,7 +80,7 @@ const PinInstructionTooltip: React.FC = () => {
   };
 
   // Use appropriate icon based on device
-  const IconComponent = isMobile ? TapIcon : MousePointer2;
+  const IconComponent = isMobile ? Smartphone : MousePointer2;
 
   return (
     <>
