@@ -1,60 +1,91 @@
 
 import React from 'react';
-import { Map } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Eye } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { CountryData, DataMetric } from '@/types/country';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface CountryTableRowProps {
   country: CountryData;
   selectedMetric: DataMetric;
   selectedCountry: string | null;
   onCountrySelect: (countryId: string | null) => void;
-  formatMetricValue: (country: CountryData, metric: DataMetric) => string;
+  formatMetricValue: (value: number | null, metric: string) => string;
+  showMetricColumn?: boolean;
 }
 
-const CountryTableRow: React.FC<CountryTableRowProps> = ({
+const CountryTableRow = ({
   country,
   selectedMetric,
   selectedCountry,
   onCountrySelect,
-  formatMetricValue
-}) => {
-  const { t } = useLanguage();
+  formatMetricValue,
+  showMetricColumn = true
+}: CountryTableRowProps) => {
+  const isMobile = useIsMobile();
+  const isSelected = selectedCountry === country.id;
   
+  const rowVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.3 } 
+    },
+    exit: { 
+      opacity: 0,
+      transition: { duration: 0.2 } 
+    }
+  };
+
   return (
-    <motion.tr 
+    <motion.tr
+      layout
       key={country.id}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className={`hover:bg-gray-50 ${selectedCountry === country.id ? 'bg-blue-50' : ''}`}
+      variants={rowVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      className={isSelected ? "bg-blue-50 dark:bg-blue-900/20" : ""}
     >
-      <td className="px-6 py-4 whitespace-nowrap">
+      <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
         <div className="flex items-center">
-          <div className="text-sm font-medium text-gray-900">
-            {country.name}
+          <div className="ml-1 sm:ml-2">
+            <div className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">{country.name}</div>
+            <div className="text-[8px] sm:text-xs text-gray-500 dark:text-gray-400">{country.id.toUpperCase()}</div>
           </div>
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        {country.population.toLocaleString()} 人
+      <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
+        <div className="text-xs sm:text-sm text-gray-900 dark:text-gray-100">
+          {formatMetricValue(country.population, 'population')}
+        </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        {formatMetricValue(country, selectedMetric)}
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-        <button
-          onClick={() => onCountrySelect(selectedCountry === country.id ? null : country.id)}
-          className={`inline-flex items-center py-1 px-2 border rounded-md text-xs font-medium ${
-            selectedCountry === country.id
-              ? 'border-blue-600 bg-blue-600 text-white hover:bg-blue-700'
-              : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-          }`}
+      {showMetricColumn && (
+        <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
+          <div className="text-xs sm:text-sm text-gray-900 dark:text-gray-100">
+            {formatMetricValue(
+              selectedMetric === 'population_density' 
+                ? country.population_density 
+                : selectedMetric === 'gdp_per_capita' 
+                  ? country.gdp_per_capita 
+                  : country.population,
+              selectedMetric
+            )}
+          </div>
+        </td>
+      )}
+      <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-right text-xs sm:text-sm font-medium">
+        <Button
+          size={isMobile ? "sm" : "default"}
+          variant={isSelected ? "default" : "ghost"}
+          className="h-6 sm:h-8 py-0.5 sm:py-1 px-1.5 sm:px-3"
+          onClick={() => onCountrySelect(isSelected ? null : country.id)}
         >
-          <Map className="mr-1 h-3 w-3" />
-          {selectedCountry === country.id ? t('viewing') : t('viewOnMap')}
-        </button>
+          <Eye className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-0.5 sm:mr-1" />
+          <span className="text-[8px] sm:text-xs">{isSelected ? "隠す" : "表示"}</span>
+        </Button>
       </td>
     </motion.tr>
   );

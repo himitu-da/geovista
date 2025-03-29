@@ -15,6 +15,7 @@ import {
   SidebarSeparator
 } from '@/components/ui/sidebar';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // 分割したコンポーネントをインポート
 import SidebarNavigation from './sidebar/SidebarNavigation';
@@ -49,20 +50,21 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
   // アクティブなセクションの状態管理
   const [activeSection, setActiveSection] = useState<SidebarSection>('visualization');
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
   
   return (
-    <Sidebar variant="floating" collapsible="icon">
-      <SidebarHeader className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Badge className="h-6 w-6" />
-          <span className="font-medium text-sm">{t('explorer')}</span>
+    <Sidebar variant={isMobile ? "inset" : "floating"} collapsible="icon">
+      <SidebarHeader className="flex items-center justify-between p-1 sm:p-2">
+        <div className="flex items-center gap-1 sm:gap-2">
+          <Badge className="h-4 w-4 sm:h-6 sm:w-6" />
+          <span className="font-medium text-xs sm:text-sm">{t('explorer')}</span>
         </div>
         <SidebarTrigger />
       </SidebarHeader>
       
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>{t('navigation')}</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[10px] sm:text-xs">{t('navigation')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarNavigation 
               activeSection={activeSection}
@@ -84,12 +86,13 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
             onMetricChange,
             selectedCountry,
             countries
-          }
+          },
+          isMobile
         )}
       </SidebarContent>
       
       <SidebarFooter>
-        <div className="text-xs text-gray-500 p-2">
+        <div className="text-[8px] sm:text-xs text-gray-500 p-1 sm:p-2">
           {t('enjoyExploring')}
         </div>
       </SidebarFooter>
@@ -109,7 +112,8 @@ const renderActiveSection = (
     onMetricChange: (metric: DataMetric) => void;
     selectedCountry: string | null;
     countries: CountryData[];
-  }
+  },
+  isMobile: boolean
 ) => {
   const { t } = useLanguage();
   const { 
@@ -126,7 +130,7 @@ const renderActiveSection = (
     case 'visualization':
       return (
         <SidebarGroup>
-          <SidebarGroupLabel>{t('visualizationType')}</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[10px] sm:text-xs">{t('visualizationType')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarVisualizationSection 
               visualizationType={visualizationType}
@@ -140,7 +144,7 @@ const renderActiveSection = (
     case 'metrics':
       return (
         <SidebarGroup>
-          <SidebarGroupLabel>{t('dataMetrics')}</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[10px] sm:text-xs">{t('dataMetrics')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMetricsSection 
               selectedMetric={selectedMetric}
@@ -155,7 +159,7 @@ const renderActiveSection = (
     case 'insights':
       return selectedCountry ? (
         <SidebarGroup>
-          <SidebarGroupLabel>{t('aiInsights')}</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[10px] sm:text-xs">{t('aiInsights')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <AIInsights 
               country={countries.find(c => c.id === selectedCountry)} 
@@ -168,7 +172,7 @@ const renderActiveSection = (
     case 'info':
       return (
         <SidebarGroup>
-          <SidebarGroupLabel>{t('information')}</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[10px] sm:text-xs">{t('information')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarInfoSection />
           </SidebarGroupContent>

@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import DataCategoryNav, { DataCategory } from '@/components/explore/DataCategoryNav';
 import FeaturedInsights from '@/components/explore/FeaturedInsights';
 import CountryDataTable from '@/components/explore/CountryDataTable';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // アニメーション設定
 const itemVariants = {
@@ -51,6 +52,7 @@ const UILayer = ({
   onCountrySelect: (countryId: string | null) => void;
 }) => {
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
   
   return (
     <div className="absolute inset-0 z-10 pointer-events-none">
@@ -59,7 +61,7 @@ const UILayer = ({
         className="flex flex-col h-full pointer-events-none"
       >
         {/* ヘッダー - ポインターイベント有効 （最小化） */}
-        <div className="pointer-events-auto h-10">
+        <div className="pointer-events-auto h-8 sm:h-10">
           <Header />
         </div>
         
@@ -79,9 +81,9 @@ const UILayer = ({
           </SidebarProvider>
           
           {/* データビューパネル（右側） - 必要な場合のみ表示 */}
-          {selectedCountry && (
-            <div className="pointer-events-auto w-64 max-w-[18vw] hidden lg:block bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-l border-gray-100 dark:border-gray-700 transition-all">
-              <div className="h-full p-2 flex flex-col space-y-2 overflow-auto">
+          {selectedCountry && !isMobile && (
+            <div className="pointer-events-auto w-56 sm:w-64 max-w-[18vw] hidden lg:block bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-l border-gray-100 dark:border-gray-700 transition-all">
+              <div className="h-full p-1 sm:p-2 flex flex-col space-y-1 sm:space-y-2 overflow-auto">
                 <DataExplorerTabs 
                   activeTab={activeTab}
                   onTabChange={onTabChange}
@@ -99,7 +101,7 @@ const UILayer = ({
         </div>
         
         {/* フッター - ポインターイベント有効 （最小化） */}
-        <div className="pointer-events-auto h-6">
+        <div className="pointer-events-auto h-5 sm:h-6">
           <Footer />
         </div>
       </motion.div>
@@ -135,10 +137,10 @@ const DataExplorerTabs: React.FC<DataExplorerTabsProps> = ({
   return (
     <Tabs defaultValue="map" value={activeTab} onValueChange={onTabChange} className="w-full">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="map" className="text-xs py-1">{t('mapExplorer')}</TabsTrigger>
-        <TabsTrigger value="data" className="text-xs py-1">{t('dataExplorer')}</TabsTrigger>
+        <TabsTrigger value="map" className="text-[10px] sm:text-xs py-0.5 sm:py-1">{t('mapExplorer')}</TabsTrigger>
+        <TabsTrigger value="data" className="text-[10px] sm:text-xs py-0.5 sm:py-1">{t('dataExplorer')}</TabsTrigger>
       </TabsList>
-      <TabsContent value="map" className="pt-2 space-y-3">
+      <TabsContent value="map" className="pt-1 sm:pt-2 space-y-1 sm:space-y-3">
         {/* カテゴリナビゲーション */}
         <DataCategoryNav
           activeCategory={activeCategory}
@@ -148,7 +150,7 @@ const DataExplorerTabs: React.FC<DataExplorerTabsProps> = ({
         {/* フィーチャーインサイト */}
         <FeaturedInsights />
       </TabsContent>
-      <TabsContent value="data" className="pt-2">
+      <TabsContent value="data" className="pt-1 sm:pt-2">
         {/* データテーブル */}
         <CountryDataTable
           countries={countries}
