@@ -81,18 +81,20 @@ const UILayer = ({
           
           {/* データビューパネル（右側） */}
           <div className="pointer-events-auto flex-grow max-w-xs lg:max-w-sm hidden md:block">
-            <div className="h-full p-4 flex flex-col space-y-4 overflow-auto">
-              <DataExplorerTabs 
-                activeTab={activeTab}
-                onTabChange={onTabChange}
-                activeCategory={activeCategory}
-                onCategoryChange={onCategoryChange}
-                countries={countries}
-                selectedMetric={selectedMetric}
-                onCountrySelect={onCountrySelect}
-                selectedCountry={selectedCountry}
-                onVisualizationTypeChange={onVisualizationTypeChange}
-              />
+            <div className="h-full overflow-auto bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm">
+              <div className="p-4 flex flex-col space-y-4">
+                <DataExplorerTabs 
+                  activeTab={activeTab}
+                  onTabChange={onTabChange}
+                  activeCategory={activeCategory}
+                  onCategoryChange={onCategoryChange}
+                  countries={countries}
+                  selectedMetric={selectedMetric}
+                  onCountrySelect={onCountrySelect}
+                  selectedCountry={selectedCountry}
+                  onVisualizationTypeChange={onVisualizationTypeChange}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -133,11 +135,11 @@ const DataExplorerTabs: React.FC<DataExplorerTabsProps> = ({
   
   return (
     <Tabs defaultValue="map" value={activeTab} onValueChange={onTabChange} className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="map">{t('mapExplorer')}</TabsTrigger>
-        <TabsTrigger value="data">{t('dataExplorer')}</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-2 mb-3">
+        <TabsTrigger value="map" className="text-sm font-medium">{t('mapExplorer')}</TabsTrigger>
+        <TabsTrigger value="data" className="text-sm font-medium">{t('dataExplorer')}</TabsTrigger>
       </TabsList>
-      <TabsContent value="map" className="pt-4 space-y-4">
+      <TabsContent value="map" className="pt-1 space-y-4">
         {/* カテゴリナビゲーション */}
         <DataCategoryNav
           activeCategory={activeCategory}
@@ -147,7 +149,7 @@ const DataExplorerTabs: React.FC<DataExplorerTabsProps> = ({
         {/* フィーチャーインサイト */}
         <FeaturedInsights />
       </TabsContent>
-      <TabsContent value="data" className="pt-4">
+      <TabsContent value="data" className="pt-1">
         {/* データテーブル */}
         <CountryDataTable
           countries={countries}

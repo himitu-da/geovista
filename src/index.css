@@ -14,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 0% 7%; /* より濃い前景色 */
 
-    --primary: 213 100% 40%; /* より鮮やかな青 */
+    --primary: 213 100% 50%; /* より鮮やかな青 */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 240 2% 95%;
@@ -31,7 +31,7 @@
 
     --border: 240 1% 82%; /* より鮮明な境界線 */
     --input: 240 1% 82%; /* より鮮明な入力境界線 */
-    --ring: 213 100% 40%; /* より濃いリング */
+    --ring: 213 100% 50%; /* より濃いリング */
 
     --radius: 0.75rem;
 
@@ -42,7 +42,7 @@
     --sidebar-accent: 240 4.8% 94%;
     --sidebar-accent-foreground: 240 5.9% 8%; /* より濃いサイドバーアクセント前景色 */
     --sidebar-border: 220 13% 85%; /* より鮮明なサイドバー境界線 */
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 213 100% 50%;
   }
 
   .dark {
@@ -55,7 +55,7 @@
     --popover: 240 0% 7%; /* より深いダークモード背景 */
     --popover-foreground: 0 0% 98%;
 
-    --primary: 213 100% 50%; /* より明るい青 */
+    --primary: 213 100% 60%; /* より明るい青 */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 240 3% 13%; /* よりコントラストの高いセカンダリ */
@@ -72,16 +72,16 @@
 
     --border: 240 3% 18%; /* より鮮明な境界線 */
     --input: 240 3% 18%; /* より鮮明な入力境界線 */
-    --ring: 213 100% 50%; /* より明るいリング */
+    --ring: 213 100% 60%; /* より明るいリング */
     
-    --sidebar-background: 240 0% 7%; /* より深いダークモード背景 */
+    --sidebar-background: 240 0% 10%; /* より深いダークモード背景 */
     --sidebar-foreground: 240 2% 97%;
-    --sidebar-primary: 213 100% 50%; /* より明るい青 */
+    --sidebar-primary: 213 100% 60%; /* より明るい青 */
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 3% 13%; /* よりコントラストの高いアクセント */
     --sidebar-accent-foreground: 240 2% 97%;
     --sidebar-border: 240 3% 18%; /* より鮮明な境界線 */
-    --sidebar-ring: 213 100% 50%; /* より明るい青 */
+    --sidebar-ring: 213 100% 60%; /* より明るい青 */
   }
 }
 
@@ -96,13 +96,13 @@
     -moz-osx-font-smoothing: grayscale;
   }
   
-  /* Apple風スタイリング - コンポーネント向け */
+  /* 地図ポップアップスタイル */
   .country-popup .leaflet-popup-content-wrapper {
-    @apply rounded-xl shadow-lg border border-gray-200 bg-white/95 backdrop-blur-sm; /* より明確な境界線 */
+    @apply rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm;
   }
   
   .country-popup .leaflet-popup-tip {
-    @apply bg-white/95;
+    @apply bg-white/95 dark:bg-gray-800/95;
   }
   
   /* ツールチップから境界線を削除 */
@@ -118,15 +118,15 @@
   }
   
   .glass-effect {
-    @apply backdrop-blur-md bg-white/90 dark:bg-black/90 border border-white/20 dark:border-white/10; /* コントラスト向上 */
+    @apply backdrop-blur-md bg-white/90 dark:bg-black/90 border border-white/20 dark:border-white/10;
   }
   
   .text-gradient-primary {
-    @apply bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 bg-clip-text text-transparent; /* より濃い青のグラデーション */
+    @apply bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 dark:from-blue-500 dark:via-blue-400 dark:to-blue-300 bg-clip-text text-transparent;
   }
   
   .text-gradient-cyan {
-    @apply bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent; /* シアン系グラデーション追加 */
+    @apply bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent;
   }
   
   @keyframes fadeIn {
@@ -146,7 +146,7 @@
   
   /* シャドウの強化 */
   .shadow-contrast {
-    @apply shadow-[0_4px_12px_rgba(0,0,0,0.18)];
+    @apply shadow-[0_4px_12px_rgba(0,0,0,0.18)] dark:shadow-[0_4px_12px_rgba(0,0,0,0.3)];
   }
   
   /* ボタンのホバー効果を強化 */

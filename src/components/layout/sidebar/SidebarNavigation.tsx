@@ -81,9 +81,12 @@ const NavigationMenuItem: React.FC<NavigationMenuItemProps> = ({
       isActive={activeSection === section} 
       onClick={() => setActiveSection(section)}
       tooltip={label}
+      className={activeSection === section ? "bg-blue-50 dark:bg-blue-950/40" : ""}
     >
-      {icon}
-      <span>{label}</span>
+      <span className={`${activeSection === section ? "text-blue-600 dark:text-blue-400" : ""}`}>
+        {icon}
+      </span>
+      <span className={`${activeSection === section ? "font-medium text-blue-700 dark:text-blue-300" : ""}`}>{label}</span>
     </SidebarMenuButton>
   </SidebarMenuItem>
 );
