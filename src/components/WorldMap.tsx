@@ -9,12 +9,14 @@ import MapControls from './map/MapControls';
 import LoadingOverlay from './map/LoadingOverlay';
 import { initializeLeafletIcons } from './map/leafletUtils';
 import MapPinManager from './map/MapPinManager';
+import PinInstructionTooltip from './map/PinInstructionTooltip';
+import { useLanguage } from '@/contexts/LanguageContext';
 
-// Leafletのデフォルトアイコンの問題を修正
+// Initialize Leaflet default icons
 initializeLeafletIcons();
 
 /**
- * マップのコントローラーコンポーネント
+ * Map controller component
  */
 function MapController({ setMapRef }: { setMapRef: React.Dispatch<React.SetStateAction<L.Map | null>> }) {
   const map = useMap();
@@ -22,7 +24,7 @@ function MapController({ setMapRef }: { setMapRef: React.Dispatch<React.SetState
   React.useEffect(() => {
     setMapRef(map);
     
-    // マップの制限を緩和して自由に動かせるようにする
+    // Relax map constraints for free movement
     map.dragging.enable();
     map.touchZoom.enable();
     map.doubleClickZoom.enable();
@@ -30,7 +32,7 @@ function MapController({ setMapRef }: { setMapRef: React.Dispatch<React.SetState
     map.boxZoom.enable();
     map.keyboard.enable();
     
-    // スムーズなズーム効果を有効にする
+    // Enable smooth zoom effect
     map.options.zoomSnap = 0.5;
     map.options.zoomDelta = 0.5;
     
@@ -50,7 +52,7 @@ interface WorldMapProps {
 }
 
 /**
- * 世界地図コンポーネント - シンプル化バージョン
+ * World map component - simplified version
  */
 const WorldMap: React.FC<WorldMapProps> = ({ 
   countries, 
@@ -59,16 +61,17 @@ const WorldMap: React.FC<WorldMapProps> = ({
   selectedCountry 
 }) => {
   const [mapRef, setMapRef] = useState<L.Map | null>(null);
+  const { language } = useLanguage();
 
   return (
     <div className="w-full h-full overflow-hidden">
-      {/* 読み込み中オーバーレイ */}
+      {/* Loading overlay */}
       {loading && <LoadingOverlay />}
       
-      {/* 地図コントロール */}
+      {/* Map controls */}
       <MapControls mapRef={mapRef} />
       
-      {/* フルスクリーンマップ */}
+      {/* Full screen map */}
       <MapContainer 
         center={[20, 0]} 
         zoom={2} 
@@ -84,16 +87,16 @@ const WorldMap: React.FC<WorldMapProps> = ({
         touchZoom={true}
         doubleClickZoom={true}
       >
-        {/* 地図コントローラ */}
+        {/* Map controller */}
         <MapController setMapRef={setMapRef} />
         
-        {/* マップタイル */}
+        {/* Map tiles */}
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
         
-        {/* 国のデータハンドラ */}
+        {/* Country data handler */}
         {!loading && countries.length > 0 && (
           <MapDataHandler
             countries={countries}
@@ -102,19 +105,17 @@ const WorldMap: React.FC<WorldMapProps> = ({
           />
         )}
         
-        {/* ピンマネージャー - 地図上にピンを追加・管理 */}
+        {/* Pin manager - add and manage pins on the map */}
         <MapPinManager />
       </MapContainer>
       
-      {/* 帰属表示オーバーレイ */}
+      {/* Attribution overlay */}
       <div className="absolute bottom-7 right-1 z-[400] text-[7px] sm:text-[8px] text-gray-700 bg-white/80 px-1.5 py-0.5 rounded-tl-md shadow-sm">
         &copy; <a href="https://www.openstreetmap.org/copyright" className="hover:text-blue-600 font-medium">OpenStreetMap</a>
       </div>
       
-      {/* ピン追加のためのヘルプテキスト */}
-      <div className="absolute bottom-10 left-1 z-[400] text-[7px] sm:text-[9px] text-gray-700 bg-white/80 px-1.5 py-0.5 rounded-md shadow-sm">
-        <p className="font-medium">地図上で右クリックするとピンを追加できます</p>
-      </div>
+      {/* Pin tooltip with animation */}
+      <PinInstructionTooltip />
     </div>
   );
 };
