@@ -3,6 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ZoomIn, ZoomOut, Home, Search } from 'lucide-react';
 import L from 'leaflet';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MapControlsProps {
   mapRef: L.Map | null;
@@ -15,6 +16,8 @@ const MapControls: React.FC<MapControlsProps> = ({
   showSearch, 
   setShowSearch 
 }) => {
+  const { t } = useLanguage();
+
   // Function to reset map view
   const handleResetView = () => {
     if (mapRef) {
@@ -43,7 +46,7 @@ const MapControls: React.FC<MapControlsProps> = ({
         whileTap={{ scale: 0.95 }}
         onClick={handleResetView}
         className="bg-white rounded-full p-2 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
-        title="ホームビュー"
+        title={t('homeView')}
       >
         <Home size={16} />
       </motion.button>
@@ -52,7 +55,7 @@ const MapControls: React.FC<MapControlsProps> = ({
         whileTap={{ scale: 0.95 }}
         onClick={handleZoomIn}
         className="bg-white rounded-full p-2 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
-        title="ズームイン"
+        title={t('zoomIn')}
       >
         <ZoomIn size={16} />
       </motion.button>
@@ -61,7 +64,7 @@ const MapControls: React.FC<MapControlsProps> = ({
         whileTap={{ scale: 0.95 }}
         onClick={handleZoomOut}
         className="bg-white rounded-full p-2 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
-        title="ズームアウト"
+        title={t('zoomOut')}
       >
         <ZoomOut size={16} />
       </motion.button>
@@ -70,7 +73,7 @@ const MapControls: React.FC<MapControlsProps> = ({
         whileTap={{ scale: 0.95 }}
         onClick={() => setShowSearch(!showSearch)}
         className="bg-white rounded-full p-2 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
-        title="国名で検索"
+        title={t('searchByCountry')}
       >
         <Search size={16} />
       </motion.button>

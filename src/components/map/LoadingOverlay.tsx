@@ -1,8 +1,11 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const LoadingOverlay: React.FC = () => {
+  const { t } = useLanguage();
+  
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -16,7 +19,7 @@ const LoadingOverlay: React.FC = () => {
         transition={{ repeat: Infinity, duration: 2 }}
       >
         <div className="h-10 w-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-3"></div>
-        <p className="text-apple-gray-600 font-medium tracking-tight">地図データを読み込み中...</p>
+        <p className="text-apple-gray-600 font-medium tracking-tight">{t('loadingMapData')}</p>
       </motion.div>
     </motion.div>
   );

@@ -22,6 +22,7 @@ import { motion } from 'framer-motion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ExplorerSidebarProps {
   visualizationType: 'map' | 'chart';
@@ -41,6 +42,7 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
   countries
 }) => {
   const [activeSection, setActiveSection] = useState<'visualization' | 'metrics' | 'insights' | 'info'>('visualization');
+  const { t } = useLanguage();
   
   // Find the selected country data
   const selectedCountryData = selectedCountry 
@@ -52,24 +54,24 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
       <SidebarHeader className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Badge className="h-6 w-6" />
-          <span className="font-medium text-sm">Explorer</span>
+          <span className="font-medium text-sm">{t('explorer')}</span>
         </div>
         <SidebarTrigger />
       </SidebarHeader>
       
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>ナビゲーション</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('navigation')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton 
                   isActive={activeSection === 'visualization'} 
                   onClick={() => setActiveSection('visualization')}
-                  tooltip="可視化タイプ"
+                  tooltip={t('visualizationType')}
                 >
                   <ZoomIn className="size-4" />
-                  <span>可視化タイプ</span>
+                  <span>{t('visualizationType')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               
@@ -77,10 +79,10 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
                 <SidebarMenuButton 
                   isActive={activeSection === 'metrics'} 
                   onClick={() => setActiveSection('metrics')}
-                  tooltip="データ指標"
+                  tooltip={t('dataMetrics')}
                 >
                   <Menu className="size-4" />
-                  <span>データ指標</span>
+                  <span>{t('dataMetrics')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               
@@ -89,10 +91,10 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
                   <SidebarMenuButton 
                     isActive={activeSection === 'insights'} 
                     onClick={() => setActiveSection('insights')}
-                    tooltip="AIインサイト"
+                    tooltip={t('aiInsights')}
                   >
                     <User className="size-4" />
-                    <span>AIインサイト</span>
+                    <span>{t('aiInsights')}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )}
@@ -101,10 +103,10 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
                 <SidebarMenuButton 
                   isActive={activeSection === 'info'} 
                   onClick={() => setActiveSection('info')}
-                  tooltip="情報"
+                  tooltip={t('information')}
                 >
                   <Info className="size-4" />
-                  <span>情報</span>
+                  <span>{t('information')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -115,7 +117,7 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
         
         {activeSection === 'visualization' && (
           <SidebarGroup>
-            <SidebarGroupLabel>可視化タイプ</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('visualizationType')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <Card className="border-none shadow-none">
                 <CardContent className="p-3">
@@ -129,7 +131,7 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
                       onClick={() => onVisualizationTypeChange('map')}
                     >
                       <Map className="mr-2 h-4 w-4" />
-                      マップ
+                      {t('map')}
                     </button>
                     <button 
                       className={`flex items-center justify-center px-4 py-2.5 ${
@@ -140,7 +142,7 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
                       onClick={() => onVisualizationTypeChange('chart')}
                     >
                       <BarChart3 className="mr-2 h-4 w-4" />
-                      チャート
+                      {t('chart')}
                     </button>
                   </div>
                 </CardContent>
@@ -159,7 +161,7 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
         
         {activeSection === 'metrics' && (
           <SidebarGroup>
-            <SidebarGroupLabel>データ指標</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('dataMetrics')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <Card className="border-none shadow-none">
                 <CardContent className="p-3">
@@ -174,7 +176,7 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
                         onChange={() => onMetricChange('population_density')}
                       />
                       <label htmlFor="population-density" className="ml-2.5 block text-sm text-gray-800">
-                        人口密度
+                        {t('populationDensity')}
                       </label>
                     </div>
                     <div className="flex items-center">
@@ -187,7 +189,7 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
                         onChange={() => onMetricChange('population')}
                       />
                       <label htmlFor="total-population" className="ml-2.5 block text-sm text-gray-800">
-                        総人口
+                        {t('totalPopulation')}
                       </label>
                     </div>
                     <div className="flex items-center">
@@ -200,7 +202,7 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
                         onChange={() => onMetricChange('gdp_per_capita')}
                       />
                       <label htmlFor="gdp-per-capita" className="ml-2.5 block text-sm text-gray-800">
-                        一人当たりGDP
+                        {t('gdpPerCapita')}
                       </label>
                     </div>
                   </div>
@@ -209,15 +211,15 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
               
               {selectedCountry && (
                 <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
-                  <h3 className="text-sm font-medium text-blue-800 mb-1">選択された国: {selectedCountryData?.name}</h3>
+                  <h3 className="text-sm font-medium text-blue-800 mb-1">{t('selectedCountry')}: {selectedCountryData?.name}</h3>
                   {selectedCountryData && (
                     <div className="text-xs text-blue-700">
-                      <p>人口: {selectedCountryData.population.toLocaleString()}</p>
+                      <p>{t('population')}: {selectedCountryData.population.toLocaleString()}</p>
                       {selectedCountryData.area_km2 && (
-                        <p>面積: {selectedCountryData.area_km2.toLocaleString()} km²</p>
+                        <p>{t('area')}: {selectedCountryData.area_km2.toLocaleString()} km²</p>
                       )}
                       {selectedCountryData.gdp_per_capita && (
-                        <p>一人当たりGDP: ${selectedCountryData.gdp_per_capita.toLocaleString()}</p>
+                        <p>{t('gdpPerCapita')}: ${selectedCountryData.gdp_per_capita.toLocaleString()}</p>
                       )}
                     </div>
                   )}
@@ -229,7 +231,7 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
         
         {activeSection === 'insights' && selectedCountry && (
           <SidebarGroup>
-            <SidebarGroupLabel>AIインサイト</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('aiInsights')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <AIInsights 
                 country={countries.find(c => c.id === selectedCountry)} 
@@ -241,16 +243,16 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
         
         {activeSection === 'info' && (
           <SidebarGroup>
-            <SidebarGroupLabel>情報</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('information')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <Card className="border-none shadow-none">
                 <CardContent className="p-3 text-sm text-gray-600">
-                  <p className="mb-2">このアプリケーションは世界各国のデータを視覚的に探索するためのツールです。</p>
-                  <p className="mb-2">様々な指標で国を比較し、AIによる洞察を得ることができます。</p>
+                  <p className="mb-2">{t('aboutTheApp')}</p>
+                  <p className="mb-2">{t('compareCountries')}</p>
                   <ul className="list-disc pl-5 space-y-1 text-xs">
-                    <li>マップビュー: 地理的に国をハイライト</li>
-                    <li>チャートビュー: トップ20カ国のデータを比較</li>
-                    <li>AIインサイト: 選択した国のデータから洞察を生成</li>
+                    <li>{t('mapView')}</li>
+                    <li>{t('chartView')}</li>
+                    <li>{t('aiInsightFeature')}</li>
                   </ul>
                 </CardContent>
               </Card>
@@ -261,7 +263,7 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
       
       <SidebarFooter>
         <div className="text-xs text-gray-500 p-2">
-          データ探索をお楽しみください
+          {t('enjoyExploring')}
         </div>
       </SidebarFooter>
     </Sidebar>

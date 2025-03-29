@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SearchOverlayProps {
   searchQuery: string;
@@ -14,6 +15,8 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
   setSearchQuery,
   handleSearch
 }) => {
+  const { t } = useLanguage();
+  
   return (
     <motion.div 
       initial={{ opacity: 0, y: -20 }}
@@ -26,7 +29,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="国名を検索..."
+          placeholder={t('searchCountry')}
           className="py-2 px-3 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
         />
         <button 

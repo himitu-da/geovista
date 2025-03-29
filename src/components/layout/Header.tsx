@@ -5,9 +5,12 @@ import { Home, Globe, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageToggle from '@/components/LanguageToggle';
 
 const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t } = useLanguage();
   
   return (
     <header className="bg-white/80 backdrop-blur-md shadow-sm py-4 px-6 sticky top-0 z-50">
@@ -24,20 +27,21 @@ const Header: React.FC = () => {
               transition={{ delay: 0.2 }}
               className="inline-block px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-xs font-medium"
             >
-              Explorer
+              {t('explorer')}
             </motion.span>
           </div>
           
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-4">
             <div className="text-sm text-apple-gray-500">
-              インタラクティブなグローバルデータビジュアライゼーション
+              {t('globalDataVisualization')}
             </div>
             <Link to="/">
               <Button variant="outline" size="sm" className="rounded-full hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                <Home className="h-4 w-4 mr-1" /> ホーム
+                <Home className="h-4 w-4 mr-1" /> {t('home')}
               </Button>
             </Link>
+            <LanguageToggle />
           </div>
           
           {/* Mobile menu button */}
@@ -68,13 +72,14 @@ const Header: React.FC = () => {
             >
               <div className="flex flex-col space-y-2 py-2">
                 <div className="text-sm text-apple-gray-500 pb-2 text-center">
-                  インタラクティブなグローバルデータビジュアライゼーション
+                  {t('globalDataVisualization')}
                 </div>
                 <Link to="/" className="w-full">
                   <Button variant="outline" size="sm" className="w-full justify-center rounded-full">
-                    <Home className="h-4 w-4 mr-1" /> ホーム
+                    <Home className="h-4 w-4 mr-1" /> {t('home')}
                   </Button>
                 </Link>
+                <LanguageToggle />
               </div>
             </motion.div>
           )}
