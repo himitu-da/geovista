@@ -50,5 +50,17 @@ export const commonTranslations: Record<string, TranslationRecord> = {
   addPin: {
     en: "Right-click or tap to add a pin",
     es: "Haga clic derecho o toque para añadir un pin"
+  },
+  confirmAddPin: {
+    en: "Add this pin?",
+    es: "¿Añadir este pin?"
+  },
+  cancel: {
+    en: "Cancel",
+    es: "Cancelar"
+  },
+  add: {
+    en: "Add",
+    es: "Añadir"
   }
 };

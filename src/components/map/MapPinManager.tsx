@@ -1,44 +1,48 @@
 
 import React, { useState, useEffect } from 'react';
-import { useMapEvents } from 'react-leaflet';
+import { useMapEvents, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
 import PinMarker from './PinMarker';
 import { generateLocationDescription } from '@/utils/aiUtils';
 import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useIsMobile } from '@/hooks/use-mobile';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { MapPin, X } from 'lucide-react';
+
+// 半透明なピンアイコンを作成
+const ghostPinIcon = new L.Icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-grey.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+  className: 'ghost-pin-icon opacity-70'
+});
 
 /**
  * Map pin manager component
- * Manages the addition and removal of pins on the map
+ * 半透明のピンとポップアップを表示して、UXを改善したバージョン
  */
 const MapPinManager: React.FC = () => {
   const [pins, setPins] = useState<[number, number][]>([]);
   const [pendingPin, setPendingPin] = useState<[number, number] | null>(null);
   const { toast } = useToast();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const isMobile = useIsMobile();
 
   // Map event listener
   const map = useMapEvents({
     // Handle right-click for desktop
     contextmenu: (e) => {
-      // デスクトップの右クリックでピン追加確認ダイアログを表示
+      // デスクトップの右クリックで半透明ピンを表示
       setPendingPin([e.latlng.lat, e.latlng.lng]);
     },
     // Handle tap/click for mobile
     click: (e) => {
       if (isMobile) {
-        // モバイルのタップでピン追加確認ダイアログを表示
+        // モバイルのタップで半透明ピンを表示
         setPendingPin([e.latlng.lat, e.latlng.lng]);
       }
     }
@@ -93,8 +97,14 @@ const MapPinManager: React.FC = () => {
     }
   };
 
+  // クリックイベントを停止する（ポップアップの背景クリック防止）
+  const stopPropagation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   return (
     <>
+      {/* 既存のピン */}
       {pins.map((position, index) => (
         <PinMarker
           key={`pin-${index}-${position[0]}-${position[1]}`}
@@ -104,29 +114,65 @@ const MapPinManager: React.FC = () => {
         />
       ))}
 
-      {/* ピン追加確認ダイアログ */}
-      <AlertDialog open={pendingPin !== null} onOpenChange={handleDialogClose}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {language === 'es' ? 'Añadir un pin' : 'Add a pin'}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {language === 'es' 
-                ? '¿Desea añadir un pin en esta ubicación?' 
-                : 'Do you want to add a pin at this location?'}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>
-              {language === 'es' ? 'Cancelar' : 'Cancel'}
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmAddPin}>
-              {language === 'es' ? 'Añadir' : 'Add'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* 半透明の仮ピンとポップアップ */}
+      {pendingPin && (
+        <Marker 
+          position={pendingPin} 
+          icon={ghostPinIcon}
+          zIndexOffset={1000}
+        >
+          <Popup
+            className="pin-confirmation-popup"
+            closeButton={false}
+            autoPan={false}
+            autoClose={false}
+            closeOnClick={false}
+            onClose={handleDialogClose}
+          >
+            <div 
+              className="w-48 p-2" 
+              onClick={stopPropagation}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-medium flex items-center">
+                  <MapPin className="w-4 h-4 mr-1.5 text-gray-500" />
+                  {t('confirmAddPin')}
+                </h3>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-6 w-6 p-0" 
+                  onClick={handleDialogClose}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              
+              <div className="flex gap-2 justify-end mt-3">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                  onClick={handleDialogClose}
+                >
+                  {t('cancel')}
+                </Button>
+                <Button 
+                  variant="default" 
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                  onClick={handleConfirmAddPin}
+                >
+                  {t('add')}
+                </Button>
+              </div>
+            </div>
+          </Popup>
+        </Marker>
+      )}
+
+      {/* 左下の説明ツールチップは残す */}
+      <PinInstructionTooltip />
     </>
   );
 };
