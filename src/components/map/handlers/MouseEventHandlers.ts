@@ -43,19 +43,18 @@ export const createMouseOverHandler = (
     setPopupInfo({
       position: [center.lat, center.lng],
       content: `
-        <div class="py-2 px-3">
-          <h3 class="font-medium text-sm text-gray-900 dark:text-gray-100">${tooltipInfo.title}</h3>
-          <p class="text-xs text-gray-700 dark:text-gray-300">${tooltipInfo.value}: <span class="font-medium">${tooltipInfo.formattedValue}</span></p>
+        <div class="py-1 px-2">
+          <h3 class="font-medium text-sm text-gray-900">${tooltipInfo.title}</h3>
+          <p class="text-xs text-gray-700">${tooltipInfo.value}: <span class="font-medium">${tooltipInfo.formattedValue}</span></p>
         </div>
       `,
       isOpen: true
     });
     
-    // ホバースタイルの適用 - より洗練されたスタイル
+    // ホバースタイルの適用
     layer.setStyle({
       weight: 2,
-      color: '#3b82f6', // blue-500
-      fillOpacity: 0.7,
+      fillOpacity: 0.85,
       dashArray: ''
     });
     
@@ -104,22 +103,10 @@ export const createClickHandler = (
     
     // 選択の切り替え
     if (countryId === selectedCountry) {
-      // 同じ国をクリックした場合は選択解除してズームアウト
       onCountrySelect(null);
-      map.flyTo([20, 0], 2, { 
-        duration: 1, 
-        easeLinearity: 0.3 
-      });
+      map.flyTo([20, 0], 2, { duration: 1 });
     } else {
-      // 新しい国を選択した場合は、その国にズームイン
       onCountrySelect(countryId);
-      // 国の境界に基づいて最適なズームレベルを計算
-      const bounds = layer.getBounds();
-      map.flyToBounds(bounds, { 
-        padding: [50, 50], 
-        duration: 1, 
-        easeLinearity: 0.3 
-      });
     }
   };
 };

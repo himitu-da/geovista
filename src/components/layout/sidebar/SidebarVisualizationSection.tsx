@@ -26,40 +26,41 @@ const SidebarVisualizationSection: React.FC<SidebarVisualizationSectionProps> = 
   
   return (
     <>
-      <div className="px-3 py-2">
-        <div className="flex p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
-          <button 
-            className={`flex items-center justify-center px-4 py-2 ${
-              visualizationType === 'map' 
-                ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                : 'bg-transparent text-gray-600 dark:text-gray-400'
-            } rounded-md font-medium text-sm transition-all duration-200 flex-1`}
-            onClick={() => onVisualizationTypeChange('map')}
-            aria-pressed={visualizationType === 'map'}
-          >
-            <Map className="mr-2 h-4 w-4" />
-            {t('map')}
-          </button>
-          <button 
-            className={`flex items-center justify-center px-4 py-2 ${
-              visualizationType === 'chart' 
-                ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                : 'bg-transparent text-gray-600 dark:text-gray-400'
-            } rounded-md font-medium text-sm transition-all duration-200 flex-1`}
-            onClick={() => onVisualizationTypeChange('chart')}
-            aria-pressed={visualizationType === 'chart'}
-          >
-            <BarChart3 className="mr-2 h-4 w-4" />
-            {t('chart')}
-          </button>
-        </div>
-      </div>
+      <Card className="border-none shadow-none">
+        <CardContent className="p-3">
+          <div className="flex p-1 bg-apple-gray-100 rounded-lg">
+            <button 
+              className={`flex items-center justify-center px-4 py-2.5 ${
+                visualizationType === 'map' 
+                  ? 'bg-white text-apple-gray-700 shadow-apple-sm'
+                  : 'bg-transparent text-apple-gray-500'
+              } rounded-md font-medium text-sm transition-all duration-200 flex-1`}
+              onClick={() => onVisualizationTypeChange('map')}
+              aria-pressed={visualizationType === 'map'}
+            >
+              <Map className="mr-2 h-4 w-4" />
+              {t('map')}
+            </button>
+            <button 
+              className={`flex items-center justify-center px-4 py-2.5 ${
+                visualizationType === 'chart' 
+                  ? 'bg-white text-apple-gray-700 shadow-apple-sm'
+                  : 'bg-transparent text-apple-gray-500'
+              } rounded-md font-medium text-sm transition-all duration-200 flex-1`}
+              onClick={() => onVisualizationTypeChange('chart')}
+              aria-pressed={visualizationType === 'chart'}
+            >
+              <BarChart3 className="mr-2 h-4 w-4" />
+              {t('chart')}
+            </button>
+          </div>
+        </CardContent>
+      </Card>
       
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="px-3 py-2"
       >
         <Legend metric={selectedMetric} />
       </motion.div>

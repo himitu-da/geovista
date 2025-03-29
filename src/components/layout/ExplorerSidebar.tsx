@@ -51,20 +51,18 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
   const { t } = useLanguage();
   
   return (
-    <Sidebar variant="floating" collapsible="icon" className="bg-gray-50/90 backdrop-blur-md dark:bg-gray-900/90 border-r border-gray-200 dark:border-gray-800">
-      <SidebarHeader className="flex items-center justify-between px-3 py-2.5">
+    <Sidebar variant="floating" collapsible="icon">
+      <SidebarHeader className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Badge className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-          <span className="font-medium text-sm text-gray-800 dark:text-gray-200">{t('explorer')}</span>
+          <Badge className="h-6 w-6" />
+          <span className="font-medium text-sm">{t('explorer')}</span>
         </div>
-        <SidebarTrigger className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200" />
+        <SidebarTrigger />
       </SidebarHeader>
       
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-500 dark:text-gray-400 font-medium px-3">
-            {t('navigation')}
-          </SidebarGroupLabel>
+          <SidebarGroupLabel>{t('navigation')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarNavigation 
               activeSection={activeSection}
@@ -74,7 +72,7 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
           </SidebarGroupContent>
         </SidebarGroup>
         
-        <SidebarSeparator className="my-1 bg-gray-200 dark:bg-gray-700" />
+        <SidebarSeparator />
         
         {/* コンテンツセクション - 選択されたセクションに基づいて表示 */}
         {renderActiveSection(
@@ -90,8 +88,8 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
         )}
       </SidebarContent>
       
-      <SidebarFooter className="border-t border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
-        <div className="text-xs text-gray-500 dark:text-gray-400 p-3">
+      <SidebarFooter>
+        <div className="text-xs text-gray-500 p-2">
           {t('enjoyExploring')}
         </div>
       </SidebarFooter>
@@ -128,9 +126,7 @@ const renderActiveSection = (
     case 'visualization':
       return (
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-500 dark:text-gray-400 font-medium px-3">
-            {t('visualizationType')}
-          </SidebarGroupLabel>
+          <SidebarGroupLabel>{t('visualizationType')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarVisualizationSection 
               visualizationType={visualizationType}
@@ -144,9 +140,7 @@ const renderActiveSection = (
     case 'metrics':
       return (
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-500 dark:text-gray-400 font-medium px-3">
-            {t('dataMetrics')}
-          </SidebarGroupLabel>
+          <SidebarGroupLabel>{t('dataMetrics')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMetricsSection 
               selectedMetric={selectedMetric}
@@ -161,10 +155,8 @@ const renderActiveSection = (
     case 'insights':
       return selectedCountry ? (
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-500 dark:text-gray-400 font-medium px-3">
-            {t('aiInsights')}
-          </SidebarGroupLabel>
-          <SidebarGroupContent className="px-3">
+          <SidebarGroupLabel>{t('aiInsights')}</SidebarGroupLabel>
+          <SidebarGroupContent>
             <AIInsights 
               country={countries.find(c => c.id === selectedCountry)} 
               metric={selectedMetric} 
@@ -176,9 +168,7 @@ const renderActiveSection = (
     case 'info':
       return (
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-500 dark:text-gray-400 font-medium px-3">
-            {t('information')}
-          </SidebarGroupLabel>
+          <SidebarGroupLabel>{t('information')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarInfoSection />
           </SidebarGroupContent>

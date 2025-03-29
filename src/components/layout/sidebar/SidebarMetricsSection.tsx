@@ -1,8 +1,8 @@
 
 import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { DataMetric, CountryData } from '@/types/country';
-import { formatMetricValue } from '@/utils/formatters';
 
 interface SidebarMetricsSectionProps {
   selectedMetric: DataMetric;
@@ -30,38 +30,38 @@ const SidebarMetricsSection: React.FC<SidebarMetricsSectionProps> = ({
     
   return (
     <>
-      <div className="px-3 py-2">
-        <div className="space-y-3">
-          <MetricRadioOption
-            id="population-density"
-            metric="population_density"
-            label={t('populationDensity')}
-            selectedMetric={selectedMetric}
-            onChange={onMetricChange}
-          />
-          <MetricRadioOption
-            id="total-population"
-            metric="population"
-            label={t('totalPopulation')}
-            selectedMetric={selectedMetric}
-            onChange={onMetricChange}
-          />
-          <MetricRadioOption
-            id="gdp-per-capita"
-            metric="gdp_per_capita"
-            label={t('gdpPerCapita')}
-            selectedMetric={selectedMetric}
-            onChange={onMetricChange}
-          />
-        </div>
-      </div>
+      <Card className="border-none shadow-none">
+        <CardContent className="p-3">
+          <div className="space-y-2.5">
+            <MetricRadioOption
+              id="population-density"
+              metric="population_density"
+              label={t('populationDensity')}
+              selectedMetric={selectedMetric}
+              onChange={onMetricChange}
+            />
+            <MetricRadioOption
+              id="total-population"
+              metric="population"
+              label={t('totalPopulation')}
+              selectedMetric={selectedMetric}
+              onChange={onMetricChange}
+            />
+            <MetricRadioOption
+              id="gdp-per-capita"
+              metric="gdp_per_capita"
+              label={t('gdpPerCapita')}
+              selectedMetric={selectedMetric}
+              onChange={onMetricChange}
+            />
+          </div>
+        </CardContent>
+      </Card>
       
       {selectedCountry && selectedCountryData && (
-        <div className="px-3 py-2">
-          <SelectedCountryInfo
-            countryData={selectedCountryData}
-          />
-        </div>
+        <SelectedCountryInfo
+          countryData={selectedCountryData}
+        />
       )}
     </>
   );
@@ -88,11 +88,11 @@ const MetricRadioOption: React.FC<MetricRadioOptionProps> = ({
       id={id}
       name="metric"
       type="radio"
-      className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-offset-1 dark:border-gray-600 dark:bg-gray-700"
+      className="h-4 w-4 text-apple-blue border-apple-gray-300 focus:ring-apple-blue focus:ring-offset-1"
       checked={selectedMetric === metric}
       onChange={() => onChange(metric)}
     />
-    <label htmlFor={id} className="ml-2.5 block text-sm text-gray-700 dark:text-gray-300">
+    <label htmlFor={id} className="ml-2.5 block text-sm text-gray-800">
       {label}
     </label>
   </div>
@@ -107,11 +107,11 @@ const SelectedCountryInfo: React.FC<SelectedCountryInfoProps> = ({ countryData }
   const { t } = useLanguage();
   
   return (
-    <div className="mt-2 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-100 dark:border-blue-800">
-      <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-1">
+    <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+      <h3 className="text-sm font-medium text-blue-800 mb-1">
         {t('selectedCountry')}: {countryData.name}
       </h3>
-      <div className="text-xs text-blue-700 dark:text-blue-400 space-y-1">
+      <div className="text-xs text-blue-700">
         <p>{t('population')}: {countryData.population.toLocaleString()}</p>
         {countryData.area_km2 && (
           <p>{t('area')}: {countryData.area_km2.toLocaleString()} km²</p>

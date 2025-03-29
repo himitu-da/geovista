@@ -43,28 +43,26 @@ const MapControls: React.FC<MapControlsProps> = ({
       className="absolute top-20 right-4 z-[400] flex flex-col gap-1.5"
     >
       {/* マップコントロールボタン群 */}
-      <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-md p-1 border border-gray-200 dark:border-gray-700">
-        {[
-          { icon: Home, action: 'reset', title: 'homeView' },
-          { icon: ZoomIn, action: 'zoomIn', title: 'zoomIn' },
-          { icon: ZoomOut, action: 'zoomOut', title: 'zoomOut' },
-          { icon: Search, action: 'search', title: 'searchByCountry', isActive: showSearch }
-        ].map((button, index) => (
-          <ControlButton 
-            key={index}
-            Icon={button.icon}
-            onClick={() => {
-              if (button.action === 'search') {
-                setShowSearch(!showSearch);
-              } else {
-                handleMapAction(button.action as 'reset' | 'zoomIn' | 'zoomOut');
-              }
-            }}
-            title={t(button.title)}
-            isActive={button.isActive}
-          />
-        ))}
-      </div>
+      {[
+        { icon: Home, action: 'reset', title: 'homeView' },
+        { icon: ZoomIn, action: 'zoomIn', title: 'zoomIn' },
+        { icon: ZoomOut, action: 'zoomOut', title: 'zoomOut' },
+        { icon: Search, action: 'search', title: 'searchByCountry', isActive: showSearch }
+      ].map((button, index) => (
+        <ControlButton 
+          key={index}
+          Icon={button.icon}
+          onClick={() => {
+            if (button.action === 'search') {
+              setShowSearch(!showSearch);
+            } else {
+              handleMapAction(button.action as 'reset' | 'zoomIn' | 'zoomOut');
+            }
+          }}
+          title={t(button.title)}
+          isActive={button.isActive}
+        />
+      ))}
     </motion.div>
   );
 };
@@ -83,10 +81,8 @@ const ControlButton: React.FC<ControlButtonProps> = ({ Icon, onClick, title, isA
     whileTap={{ scale: 0.95 }}
     onClick={onClick}
     className={cn(
-      "rounded-md p-2 text-gray-700 dark:text-gray-300 transition-colors block",
-      isActive 
-        ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30" 
-        : "hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700/50"
+      "bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-sm text-gray-700 transition-colors",
+      isActive ? "text-blue-600 ring-2 ring-blue-400" : "hover:text-blue-600"
     )}
     title={title}
   >
