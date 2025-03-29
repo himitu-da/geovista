@@ -1,3 +1,4 @@
+
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
 import { CountryData, DataMetric } from '@/types/country';
@@ -189,6 +190,9 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     // Clean up event listeners when component unmounts
     return () => {
       if (!map) return;
+      
+      // The correct way to remove event listeners is to remove them by layer ID
+      // rather than trying to pass the original handlers (which are no longer accessible)
       map.off('mouseenter', 'countries-fill');
       map.off('mouseleave', 'countries-fill');
       map.off('click', 'countries-fill');
