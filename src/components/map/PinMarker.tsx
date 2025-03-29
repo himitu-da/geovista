@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import LocationDescription from './LocationDescription';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
-import { generateSpeech } from '@/utils/speechUtils';
+import { generateSpeech, playSpeech } from '@/utils/speechUtils';
 import AudioPlayer from './AudioPlayer';
 
 interface PinMarkerProps {
