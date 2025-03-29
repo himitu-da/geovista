@@ -1,6 +1,7 @@
 
 import { CountryData } from '@/types/country';
 import { captureException } from '@/lib/sentry';
+import L from 'leaflet';
 
 /**
  * 国データをGeoJSONに変換する関数
