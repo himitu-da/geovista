@@ -119,26 +119,35 @@
     font-size: 0.95rem;
     border-bottom: 1px solid #e5e7eb;
     padding-bottom: 0.25rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
   }
 
   .location-description h2 {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 600;
     margin-top: 0.5rem;
     color: #4b5563;
+    display: flex;
+    align-items: center;
   }
 
   .location-description p {
-    line-height: 1.4;
+    line-height: 1.5;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    color: #4b5563;
   }
 
   .location-description ul {
-    padding-left: 1rem;
+    padding-left: 1.5rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.5rem;
   }
 
   .location-description li {
     margin-bottom: 0.25rem;
+    font-size: 0.8rem;
+    line-height: 1.4;
   }
 }
 
