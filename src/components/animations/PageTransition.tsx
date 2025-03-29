@@ -26,13 +26,9 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
   const location = useLocation();
   
   return (
-    <AnimatePresence mode="sync">
+    <div className="w-full h-full">
       {backgroundEffect && (
-        <motion.div
-          key={`bg-${location.pathname}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.03 }}
-          exit={{ opacity: 0 }}
+        <div
           className="fixed inset-0 pointer-events-none"
           style={{
             background: 'radial-gradient(circle at center, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0) 70%)',
@@ -52,7 +48,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
       >
         {children}
       </motion.div>
-    </AnimatePresence>
+    </div>
   );
 };
 
@@ -63,7 +59,7 @@ export const LandingTransition: React.FC<{ children: React.ReactNode }> = ({ chi
 
 // 特殊なバリエーション - エクスプローラー用
 export const ExplorerTransition: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <PageTransition transitionType="rotate" backgroundEffect={true}>{children}</PageTransition>
+  <PageTransition transitionType="slide" backgroundEffect={true}>{children}</PageTransition>
 );
 
 // 特殊なバリエーション - デフォルト

@@ -5,13 +5,13 @@
 export const transitions = {
   default: {
     type: 'tween',
-    ease: 'anticipate',
-    duration: 0.5,
+    ease: 'easeOut',
+    duration: 0.3,
   },
   slide: {
     type: 'tween',
-    ease: 'circOut',
-    duration: 0.5,
+    ease: 'easeOut',
+    duration: 0.3,
   },
   spring: {
     type: 'spring',
@@ -19,18 +19,18 @@ export const transitions = {
     damping: 20,
   },
   rotate: {
-    type: 'spring',
-    stiffness: 80,
-    damping: 15,
+    type: 'tween',
+    ease: 'easeOut',
+    duration: 0.3,
   },
   fancy: {
-    type: 'spring',
-    stiffness: 100,
-    damping: 10,
+    type: 'tween',
+    ease: 'easeOut',
+    duration: 0.3,
   },
   flip: {
-    type: 'spring',
-    stiffness: 120,
-    damping: 12,
+    type: 'tween',
+    ease: 'easeOut',
+    duration: 0.3,
   },
 };
