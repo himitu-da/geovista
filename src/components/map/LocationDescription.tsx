@@ -9,18 +9,13 @@ import {
   Camera, 
   Book, 
   Users, 
-  Star,
-  Volume2,
-  Loader2
+  Star
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 
 interface LocationDescriptionProps {
   description: string;
-  onTextToSpeech?: () => void;
-  speechLoading?: boolean;
 }
 
 /**
@@ -28,21 +23,9 @@ interface LocationDescriptionProps {
  * with visually appealing section-based card designs
  */
 const LocationDescription: React.FC<LocationDescriptionProps> = ({ 
-  description, 
-  onTextToSpeech,
-  speechLoading = false
+  description
 }) => {
   const { language, t } = useLanguage();
-  
-  // ボタンがクリックされたときのハンドラー
-  const handleTextToSpeechClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log("Text-to-speech button clicked");
-    if (onTextToSpeech) {
-      onTextToSpeech();
-    }
-  };
   
   // Determine appropriate icon and color scheme based on section type
   const getSectionInfo = (text: string): { 
@@ -151,35 +134,6 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({
     };
   };
 
-  // 独立した読み上げボタンをレンダリング（最も安全な方法）
-  const renderTextToSpeechButton = () => {
-    if (!onTextToSpeech) return null;
-    
-    return (
-      <div className="mb-4 flex justify-end">
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-8 px-3 py-1 text-xs flex items-center gap-1.5 text-blue-600 border-blue-200 hover:bg-blue-50"
-          onClick={handleTextToSpeechClick}
-          disabled={speechLoading}
-        >
-          {speechLoading ? (
-            <>
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              <span>{t('generating')}</span>
-            </>
-          ) : (
-            <>
-              <Volume2 className="h-3.5 w-3.5" />
-              <span>{t('listen')}</span>
-            </>
-          )}
-        </Button>
-      </div>
-    );
-  };
-
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -187,9 +141,6 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({
       transition={{ duration: 0.3 }}
       className="text-xs location-description p-3"
     >
-      {/* 最初に独立したテキスト読み上げボタンを表示 */}
-      {renderTextToSpeechButton()}
-      
       <ReactMarkdown
         components={{
           h1: ({ node, children, ...props }) => {

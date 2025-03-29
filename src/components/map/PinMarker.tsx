@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import LocationDescription from './LocationDescription';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
-import { generateSpeech } from '@/utils/speechUtils';
+import { generateSpeech, isTextTooLongForSpeech } from '@/utils/speechUtils';
 import AudioPlayer from './AudioPlayer';
 import { useToast } from '@/hooks/use-toast';
 
@@ -28,7 +28,7 @@ const customPinIcon = new L.Icon({
 });
 
 /**
- * Pin marker component
+ * Pin marker component with enhanced error handling
  */
 const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDescription }) => {
   const [description, setDescription] = useState<string>('');
@@ -36,21 +36,23 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(true);
   const [speechLoading, setSpeechLoading] = useState<boolean>(false);
   const [speechData, setSpeechData] = useState<string | null>(null);
+  const [speechError, setSpeechError] = useState<string | null>(null);
   const { language, t } = useLanguage();
   const { toast } = useToast();
 
   useEffect(() => {
-    // ログ出力用
     console.log("PinMarker mounted at position:", position);
-    
     return () => {
       console.log("PinMarker unmounted from position:", position);
     };
   }, [position]);
 
-  // Generate location description
+  /**
+   * Generate location description
+   */
   const handleGenerateDescription = async () => {
     setLoading(true);
+    setSpeechError(null);
     console.log("Generating description for location:", position);
     
     try {
@@ -79,23 +81,63 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
     }
   };
 
-  // Generate speech for text-to-speech functionality
+  /**
+   * Generate speech for text-to-speech functionality with enhanced error handling
+   */
   const handleGenerateSpeech = async () => {
     if (!description || speechLoading) return;
     
+    // Reset previous speech errors
+    setSpeechError(null);
     setSpeechLoading(true);
+    
+    // Check if text is too long for the API
+    if (isTextTooLongForSpeech(description)) {
+      console.log("Text too long, truncating for speech generation");
+      toast({
+        title: language === 'es' ? 'Texto demasiado largo' : 'Text too long',
+        description: language === 'es' 
+          ? 'El texto será recortado para la generación de voz.' 
+          : 'The text will be truncated for voice generation.',
+        duration: 3000,
+      });
+    }
+    
     console.log("Generating speech for description, length:", description.length);
     
     try {
-      // 独自の音声生成関数を呼び出す
-      const audio = await generateSpeech(description, language);
+      // Attempt to generate speech with retry mechanism
+      let audio = null;
+      let retryCount = 0;
+      const maxRetries = 1;
+      
+      while (!audio && retryCount <= maxRetries) {
+        try {
+          audio = await generateSpeech(description, language);
+          if (!audio && retryCount < maxRetries) {
+            console.log(`Speech generation attempt ${retryCount + 1} failed, retrying...`);
+            retryCount++;
+            // Small delay before retry
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        } catch (err) {
+          console.error(`Speech generation attempt ${retryCount + 1} error:`, err);
+          if (retryCount < maxRetries) {
+            retryCount++;
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          } else {
+            throw err;
+          }
+        }
+      }
       
       if (!audio) {
-        throw new Error("No audio data received");
+        throw new Error("Speech generation failed after retries");
       }
       
       console.log("Speech generated successfully, data length:", audio.length);
       setSpeechData(audio);
+      setSpeechError(null);
       
       // Show success toast
       toast({
@@ -104,22 +146,27 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
       });
     } catch (error) {
       console.error('Failed to generate speech:', error);
+      setSpeechError(t('errorGeneratingSpeech'));
       
       // Show error toast
       toast({
         title: language === 'es' ? 'Error' : 'Error',
-        description: language === 'es' 
-          ? 'Error al generar audio. Por favor, inténtelo de nuevo.' 
-          : 'Failed to generate audio. Please try again.',
+        description: t('errorGeneratingSpeech'),
         variant: 'destructive',
         duration: 3000,
       });
+      
+      // Check and report specific errors for debugging
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error('Speech generation error details:', errorMessage);
     } finally {
       setSpeechLoading(false);
     }
   };
 
-  // 独立した音声読み上げボタン
+  /**
+   * Render text-to-speech button (single source of truth)
+   */
   const renderTextToSpeechButton = () => {
     if (!description) return null;
 
@@ -228,16 +275,19 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              {/* 独立した音声再生ボタン（追加） */}
+              {/* Text-to-speech button - SINGLE SOURCE OF TRUTH */}
               {renderTextToSpeechButton()}
+              
+              {/* Speech generation error */}
+              {speechError && (
+                <div className="mx-3 mb-3 p-2 text-xs text-red-600 bg-red-50 rounded-md border border-red-200 flex items-center">
+                  <span className="text-xs">{speechError}</span>
+                </div>
+              )}
               
               {/* Location description */}
               <div className="max-h-[400px] overflow-y-auto">
-                <LocationDescription 
-                  description={description}
-                  onTextToSpeech={handleGenerateSpeech}
-                  speechLoading={speechLoading}
-                />
+                <LocationDescription description={description} />
               </div>
               
               {/* Audio player - render only when speech data is available */}
