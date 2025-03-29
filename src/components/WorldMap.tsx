@@ -36,12 +36,12 @@ const WorldMap: React.FC<WorldMapProps> = ({
   selectedCountry 
 }) => {
   return (
-    <div className="relative w-full h-full rounded-2xl overflow-hidden border border-gray-100 shadow-apple-md">
+    <div className="relative w-full h-full rounded-3xl overflow-hidden border border-gray-100 shadow-apple-md bg-white">
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 backdrop-blur-sm z-[1000]">
           <div className="flex flex-col items-center">
             <div className="h-10 w-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-3"></div>
-            <p className="text-apple-gray-600 font-medium tracking-tight">Loading map data...</p>
+            <p className="text-apple-gray-600 font-medium tracking-tight">地図データを読み込み中...</p>
           </div>
         </div>
       )}
