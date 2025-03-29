@@ -66,16 +66,16 @@ const Legend: React.FC<LegendProps> = ({ metric }) => {
   const legendConfig = getLegendConfig();
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4">
-      <h3 className="text-sm font-medium mb-2">{legendConfig.title}</h3>
-      <div className="flex flex-col space-y-1">
+    <div className="bg-white rounded-lg shadow-md p-2 sm:p-3">
+      <h3 className="text-xs font-medium mb-1">{legendConfig.title}</h3>
+      <div className="flex flex-col space-y-0.5">
         {legendConfig.items.map((item, index) => (
           <div key={index} className="flex items-center">
             <div
-              className="w-4 h-4 mr-2"
+              className="w-3 h-3 mr-1.5"
               style={{ backgroundColor: item.color }}
             ></div>
-            <span className="text-xs">{item.label}</span>
+            <span className="text-[9px] sm:text-xs">{item.label}</span>
           </div>
         ))}
       </div>

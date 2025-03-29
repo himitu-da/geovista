@@ -42,7 +42,7 @@ const MapControls: React.FC<MapControlsProps> = ({
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3 z-[400] flex flex-col gap-0.5 sm:gap-1"
+      className="absolute bottom-7 sm:bottom-8 right-2 sm:right-3 z-[400] flex flex-col gap-0.5 sm:gap-1"
     >
       <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full shadow-md p-0.5 flex flex-col gap-0.5">
         {[

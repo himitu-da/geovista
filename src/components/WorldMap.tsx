@@ -10,6 +10,7 @@ import SearchOverlay from './map/SearchOverlay';
 import CountryInfoOverlay from './map/CountryInfoOverlay';
 import LoadingOverlay from './map/LoadingOverlay';
 import { initializeLeafletIcons } from './map/leafletUtils';
+import { fitMapToCountry } from './map/handlers/GeoJsonTransformer';
 
 // Leafletのデフォルトアイコンの問題を修正
 initializeLeafletIcons();
@@ -90,23 +91,8 @@ const WorldMap: React.FC<WorldMapProps> = ({
    * 指定された国に地図を移動する関数
    */
   const navigateToCountry = (country: CountryData) => {
-    if (!mapRef || !country.geometry || !country.geometry.geometry) return;
-    
-    try {
-      // GeoJSONオブジェクトを作成
-      const geoJSON = L.geoJSON(country.geometry.geometry as any);
-      
-      // 境界を取得し、地図をこれらの境界に合わせる
-      const bounds = geoJSON.getBounds();
-      mapRef.flyToBounds(bounds, { 
-        padding: [20, 20], 
-        maxZoom: 5, 
-        duration: 0.75,
-        easeLinearity: 0.25
-      });
-    } catch (error) {
-      console.error('Error fitting bounds:', error);
-    }
+    if (!mapRef) return;
+    fitMapToCountry(country, mapRef);
   };
 
   return (
@@ -177,7 +163,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
       </MapContainer>
       
       {/* 帰属表示オーバーレイ */}
-      <div className="absolute bottom-0 right-0 z-[400] text-[8px] text-gray-700 bg-white/80 px-1.5 py-0.5 rounded-tl-md shadow-sm">
+      <div className="absolute bottom-0.5 right-0.5 z-[400] text-[6px] sm:text-[8px] text-gray-700 bg-white/80 px-1 py-0.5 rounded-tl-md shadow-sm">
         &copy; <a href="https://www.openstreetmap.org/copyright" className="hover:text-blue-600 font-medium">OpenStreetMap</a>
       </div>
     </div>

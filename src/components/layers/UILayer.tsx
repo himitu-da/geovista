@@ -82,7 +82,7 @@ const UILayer = ({
           
           {/* データビューパネル（右側） - 必要な場合のみ表示 */}
           {selectedCountry && !isMobile && (
-            <div className="pointer-events-auto w-56 sm:w-64 max-w-[18vw] hidden lg:block bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-l border-gray-100 dark:border-gray-700 transition-all">
+            <div className="pointer-events-auto w-52 sm:w-60 max-w-[18vw] hidden lg:block bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-l border-gray-100 dark:border-gray-700 transition-all">
               <div className="h-full p-1 sm:p-2 flex flex-col space-y-1 sm:space-y-2 overflow-auto">
                 <DataExplorerTabs 
                   activeTab={activeTab}

@@ -61,7 +61,7 @@ const SidebarVisualizationSection: React.FC<SidebarVisualizationSectionProps> = 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="scale-90 origin-top-left"
+        className="scale-95 origin-top-left"
       >
         <Legend metric={selectedMetric} />
       </motion.div>
