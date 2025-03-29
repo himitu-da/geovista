@@ -6,6 +6,8 @@ export type TranslationRecord = {
 
 export type TranslationsMap = Record<string, TranslationRecord>;
 
+export type Language = 'en' | 'ja';
+
 export interface LandingTranslations {
   en: {
     launchExplorer: string;
