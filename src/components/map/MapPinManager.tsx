@@ -5,6 +5,7 @@ import PinMarker from './PinMarker';
 import { generateLocationDescription } from '@/utils/aiUtils';
 import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 /**
  * Map pin manager component
@@ -14,23 +15,34 @@ const MapPinManager: React.FC = () => {
   const [pins, setPins] = useState<[number, number][]>([]);
   const { toast } = useToast();
   const { language } = useLanguage();
+  const isMobile = useIsMobile();
 
   // Map event listener
   const map = useMapEvents({
+    // Handle right-click for desktop
     contextmenu: (e) => {
-      // Add pin on right-click
-      const { lat, lng } = e.latlng;
-      setPins(prev => [...prev, [lat, lng]]);
-      
-      toast({
-        title: language === 'es' ? 'Pin añadido' : 'Pin added',
-        description: language === 'es' 
-          ? `Latitud: ${lat.toFixed(4)}, Longitud: ${lng.toFixed(4)}`
-          : `Latitude: ${lat.toFixed(4)}, Longitude: ${lng.toFixed(4)}`,
-        duration: 2000,
-      });
+      addPin(e.latlng.lat, e.latlng.lng);
     },
+    // Handle tap/click for mobile
+    click: (e) => {
+      if (isMobile) {
+        addPin(e.latlng.lat, e.latlng.lng);
+      }
+    }
   });
+
+  // Common function to add a pin
+  const addPin = (lat: number, lng: number) => {
+    setPins(prev => [...prev, [lat, lng]]);
+    
+    toast({
+      title: language === 'es' ? 'Pin añadido' : 'Pin added',
+      description: language === 'es' 
+        ? `Latitud: ${lat.toFixed(4)}, Longitud: ${lng.toFixed(4)}`
+        : `Latitude: ${lat.toFixed(4)}, Longitude: ${lng.toFixed(4)}`,
+      duration: 2000,
+    });
+  };
 
   // Remove pin
   const handleRemovePin = (index: number) => {
