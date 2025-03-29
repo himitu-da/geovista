@@ -40,54 +40,39 @@ const MapControls: React.FC<MapControlsProps> = ({
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="absolute top-20 right-4 z-[400] flex flex-col gap-1.5"
+      className="absolute bottom-6 right-6 z-[400] flex flex-col gap-2"
     >
-      {/* マップコントロールボタン群 */}
-      {[
-        { icon: Home, action: 'reset', title: 'homeView' },
-        { icon: ZoomIn, action: 'zoomIn', title: 'zoomIn' },
-        { icon: ZoomOut, action: 'zoomOut', title: 'zoomOut' },
-        { icon: Search, action: 'search', title: 'searchByCountry', isActive: showSearch }
-      ].map((button, index) => (
-        <ControlButton 
-          key={index}
-          Icon={button.icon}
-          onClick={() => {
-            if (button.action === 'search') {
-              setShowSearch(!showSearch);
-            } else {
-              handleMapAction(button.action as 'reset' | 'zoomIn' | 'zoomOut');
-            }
-          }}
-          title={t(button.title)}
-          isActive={button.isActive}
-        />
-      ))}
+      <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full shadow-md p-1.5 flex flex-col gap-1.5">
+        {[
+          { icon: Home, action: 'reset', title: 'homeView' },
+          { icon: ZoomIn, action: 'zoomIn', title: 'zoomIn' },
+          { icon: ZoomOut, action: 'zoomOut', title: 'zoomOut' },
+        ].map((button, index) => (
+          <button 
+            key={index}
+            onClick={() => handleMapAction(button.action as 'reset' | 'zoomIn' | 'zoomOut')}
+            className="w-9 h-9 flex items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+            title={t(button.title)}
+          >
+            <button.icon size={18} />
+          </button>
+        ))}
+      </div>
+      
+      <button 
+        onClick={() => setShowSearch(!showSearch)}
+        className={cn(
+          "w-12 h-12 flex items-center justify-center rounded-full shadow-md transition-colors",
+          showSearch 
+            ? "bg-blue-600 text-white hover:bg-blue-700" 
+            : "bg-white/90 dark:bg-gray-800/90 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+        )}
+        title={t('searchByCountry')}
+      >
+        <Search size={20} />
+      </button>
     </motion.div>
   );
 };
-
-// コントロールボタンコンポーネント
-interface ControlButtonProps {
-  Icon: React.FC<any>;
-  onClick: () => void;
-  title: string;
-  isActive?: boolean;
-}
-
-const ControlButton: React.FC<ControlButtonProps> = ({ Icon, onClick, title, isActive }) => (
-  <motion.button 
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    onClick={onClick}
-    className={cn(
-      "bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-sm text-gray-700 transition-colors",
-      isActive ? "text-blue-600 ring-2 ring-blue-400" : "hover:text-blue-600"
-    )}
-    title={title}
-  >
-    <Icon size={16} />
-  </motion.button>
-);
 
 export default MapControls;

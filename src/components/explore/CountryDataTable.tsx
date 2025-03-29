@@ -27,15 +27,15 @@ const CountryDataTable: React.FC<CountryDataTableProps> = ({
   const { sortedCountries, sortConfig, handleSort } = useSortedCountries(countries, searchQuery);
   
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
       <SearchBar 
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
       
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-700/50">
             <tr>
               <SortableHeader
                 label={t('country')}
@@ -55,23 +55,31 @@ const CountryDataTable: React.FC<CountryDataTableProps> = ({
                 sortConfig={sortConfig}
                 onSort={handleSort}
               />
-              <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 {t('actions')}
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             <AnimatePresence>
-              {sortedCountries.map((country) => (
-                <CountryTableRow
-                  key={country.id}
-                  country={country}
-                  selectedMetric={selectedMetric}
-                  selectedCountry={selectedCountry}
-                  onCountrySelect={onCountrySelect}
-                  formatMetricValue={formatMetricValue}
-                />
-              ))}
+              {sortedCountries.length > 0 ? (
+                sortedCountries.map((country) => (
+                  <CountryTableRow
+                    key={country.id}
+                    country={country}
+                    selectedMetric={selectedMetric}
+                    selectedCountry={selectedCountry}
+                    onCountrySelect={onCountrySelect}
+                    formatMetricValue={formatMetricValue}
+                  />
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="px-4 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                    {t('noCountriesFound')}
+                  </td>
+                </tr>
+              )}
             </AnimatePresence>
           </tbody>
         </table>

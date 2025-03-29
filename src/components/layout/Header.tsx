@@ -13,32 +13,21 @@ const Header: React.FC = () => {
   const { t } = useLanguage();
   
   return (
-    <header className="bg-white/80 backdrop-blur-md shadow-sm py-4 px-6 sticky top-0 z-50">
+    <header className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md py-3 px-4 sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Link to="/" className="flex items-center">
-              <Globe className="h-6 w-6 text-blue-600 mr-2" />
-              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">World Data Explorer</h1>
+              <Globe className="h-6 w-6 text-blue-600 dark:text-blue-400 mr-2" />
+              <h1 className="text-lg font-bold text-gray-900 dark:text-white">World Data Explorer</h1>
             </Link>
-            <motion.span 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="inline-block px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-xs font-medium"
-            >
-              {t('explorer')}
-            </motion.span>
           </div>
           
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center gap-4">
-            <div className="text-sm text-apple-gray-500">
-              {t('globalDataVisualization')}
-            </div>
+          <div className="hidden md:flex items-center gap-3">
             <Link to="/">
-              <Button variant="outline" size="sm" className="rounded-full hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                <Home className="h-4 w-4 mr-1" /> {t('home')}
+              <Button variant="ghost" size="sm" className="rounded-full hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                <Home className="h-4 w-4 mr-1.5" /> {t('home')}
               </Button>
             </Link>
             <LanguageToggle />
@@ -47,9 +36,9 @@ const Header: React.FC = () => {
           {/* Mobile menu button */}
           <div className="md:hidden">
             <Button 
-              variant="outline" 
+              variant="ghost" 
               size="sm" 
-              className="p-1.5"
+              className="p-1"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? (
@@ -68,18 +57,17 @@ const Header: React.FC = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden mt-4"
+              className="md:hidden mt-3"
             >
               <div className="flex flex-col space-y-2 py-2">
-                <div className="text-sm text-apple-gray-500 pb-2 text-center">
-                  {t('globalDataVisualization')}
-                </div>
                 <Link to="/" className="w-full">
-                  <Button variant="outline" size="sm" className="w-full justify-center rounded-full">
-                    <Home className="h-4 w-4 mr-1" /> {t('home')}
+                  <Button variant="ghost" size="sm" className="w-full justify-center rounded-full">
+                    <Home className="h-4 w-4 mr-1.5" /> {t('home')}
                   </Button>
                 </Link>
-                <LanguageToggle />
+                <div className="flex justify-center">
+                  <LanguageToggle />
+                </div>
               </div>
             </motion.div>
           )}

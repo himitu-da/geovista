@@ -25,12 +25,12 @@ const InsightCard: React.FC<InsightCardProps> = ({ title, description, icon, col
           {icon}
         </div>
       </CardHeader>
-      <CardContent className="pt-4">
-        <CardTitle className="text-lg mb-2">{title}</CardTitle>
-        <p className="text-sm text-gray-600">{description}</p>
+      <CardContent className="pt-3">
+        <CardTitle className="text-base mb-2">{title}</CardTitle>
+        <p className="text-sm text-gray-600 dark:text-gray-300">{description}</p>
       </CardContent>
       <CardFooter>
-        <button className="text-xs font-medium flex items-center text-blue-600 hover:text-blue-800 transition-colors">
+        <button className="text-xs font-medium flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
           <span>詳細を見る</span>
           <ArrowRight className="ml-1 h-3 w-3" />
         </button>
@@ -70,9 +70,9 @@ const FeaturedInsights: React.FC = () => {
   ];
   
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">{t('featuredInsights')}</h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="space-y-3">
+      <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">{t('featuredInsights')}</h3>
+      <div className="grid grid-cols-1 gap-3">
         {insights.map((insight) => (
           <InsightCard
             key={insight.id}

@@ -27,13 +27,13 @@ const SidebarVisualizationSection: React.FC<SidebarVisualizationSectionProps> = 
   return (
     <>
       <Card className="border-none shadow-none">
-        <CardContent className="p-3">
-          <div className="flex p-1 bg-apple-gray-100 rounded-lg">
+        <CardContent className="p-2">
+          <div className="flex p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
             <button 
-              className={`flex items-center justify-center px-4 py-2.5 ${
+              className={`flex items-center justify-center px-3 py-2 ${
                 visualizationType === 'map' 
-                  ? 'bg-white text-apple-gray-700 shadow-apple-sm'
-                  : 'bg-transparent text-apple-gray-500'
+                  ? 'bg-white dark:bg-gray-700 text-gray-800 dark:text-white shadow-sm'
+                  : 'bg-transparent text-gray-600 dark:text-gray-300'
               } rounded-md font-medium text-sm transition-all duration-200 flex-1`}
               onClick={() => onVisualizationTypeChange('map')}
               aria-pressed={visualizationType === 'map'}
@@ -42,10 +42,10 @@ const SidebarVisualizationSection: React.FC<SidebarVisualizationSectionProps> = 
               {t('map')}
             </button>
             <button 
-              className={`flex items-center justify-center px-4 py-2.5 ${
+              className={`flex items-center justify-center px-3 py-2 ${
                 visualizationType === 'chart' 
-                  ? 'bg-white text-apple-gray-700 shadow-apple-sm'
-                  : 'bg-transparent text-apple-gray-500'
+                  ? 'bg-white dark:bg-gray-700 text-gray-800 dark:text-white shadow-sm'
+                  : 'bg-transparent text-gray-600 dark:text-gray-300'
               } rounded-md font-medium text-sm transition-all duration-200 flex-1`}
               onClick={() => onVisualizationTypeChange('chart')}
               aria-pressed={visualizationType === 'chart'}

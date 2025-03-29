@@ -21,71 +21,48 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
 }) => {
   const { t } = useLanguage();
   
+  const navigationItems = [
+    {
+      section: 'visualization' as const,
+      icon: <ZoomIn className="size-4" />,
+      label: t('visualizationType'),
+    },
+    {
+      section: 'metrics' as const,
+      icon: <Menu className="size-4" />,
+      label: t('dataMetrics'),
+    },
+    {
+      section: 'insights' as const,
+      icon: <User className="size-4" />,
+      label: t('aiInsights'),
+      condition: hasSelectedCountry
+    },
+    {
+      section: 'info' as const,
+      icon: <Info className="size-4" />,
+      label: t('information'),
+    }
+  ];
+  
   return (
     <SidebarMenu>
-      <NavigationMenuItem 
-        section="visualization"
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
-        icon={<ZoomIn className="size-4" />}
-        label={t('visualizationType')}
-      />
-      
-      <NavigationMenuItem 
-        section="metrics"
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
-        icon={<Menu className="size-4" />}
-        label={t('dataMetrics')}
-      />
-      
-      {hasSelectedCountry && (
-        <NavigationMenuItem 
-          section="insights"
-          activeSection={activeSection}
-          setActiveSection={setActiveSection}
-          icon={<User className="size-4" />}
-          label={t('aiInsights')}
-        />
-      )}
-      
-      <NavigationMenuItem 
-        section="info"
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
-        icon={<Info className="size-4" />}
-        label={t('information')}
-      />
+      {navigationItems
+        .filter(item => item.condition !== false)
+        .map(item => (
+          <SidebarMenuItem key={item.section}>
+            <SidebarMenuButton 
+              isActive={activeSection === item.section} 
+              onClick={() => setActiveSection(item.section)}
+              tooltip={item.label}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))}
     </SidebarMenu>
   );
 };
-
-// ナビゲーションメニュー項目コンポーネント
-interface NavigationMenuItemProps {
-  section: 'visualization' | 'metrics' | 'insights' | 'info';
-  activeSection: 'visualization' | 'metrics' | 'insights' | 'info';
-  setActiveSection: React.Dispatch<React.SetStateAction<'visualization' | 'metrics' | 'insights' | 'info'>>;
-  icon: React.ReactNode;
-  label: string;
-}
-
-const NavigationMenuItem: React.FC<NavigationMenuItemProps> = ({
-  section,
-  activeSection,
-  setActiveSection,
-  icon,
-  label
-}) => (
-  <SidebarMenuItem>
-    <SidebarMenuButton 
-      isActive={activeSection === section} 
-      onClick={() => setActiveSection(section)}
-      tooltip={label}
-    >
-      {icon}
-      <span>{label}</span>
-    </SidebarMenuButton>
-  </SidebarMenuItem>
-);
 
 export default SidebarNavigation;
