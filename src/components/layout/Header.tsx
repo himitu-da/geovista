@@ -23,7 +23,7 @@ const Header: React.FC<{
   const isExplore = location.pathname === '/explore';
 
   return (
-    <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md h-auto min-h-8 sm:min-h-10 px-2 sm:px-3 flex flex-col sm:flex-row items-center justify-between border-b border-gray-100 dark:border-gray-800">
+    <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md h-auto min-h-8 sm:min-h-10 px-2 sm:px-3 flex flex-col sm:flex-row items-center justify-between border-b border-gray-100 dark:border-gray-800 z-50">
       <div className="flex items-center space-x-1 sm:space-x-2 py-2">
         <Link
           to="/"
@@ -50,7 +50,7 @@ const Header: React.FC<{
         
         {/* メトリック選択ドロップダウン - モバイル表示かつExploreページの場合 */}
         {isMobile && isExplore && (
-          <div className="w-full min-w-[180px] z-[100]">
+          <div className="w-full min-w-[180px] z-50 bg-white">
             <MetricDropdown 
               selectedMetric={selectedMetric}
               onMetricChange={onMetricChange}
