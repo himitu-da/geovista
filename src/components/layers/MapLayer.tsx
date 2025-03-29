@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import WorldMap from '@/components/WorldMap';
 import Footer from '@/components/layout/Footer';
 import { CountryData } from '@/types/country';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // アニメーション設定
 const itemVariants = {
@@ -28,6 +29,9 @@ const MapLayer = ({
   selectedCountry: string | null;
   onCountrySelect: (countryId: string | null) => void;
 }) => {
+  // Ensure the language context is present
+  const { language } = useLanguage();
+  
   return (
     <motion.div 
       className="absolute inset-0 z-0"

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { MousePointer2, Smartphone, TouchpadOff } from 'lucide-react';
+import { MousePointer2, Smartphone } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 /**
@@ -13,13 +13,11 @@ const PinInstructionTooltip: React.FC = () => {
   // States to control different animation phases
   const [centerVisible, setCenterVisible] = useState(true);
   const [cornerVisible, setCornerVisible] = useState(false);
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const isMobile = useIsMobile();
 
-  // Text based on current language
-  const tooltipText = language === 'es' 
-    ? 'Toque o haga clic derecho en el mapa para añadir un pin'
-    : 'Tap or right-click on the map to add a pin';
+  // Text based on current language, using the translations
+  const tooltipText = t('addPin');
 
   // Control animation sequence timing
   useEffect(() => {
