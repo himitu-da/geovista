@@ -5,8 +5,6 @@ import 'leaflet/dist/leaflet.css';
 import { CountryData, DataMetric } from '@/types/country';
 import MapDataHandler from './map/MapDataHandler';
 import L from 'leaflet';
-import { motion } from 'framer-motion';
-import { Search, ZoomIn, ZoomOut, Maximize, Home } from 'lucide-react';
 import MapControls from './map/MapControls';
 import SearchOverlay from './map/SearchOverlay';
 import CountryInfoOverlay from './map/CountryInfoOverlay';
@@ -100,7 +98,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
         showSearch={showSearch} 
       />
       
-      {/* Search Overlay */}
+      {/* Search Overlay - コンパクト化 */}
       {showSearch && (
         <SearchOverlay 
           searchQuery={searchQuery}
@@ -109,7 +107,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
         />
       )}
       
-      {/* Selected Country Info Overlay */}
+      {/* Selected Country Info Overlay - コンパクト化 */}
       {selectedCountry && countries.length > 0 && (
         <CountryInfoOverlay 
           countries={countries}
@@ -150,7 +148,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
       
       {/* Attribution overlay in bottom right */}
       <div className="absolute bottom-0 right-0 z-[400] text-xs text-gray-500 bg-white/70 px-2 py-1 rounded-tl-md">
-        &copy; <a href="https://www.openstreetmap.org/copyright" className="hover:text-blue-500">OpenStreetMap</a> contributors
+        &copy; <a href="https://www.openstreetmap.org/copyright" className="hover:text-blue-500">OpenStreetMap</a>
       </div>
     </div>
   );

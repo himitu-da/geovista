@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ZoomIn, ZoomOut, Home, Search } from 'lucide-react';
 import L from 'leaflet';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { cn } from '@/lib/utils';
 
 interface MapControlsProps {
   mapRef: L.Map | null;
@@ -18,24 +19,20 @@ const MapControls: React.FC<MapControlsProps> = ({
 }) => {
   const { t } = useLanguage();
 
-  // Function to reset map view
-  const handleResetView = () => {
-    if (mapRef) {
-      mapRef.setView([20, 0], 2, { animate: true });
-    }
-  };
-
-  // Function to zoom in
-  const handleZoomIn = () => {
-    if (mapRef) {
-      mapRef.zoomIn(1, { animate: true });
-    }
-  };
-
-  // Function to zoom out
-  const handleZoomOut = () => {
-    if (mapRef) {
-      mapRef.zoomOut(1, { animate: true });
+  // マップ操作関数
+  const handleMapAction = (action: 'reset' | 'zoomIn' | 'zoomOut') => {
+    if (!mapRef) return;
+    
+    switch (action) {
+      case 'reset':
+        mapRef.setView([20, 0], 2, { animate: true });
+        break;
+      case 'zoomIn':
+        mapRef.zoomIn(1, { animate: true });
+        break;
+      case 'zoomOut':
+        mapRef.zoomOut(1, { animate: true });
+        break;
     }
   };
 
@@ -43,46 +40,54 @@ const MapControls: React.FC<MapControlsProps> = ({
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="absolute top-20 right-4 z-[400] flex flex-col gap-2"
+      className="absolute top-20 right-4 z-[400] flex flex-col gap-1.5"
     >
-      <motion.button 
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={handleResetView}
-        className="bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
-        title={t('homeView')}
-      >
-        <Home size={18} />
-      </motion.button>
-      <motion.button 
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={handleZoomIn}
-        className="bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
-        title={t('zoomIn')}
-      >
-        <ZoomIn size={18} />
-      </motion.button>
-      <motion.button 
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={handleZoomOut}
-        className="bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
-        title={t('zoomOut')}
-      >
-        <ZoomOut size={18} />
-      </motion.button>
-      <motion.button 
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setShowSearch(!showSearch)}
-        className="bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-md text-gray-700 hover:text-blue-600 transition-colors"
-        title={t('searchByCountry')}
-      >
-        <Search size={18} />
-      </motion.button>
+      {/* マップコントロールボタン群 */}
+      {[
+        { icon: Home, action: 'reset', title: 'homeView' },
+        { icon: ZoomIn, action: 'zoomIn', title: 'zoomIn' },
+        { icon: ZoomOut, action: 'zoomOut', title: 'zoomOut' },
+        { icon: Search, action: 'search', title: 'searchByCountry', isActive: showSearch }
+      ].map((button, index) => (
+        <ControlButton 
+          key={index}
+          Icon={button.icon}
+          onClick={() => {
+            if (button.action === 'search') {
+              setShowSearch(!showSearch);
+            } else {
+              handleMapAction(button.action as 'reset' | 'zoomIn' | 'zoomOut');
+            }
+          }}
+          title={t(button.title)}
+          isActive={button.isActive}
+        />
+      ))}
     </motion.div>
   );
 };
+
+// コントロールボタンコンポーネント
+interface ControlButtonProps {
+  Icon: React.FC<any>;
+  onClick: () => void;
+  title: string;
+  isActive?: boolean;
+}
+
+const ControlButton: React.FC<ControlButtonProps> = ({ Icon, onClick, title, isActive }) => (
+  <motion.button 
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    onClick={onClick}
+    className={cn(
+      "bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-sm text-gray-700 transition-colors",
+      isActive ? "text-blue-600 ring-2 ring-blue-400" : "hover:text-blue-600"
+    )}
+    title={title}
+  >
+    <Icon size={16} />
+  </motion.button>
+);
 
 export default MapControls;

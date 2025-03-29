@@ -30,13 +30,13 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={t('searchCountry')}
-          className="py-2 px-3 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+          className="py-1.5 px-2.5 text-sm rounded-l-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent shadow-sm w-40"
         />
         <button 
           type="submit" 
-          className="bg-blue-500 text-white py-2 px-3 rounded-r-lg hover:bg-blue-600 transition-colors"
+          className="bg-blue-500 text-white py-1.5 px-2.5 rounded-r-md hover:bg-blue-600 transition-colors"
         >
-          <Search size={16} />
+          <Search size={14} />
         </button>
       </form>
     </motion.div>

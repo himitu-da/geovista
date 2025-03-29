@@ -46,7 +46,7 @@ const Index = () => {
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.3 }}
           className="flex flex-col h-full pointer-events-none"
         >
           {/* Header - with pointer events */}
@@ -70,7 +70,7 @@ const Index = () => {
             </SidebarProvider>
           </div>
           
-          {/* Footer - with pointer events */}
+          {/* Footer - with pointer events (簡素化) */}
           <div className="pointer-events-auto">
             <Footer />
           </div>
