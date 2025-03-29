@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -114,6 +113,7 @@
   .location-popup .leaflet-popup-content {
     margin: 5px;
     width: auto !important;
+    min-width: 280px;
   }
 
   /* ピン確認ポップアップのスタイル */
@@ -131,18 +131,20 @@
     width: auto !important;
   }
 
+  /* 構造化されたロケーション説明のスタイル改善 */
   .location-description h1 {
     font-size: 0.95rem;
     border-bottom: 1px solid #e5e7eb;
     padding-bottom: 0.25rem;
     margin-bottom: 0.75rem;
+    color: #2563eb;
   }
 
   .location-description h2 {
     font-size: 0.85rem;
     font-weight: 600;
-    margin-top: 0.5rem;
-    color: #4b5563;
+    margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
     display: flex;
     align-items: center;
   }
@@ -151,11 +153,10 @@
     line-height: 1.5;
     font-size: 0.8rem;
     margin-bottom: 0.5rem;
-    color: #4b5563;
   }
 
   .location-description ul {
-    padding-left: 1.5rem;
+    padding-left: 1rem;
     margin-top: 0.25rem;
     margin-bottom: 0.5rem;
   }
@@ -164,6 +165,27 @@
     margin-bottom: 0.25rem;
     font-size: 0.8rem;
     line-height: 1.4;
+  }
+  
+  /* 説明テキストのセクションスタイル */
+  .location-description .section-geography {
+    @apply bg-blue-50 border-l-2 border-l-blue-500 rounded-md p-2 my-2;
+  }
+  
+  .location-description .section-history {
+    @apply bg-amber-50 border-l-2 border-l-amber-500 rounded-md p-2 my-2;
+  }
+  
+  .location-description .section-culture {
+    @apply bg-purple-50 border-l-2 border-l-purple-500 rounded-md p-2 my-2;
+  }
+  
+  .location-description .section-poi {
+    @apply bg-green-50 border-l-2 border-l-green-500 rounded-md p-2 my-2;
+  }
+  
+  .location-description .section-overview {
+    @apply bg-gray-50 border-l-2 border-l-gray-500 rounded-md p-2 my-2;
   }
 }
 
