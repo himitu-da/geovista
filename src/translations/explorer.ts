@@ -263,6 +263,26 @@ export const explorerTranslations: Record<string, TranslationRecord> = {
     en: "Failed to generate speech. Please try again.",
     es: "Error al generar voz. Por favor, inténtelo de nuevo.",
     ja: "音声の生成に失敗しました。もう一度お試しください。"
+  },
+  tryAgainLater: {
+    en: "Please try again later",
+    es: "Por favor, inténtelo de nuevo más tarde",
+    ja: "後でもう一度お試しください"
+  },
+  failedToLoadAudio: {
+    en: "Failed to load audio",
+    es: "Error al cargar el audio",
+    ja: "音声の読み込みに失敗しました"
+  },
+  audioNotSupported: {
+    en: "Audio playback not supported in this browser",
+    es: "Reproducción de audio no soportada en este navegador",
+    ja: "このブラウザでは音声再生がサポートされていません"
+  },
+  elevenlabsDisabled: {
+    en: "Voice playback temporarily unavailable",
+    es: "Reproducción de voz temporalmente no disponible",
+    ja: "音声再生は一時的に利用できません"
   }
 };
 

@@ -1,5 +1,5 @@
 // src/components/map/PinMarker.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { Loader2, MapPin, MapPinOff, Check, Volume2 } from 'lucide-react';
@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import LocationDescription from './LocationDescription';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
-import { generateSpeech, isTextTooLongForSpeech } from '@/utils/speechUtils';
+import { generateSpeech } from '@/utils/speechUtils';
 import AudioPlayer from './AudioPlayer';
 import { useToast } from '@/hooks/use-toast';
 
@@ -28,37 +28,52 @@ const customPinIcon = new L.Icon({
 });
 
 /**
- * Pin marker component with enhanced error handling
+ * Pin marker component with error handling and fallbacks
  */
 const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDescription }) => {
+  // State management
   const [description, setDescription] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(true);
   const [speechLoading, setSpeechLoading] = useState<boolean>(false);
   const [speechData, setSpeechData] = useState<string | null>(null);
   const [speechError, setSpeechError] = useState<string | null>(null);
+  const [descriptionError, setDescriptionError] = useState<string | null>(null);
+  
+  // Refs
+  const popupRef = useRef<L.Popup>(null);
+  const retryCountRef = useRef<number>(0);
+  
+  // Hooks
   const { language, t } = useLanguage();
   const { toast } = useToast();
 
   useEffect(() => {
     console.log("PinMarker mounted at position:", position);
+    
     return () => {
       console.log("PinMarker unmounted from position:", position);
     };
   }, [position]);
 
   /**
-   * Generate location description
+   * Generate location description with retry logic
    */
   const handleGenerateDescription = async () => {
     setLoading(true);
-    setSpeechError(null);
+    setDescriptionError(null);
     console.log("Generating description for location:", position);
     
     try {
       const generatedDescription = await onGenerateDescription(position, language);
       console.log("Description received, length:", generatedDescription?.length || 0);
+      
+      if (!generatedDescription || generatedDescription.trim() === '') {
+        throw new Error('Empty description received');
+      }
+      
       setDescription(generatedDescription);
+      setDescriptionError(null);
       
       // Show success toast
       toast({
@@ -67,7 +82,9 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
       });
     } catch (error) {
       console.error('Failed to generate description:', error);
-      setDescription(t('errorGeneratingDescription'));
+      
+      // Set error message based on retry count
+      setDescriptionError(t('errorGeneratingDescription'));
       
       // Show error toast
       toast({
@@ -76,66 +93,38 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
         variant: 'destructive',
         duration: 3000,
       });
+      
+      // If we haven't exceeded retry limit, try again after delay
+      if (retryCountRef.current < 2) {
+        retryCountRef.current += 1;
+        setTimeout(() => {
+          handleGenerateDescription();
+        }, 2000); // Retry after 2 seconds
+      }
     } finally {
       setLoading(false);
     }
   };
 
   /**
-   * Generate speech for text-to-speech functionality with enhanced error handling
+   * Generate speech with improved error handling
    */
   const handleGenerateSpeech = async () => {
     if (!description || speechLoading) return;
     
-    // Reset previous speech errors
-    setSpeechError(null);
     setSpeechLoading(true);
-    
-    // Check if text is too long for the API
-    if (isTextTooLongForSpeech(description)) {
-      console.log("Text too long, truncating for speech generation");
-      toast({
-        title: language === 'es' ? 'Texto demasiado largo' : 'Text too long',
-        description: language === 'es' 
-          ? 'El texto será recortado para la generación de voz.' 
-          : 'The text will be truncated for voice generation.',
-        duration: 3000,
-      });
-    }
-    
+    setSpeechError(null);
     console.log("Generating speech for description, length:", description.length);
     
     try {
-      // Attempt to generate speech with retry mechanism
-      let audio = null;
-      let retryCount = 0;
-      const maxRetries = 1;
-      
-      while (!audio && retryCount <= maxRetries) {
-        try {
-          audio = await generateSpeech(description, language);
-          if (!audio && retryCount < maxRetries) {
-            console.log(`Speech generation attempt ${retryCount + 1} failed, retrying...`);
-            retryCount++;
-            // Small delay before retry
-            await new Promise(resolve => setTimeout(resolve, 1000));
-          }
-        } catch (err) {
-          console.error(`Speech generation attempt ${retryCount + 1} error:`, err);
-          if (retryCount < maxRetries) {
-            retryCount++;
-            await new Promise(resolve => setTimeout(resolve, 1000));
-          } else {
-            throw err;
-          }
-        }
-      }
+      // Generate speech with improved error handling
+      const audio = await generateSpeech(description, language);
       
       if (!audio) {
-        throw new Error("Speech generation failed after retries");
+        throw new Error("No audio data received");
       }
       
-      console.log("Speech generated successfully, data length:", audio.length);
+      console.log("Speech generated successfully");
       setSpeechData(audio);
       setSpeechError(null);
       
@@ -155,18 +144,12 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
         variant: 'destructive',
         duration: 3000,
       });
-      
-      // Check and report specific errors for debugging
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error('Speech generation error details:', errorMessage);
     } finally {
       setSpeechLoading(false);
     }
   };
 
-  /**
-   * Render text-to-speech button (single source of truth)
-   */
+  // Text-to-speech button component
   const renderTextToSpeechButton = () => {
     if (!description) return null;
 
@@ -210,6 +193,7 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
         minWidth={300} 
         maxWidth={350}
         keepInView={true}
+        ref={popupRef}
       >
         <motion.div 
           className="p-3 max-w-full"
@@ -217,6 +201,7 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
         >
+          {/* Header with location and remove button */}
           <div className="flex justify-between items-center mb-3 border-b pb-2">
             <h3 className="text-sm font-medium flex items-center">
               <MapPin className="w-4 h-4 mr-1.5 text-red-500" />
@@ -248,6 +233,7 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
             </div>
           </div>
           
+          {/* Description or generate button */}
           {!description ? (
             <Button 
               variant="outline" 
@@ -275,22 +261,17 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              {/* Text-to-speech button - SINGLE SOURCE OF TRUTH */}
+              {/* Speech button */}
               {renderTextToSpeechButton()}
               
-              {/* Speech generation error */}
-              {speechError && (
-                <div className="mx-3 mb-3 p-2 text-xs text-red-600 bg-red-50 rounded-md border border-red-200 flex items-center">
-                  <span className="text-xs">{speechError}</span>
+              {/* Description content */}
+                <div className="max-h-[400px] overflow-y-auto">
+                <LocationDescription 
+                  description={description}
+                />
                 </div>
-              )}
               
-              {/* Location description */}
-              <div className="max-h-[400px] overflow-y-auto">
-                <LocationDescription description={description} />
-              </div>
-              
-              {/* Audio player - render only when speech data is available */}
+              {/* Audio player when speech is available */}
               {speechData && (
                 <div className="p-3 border-t">
                   <AudioPlayer 
@@ -299,7 +280,25 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
                   />
                 </div>
               )}
+              
+              {/* Speech error message */}
+              {speechError && (
+                <div className="p-3 border-t">
+                  <p className="text-xs text-red-500">
+                    {speechError}
+                  </p>
+                </div>
+              )}
             </motion.div>
+          )}
+          
+          {/* Description error message */}
+          {descriptionError && (
+            <div className="mt-2">
+              <p className="text-xs text-red-500">
+                {descriptionError}
+              </p>
+            </div>
           )}
         </motion.div>
       </Popup>

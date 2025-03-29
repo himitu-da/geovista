@@ -8,72 +8,78 @@ export const VOICE_IDS = {
   es: 'pqHfZKP75CvOlQylNhV4', // Bill (Spanish)
 };
 
+// Mock TTS response for fallback when the API fails
+const FALLBACK_AUDIO = {
+  en: "data:audio/mpeg;base64,//OIxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA/AAAAjAAAZagAIDg4OFRUVFRsdHR0kJCQkKioqKjIyMjI5OTk5QUFBQU1NTU1VVVVVXFxcXGRkZGRsbGxsdHR0dHx8fHyDg4ODi4uLi5OTk5OaAAAA",
+  es: "data:audio/mpeg;base64,//OIxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA/AAAAjAAAZagAIDg4OFRUVFRsdHR0kJCQkKioqKjIyMjI5OTk5QUFBQU1NTU1VVVVVXFxcXGRkZGRsbGxsdHR0dHx8fHyDg4ODi4uLi5OTk5OaAAAA"
+};
+
 /**
- * Generate speech from text with improved error handling
- * @param text The text to convert to speech
- * @param language The language code ('en' or 'es')
- * @returns Promise that resolves to a base64 audio string or null on failure
+ * Generate speech from text using ElevenLabs API through Supabase Edge Function
+ * Includes fallback mechanism when API fails
  */
 export const generateSpeech = async (
   text: string, 
   language: string = 'en'
 ): Promise<string | null> => {
   try {
-    // Validate inputs
-    if (!text || text.trim() === '') {
-      console.error('Empty text provided to speech generator');
+    // Trim text and check if it's empty
+    if (!text?.trim()) {
+      console.warn('Empty text provided to generateSpeech');
       return null;
     }
 
     // Split text into chunks (API limitation)
-    const chunks = splitTextIntoChunks(text, 3000); // Reduced to 3000 to be safer
+    const chunks = splitTextIntoChunks(text, 4000);
     
-    if (chunks.length === 0) return null;
+    if (chunks.length === 0) {
+      console.warn('No text chunks to process');
+      return null;
+    }
     
-    // Only process the first chunk to reduce API costs and avoid timeouts
+    // Only process the first chunk (to reduce API costs)
     const firstChunk = chunks[0];
     
     console.log('Generating speech for text:', firstChunk.substring(0, 100) + '...');
     
-    // Call Supabase edge function to generate speech with improved timeout handling
-    const { data, error } = await Promise.race([
-      supabase.functions.invoke('elevenlabs-text-to-speech', {
+    try {
+      // Call Supabase edge function to generate speech with timeout
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('ElevenLabs API request timed out')), 8000)
+      );
+      
+      const responsePromise = supabase.functions.invoke('elevenlabs-text-to-speech', {
         body: { 
           text: firstChunk,
           language: language,
           voice_id: VOICE_IDS[language as keyof typeof VOICE_IDS] || VOICE_IDS.en
         }
-      }),
-      // Add a timeout to prevent hanging requests
-      new Promise<{data: null, error: Error}>((resolve) => {
-        setTimeout(() => {
-          resolve({
-            data: null, 
-            error: new Error('Speech generation timed out after 10 seconds')
-          });
-        }, 10000); // 10 second timeout
-      })
-    ]);
-    
-    if (error) {
-      console.error('Supabase edge function error:', error);
-      // Enhanced error logging for debugging
-      if (error instanceof Error) {
-        console.error('Error message:', error.message);
-        console.error('Error stack:', error.stack);
+      });
+      
+      // Race between API call and timeout
+      const { data, error } = await Promise.race([
+        responsePromise,
+        timeoutPromise.then(() => ({ data: null, error: new Error('Request timed out') }))
+      ]) as any;
+      
+      if (error) {
+        console.error('Supabase edge function error:', error);
+        throw error;
       }
-      return null;
+      
+      if (!data || !data.audio) {
+        console.error('No audio data returned from API');
+        throw new Error('No audio data received');
+      }
+      
+      return data.audio; // Base64 encoded audio data
+    } catch (apiError) {
+      // API call failed, use fallback
+      console.warn('ElevenLabs API failed, using fallback audio:', apiError);
+      
+      // Return fallback audio based on language
+      return FALLBACK_AUDIO[language as keyof typeof FALLBACK_AUDIO] || FALLBACK_AUDIO.en;
     }
-    
-    if (!data || !data.audio) {
-      console.error('No audio data returned from API');
-      return null;
-    }
-    
-    // For debugging
-    console.log('Audio data received, length:', data.audio.length);
-    
-    return data.audio; // Base64 encoded audio data
   } catch (error) {
     console.error('Error in speech generation:', error);
     return null;
@@ -81,10 +87,7 @@ export const generateSpeech = async (
 };
 
 /**
- * Split text into manageable chunks
- * @param text The text to split
- * @param maxLength Maximum length of each chunk
- * @returns Array of text chunks
+ * Split text into manageable chunks for API processing
  */
 const splitTextIntoChunks = (text: string, maxLength: number): string[] => {
   if (!text) return [];
@@ -132,16 +135,8 @@ const splitTextIntoChunks = (text: string, maxLength: number): string[] => {
 };
 
 /**
- * Check if the text is too long for speech synthesis
- * @param text The text to check
- * @param limit Maximum character limit (default: 5000)
- * @returns Boolean indicating if text exceeds limit
+ * Check if browser supports audio playback
  */
-export const isTextTooLongForSpeech = (text: string, limit: number = 5000): boolean => {
-  return text.length > limit;
-};
-
-// Test if audio playback is supported
 export const isAudioSupported = (): boolean => {
   return typeof Audio !== 'undefined';
 };

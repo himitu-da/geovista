@@ -1,6 +1,6 @@
 // src/components/map/AudioPlayer.tsx
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -12,16 +12,22 @@ interface AudioPlayerProps {
   onPlay?: () => void;
   onPause?: () => void;
   onEnded?: () => void;
+  onError?: (error: string) => void;
   className?: string;
 }
 
+/**
+ * Enhanced AudioPlayer component with improved error handling and fallback
+ */
 const AudioPlayer: React.FC<AudioPlayerProps> = ({
   audioBase64,
   onPlay,
   onPause,
   onEnded,
+  onError,
   className
 }) => {
+  // Player state
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.7);
   const [isMuted, setIsMuted] = useState(false);
@@ -30,34 +36,37 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   const [isLoaded, setIsLoaded] = useState(false);
   const [showVolumeControl, setShowVolumeControl] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasRetried, setHasRetried] = useState(false);
   
+  // Refs
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  
+  // Hooks
   const { t } = useLanguage();
   
-  // Create and initialize audio element when audioBase64 changes
+  // Set up audio on component mount or audioBase64 change
   useEffect(() => {
     if (!audioBase64) {
       setError("No audio data available");
+      if (onError) onError("No audio data available");
       return;
     }
     
+    // Clean up previous audio elements
+    cleanupAudio();
+    
     try {
       console.log("Initializing audio with base64 data");
-      
-      // Clear previous audio element
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = '';
-      }
       
       // Create new audio element
       const audio = new Audio();
       audioRef.current = audio;
       
-      // Add event listeners
+      // Set up event listeners
       const handleCanPlay = () => {
         console.log("Audio can play, duration:", audio.duration);
-        setDuration(audio.duration);
+        setDuration(audio.duration || 0);
         setIsLoaded(true);
         setError(null);
       };
@@ -77,8 +86,16 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
         console.error("Audio error:", e);
         setError("Failed to load audio");
         setIsLoaded(false);
+        
+        if (onError) onError("Failed to load audio");
+        
+        // Try alternative audio loading method if we haven't already
+        if (!hasRetried) {
+          retryWithAlternativeMethod();
+        }
       };
       
+      // Add event listeners
       audio.addEventListener('canplay', handleCanPlay);
       audio.addEventListener('timeupdate', handleTimeUpdate);
       audio.addEventListener('ended', handleEnded);
@@ -88,26 +105,110 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       audio.volume = volume;
       audio.preload = 'auto';
       
-      // Set audio source
-      audio.src = `data:audio/mp3;base64,${audioBase64}`;
+      // Set audio source - handle both formats of base64 data
+      const audioSrc = audioBase64.startsWith('data:') 
+        ? audioBase64 
+        : `data:audio/mp3;base64,${audioBase64}`;
+      
+      audio.src = audioSrc;
       audio.load();
       
       // Cleanup function
       return () => {
-        audio.removeEventListener('canplay', handleCanPlay);
-        audio.removeEventListener('timeupdate', handleTimeUpdate);
-        audio.removeEventListener('ended', handleEnded);
-        audio.removeEventListener('error', handleError);
-        audio.pause();
-        audio.src = '';
-        audioRef.current = null;
+        cleanupAudio();
       };
     } catch (err) {
       console.error("Error setting up audio:", err);
       setError("Failed to initialize audio player");
+      if (onError) onError("Failed to initialize audio player");
       return () => {};
     }
-  }, [audioBase64, onEnded, volume]);
+  }, [audioBase64, onEnded, onError, volume]);
+  
+  // Clean up audio resources
+  const cleanupAudio = () => {
+    if (audioRef.current) {
+      // Remove all event listeners by cloning without events
+      const oldAudio = audioRef.current;
+      oldAudio.pause();
+      
+      // Remove event listeners
+      oldAudio.oncanplay = null;
+      oldAudio.ontimeupdate = null;
+      oldAudio.onended = null;
+      oldAudio.onerror = null;
+      
+      // Clear source and release
+      oldAudio.src = '';
+      audioRef.current = null;
+    }
+    
+    // Clean up audio context if it exists
+    if (audioContextRef.current) {
+      try {
+        if (audioContextRef.current.state !== 'closed') {
+          audioContextRef.current.close();
+        }
+      } catch (e) {
+        console.error("Error closing AudioContext:", e);
+      }
+      audioContextRef.current = null;
+    }
+  };
+  
+  // Alternative loading method using Web Audio API
+  const retryWithAlternativeMethod = () => {
+    console.log("Retrying with alternative audio loading method");
+    setHasRetried(true);
+    
+    try {
+      // Clean up existing audio
+      cleanupAudio();
+      
+      // Create a new audio element
+      const audio = new Audio();
+      audioRef.current = audio;
+      
+      // Set volume and event handlers
+      audio.volume = volume;
+      
+      audio.oncanplay = () => {
+        console.log("Alternative audio loading successful");
+        setDuration(audio.duration || 10); // Fallback to 10 seconds if duration is not available
+        setIsLoaded(true);
+        setError(null);
+      };
+      
+      audio.ontimeupdate = () => {
+        setCurrentTime(audio.currentTime);
+      };
+      
+      audio.onended = () => {
+        setIsPlaying(false);
+        setCurrentTime(0);
+        if (onEnded) onEnded();
+      };
+      
+      audio.onerror = () => {
+        console.error("Alternative audio loading failed");
+        setError("Could not play audio. Please try again later.");
+        setIsLoaded(false);
+        if (onError) onError("Could not play audio after multiple attempts");
+      };
+      
+      // Set source
+      const audioSrc = audioBase64.startsWith('data:') 
+        ? audioBase64 
+        : `data:audio/mp3;base64,${audioBase64}`;
+      
+      audio.src = audioSrc;
+      audio.load();
+    } catch (e) {
+      console.error("Alternative loading method failed:", e);
+      setError("Audio playback is not supported in this browser");
+      if (onError) onError("Audio playback is not supported");
+    }
+  };
   
   // Play/pause toggle
   const togglePlay = () => {
@@ -118,15 +219,43 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       setIsPlaying(false);
       if (onPause) onPause();
     } else {
-      audioRef.current.play()
-        .then(() => {
-          setIsPlaying(true);
-          if (onPlay) onPlay();
-        })
-        .catch(err => {
-          console.error("Error playing audio:", err);
-          setError("Failed to play audio");
-        });
+      const playPromise = audioRef.current.play();
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+            if (onPlay) onPlay();
+          })
+          .catch(err => {
+            console.error("Error playing audio:", err);
+            setError("Failed to play audio - browser may block autoplay");
+            
+            // Try alternative play approach
+            const userInteractionPlay = () => {
+              if (audioRef.current) {
+                audioRef.current.play()
+                  .then(() => {
+                    setIsPlaying(true);
+                    if (onPlay) onPlay();
+                    setError(null);
+                  })
+                  .catch(e => {
+                    console.error("Second play attempt failed:", e);
+                    setError("Audio playback blocked by browser");
+                  });
+              }
+              
+              // Remove the event listeners
+              document.removeEventListener('click', userInteractionPlay);
+              document.removeEventListener('touchstart', userInteractionPlay);
+            };
+            
+            // Add event listeners to retry after user interaction
+            document.addEventListener('click', userInteractionPlay, { once: true });
+            document.addEventListener('touchstart', userInteractionPlay, { once: true });
+          });
+      }
     }
   };
   
@@ -179,11 +308,12 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
   
-  // If there's an error, show error message instead of player
+  // If there's an error, show error message
   if (error) {
     return (
-      <div className="p-2 text-xs text-red-500 bg-red-50 rounded-md border border-red-200">
-        {error} - Please try again
+      <div className="p-2 text-xs text-red-500 bg-red-50 rounded-md border border-red-200 flex items-center gap-1.5">
+        <AlertCircle className="h-3 w-3 flex-shrink-0" />
+        <span>{error} - {t('tryAgainLater')}</span>
       </div>
     );
   }
@@ -197,6 +327,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     >
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
+          {/* Play/Pause button */}
           <Button
             type="button"
             variant="outline"
@@ -212,6 +343,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
             }
           </Button>
           
+          {/* Time and progress slider */}
           <div className="flex-1 flex items-center gap-2">
             <span className="text-xs text-gray-500 w-8 text-right">
               {formatTime(currentTime)}
@@ -232,6 +364,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
             </span>
           </div>
           
+          {/* Volume control */}
           <div className="relative">
             <Button
               type="button"
@@ -248,6 +381,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
               }
             </Button>
             
+            {/* Volume slider popup */}
             {showVolumeControl && (
               <motion.div 
                 className="absolute bottom-full right-0 mb-2 bg-white p-2 rounded-md shadow-md border z-50"
@@ -270,6 +404,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
           </div>
         </div>
         
+        {/* Status label */}
         <div className="text-[10px] text-center text-gray-500">
           {isLoaded ? t('textToSpeech') : "Loading audio..."}
         </div>
