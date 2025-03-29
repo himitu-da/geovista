@@ -4,6 +4,20 @@ import { generateCountryTooltip, resetLayerStyle } from './FeatureHandlers';
 import { DataMetric } from '@/types/country';
 
 /**
+ * Leafletのフィーチャータイプ定義
+ */
+interface LeafletFeature {
+  properties: {
+    id: string;
+    name: string;
+    code: string;
+    population: number;
+    area_km2: number | null;
+    gdp_per_capita: number;
+  };
+}
+
+/**
  * マウスオーバー時のハンドラー生成関数
  */
 export const createMouseOverHandler = (
@@ -13,7 +27,7 @@ export const createMouseOverHandler = (
 ) => {
   return (event: L.LeafletEvent) => {
     const layer = event.target as L.GeoJSON;
-    const feature = layer.feature;
+    const feature = layer.feature as LeafletFeature;
     const props = feature.properties;
     
     map.getContainer().style.cursor = 'pointer';
@@ -62,7 +76,9 @@ export const createMouseOutHandler = (
     const layer = event.target as L.GeoJSON;
     
     map.getContainer().style.cursor = '';
-    setPopupInfo(prev => prev ? { ...prev, isOpen: false } : null);
+    
+    // 関数型を修正 - 直接オブジェクトを返すようにする
+    setPopupInfo(null);
     
     // 選択されていない国はスタイルをリセット
     resetLayerStyle(layer, selectedCountry);
@@ -79,7 +95,7 @@ export const createClickHandler = (
 ) => {
   return (event: L.LeafletEvent) => {
     const layer = event.target as L.GeoJSON;
-    const feature = layer.feature;
+    const feature = layer.feature as LeafletFeature;
     const countryId = feature.properties.id;
     
     // クリックアニメーション
