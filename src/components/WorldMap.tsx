@@ -85,7 +85,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
       
       // 境界を取得し、地図をこれらの境界に合わせる
       const bounds = geoJSON.getBounds();
-      mapRef.fitBounds(bounds, { padding: [50, 50], maxZoom: 5, animate: true });
+      mapRef.fitBounds(bounds, { padding: [20, 20], maxZoom: 5, animate: true });
     } catch (error) {
       console.error('Error fitting bounds:', error);
     }
@@ -154,7 +154,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
       </MapContainer>
       
       {/* 帰属表示オーバーレイ */}
-      <div className="absolute bottom-0 right-0 z-[400] text-xs text-gray-700 bg-white/80 px-2 py-1 rounded-tl-md shadow-sm">
+      <div className="absolute bottom-0 right-0 z-[400] text-[8px] text-gray-700 bg-white/80 px-1.5 py-0.5 rounded-tl-md shadow-sm">
         &copy; <a href="https://www.openstreetmap.org/copyright" className="hover:text-blue-600 font-medium">OpenStreetMap</a>
       </div>
     </div>

@@ -1,40 +1,34 @@
 
 import React from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowRight, TrendingUp, Map, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface InsightCardProps {
   title: string;
-  description: string;
   icon: React.ReactNode;
   color: string;
   delay: number;
 }
 
-const InsightCard: React.FC<InsightCardProps> = ({ title, description, icon, color, delay }) => (
+// コンパクトなインサイトカード
+const InsightCard: React.FC<InsightCardProps> = ({ title, icon, color, delay }) => (
   <motion.div
-    initial={{ opacity: 0, y: 20 }}
+    initial={{ opacity: 0, y: 5 }}
     animate={{ opacity: 1, y: 0 }}
-    transition={{ delay, duration: 0.3 }}
+    transition={{ delay, duration: 0.2 }}
   >
-    <Card className="h-full border overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-      <CardHeader className={`pb-2 ${color}`}>
-        <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+    <Card className="border-none shadow-sm hover:shadow-md transition-shadow">
+      <CardContent className="p-1.5 flex items-center gap-1.5">
+        <div className={`w-5 h-5 rounded-full ${color} flex items-center justify-center flex-shrink-0`}>
           {icon}
         </div>
-      </CardHeader>
-      <CardContent className="pt-3">
-        <CardTitle className="text-base mb-2">{title}</CardTitle>
-        <p className="text-sm text-gray-600 dark:text-gray-300">{description}</p>
+        <div className="flex-grow">
+          <p className="text-[10px] font-medium text-gray-800 dark:text-gray-200 line-clamp-1">{title}</p>
+        </div>
+        <ArrowRight className="h-2.5 w-2.5 text-blue-500 flex-shrink-0" />
       </CardContent>
-      <CardFooter>
-        <button className="text-xs font-medium flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
-          <span>詳細を見る</span>
-          <ArrowRight className="ml-1 h-3 w-3" />
-        </button>
-      </CardFooter>
     </Card>
   </motion.div>
 );
@@ -46,38 +40,34 @@ const FeaturedInsights: React.FC = () => {
     {
       id: 'population-growth',
       title: '世界の人口増加傾向',
-      description: '2010年から2020年にかけての地域別人口変動と今後の予測',
-      icon: <Users className="h-4 w-4 text-white" />,
+      icon: <Users className="h-2.5 w-2.5 text-white" />,
       color: 'bg-gradient-to-r from-purple-500 to-purple-600',
       delay: 0.1
     },
     {
       id: 'economic-centers',
       title: '新興経済国の台頭',
-      description: '過去10年間でGDP成長率が最も高い国とその経済的影響',
-      icon: <TrendingUp className="h-4 w-4 text-white" />,
+      icon: <TrendingUp className="h-2.5 w-2.5 text-white" />,
       color: 'bg-gradient-to-r from-amber-500 to-amber-600',
       delay: 0.2
     },
     {
       id: 'urbanization',
       title: '都市化の進行と影響',
-      description: '急速に都市化が進む地域と、それに伴う社会経済的変化',
-      icon: <Map className="h-4 w-4 text-white" />,
+      icon: <Map className="h-2.5 w-2.5 text-white" />,
       color: 'bg-gradient-to-r from-blue-500 to-blue-600',
       delay: 0.3
     }
   ];
   
   return (
-    <div className="space-y-3">
-      <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">{t('featuredInsights')}</h3>
-      <div className="grid grid-cols-1 gap-3">
+    <div className="space-y-1">
+      <h3 className="text-xs font-semibold text-gray-900 dark:text-gray-100">{t('featuredInsights')}</h3>
+      <div className="grid grid-cols-1 gap-1">
         {insights.map((insight) => (
           <InsightCard
             key={insight.id}
             title={insight.title}
-            description={insight.description}
             icon={insight.icon}
             color={insight.color}
             delay={insight.delay}

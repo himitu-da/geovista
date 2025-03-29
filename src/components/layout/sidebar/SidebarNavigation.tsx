@@ -24,23 +24,23 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   const navigationItems = [
     {
       section: 'visualization' as const,
-      icon: <ZoomIn className="size-3.5" />,
+      icon: <ZoomIn className="size-3" />,
       label: t('visualizationType'),
     },
     {
       section: 'metrics' as const,
-      icon: <Menu className="size-3.5" />,
+      icon: <Menu className="size-3" />,
       label: t('dataMetrics'),
     },
     {
       section: 'insights' as const,
-      icon: <User className="size-3.5" />,
+      icon: <User className="size-3" />,
       label: t('aiInsights'),
       condition: hasSelectedCountry
     },
     {
       section: 'info' as const,
-      icon: <Info className="size-3.5" />,
+      icon: <Info className="size-3" />,
       label: t('information'),
     }
   ];
@@ -55,10 +55,10 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
               isActive={activeSection === item.section} 
               onClick={() => setActiveSection(item.section)}
               tooltip={item.label}
-              className="p-1.5"
+              className="p-1"
             >
               {item.icon}
-              <span className="text-xs">{item.label}</span>
+              <span className="text-[10px]">{item.label}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}

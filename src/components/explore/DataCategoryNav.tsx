@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Layers, Globe, TrendingUp, Users } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -24,33 +23,33 @@ const DataCategoryNav: React.FC<DataCategoryNavProps> = ({
   }[] = [
     {
       id: 'overview',
-      icon: <Layers className="h-5 w-5" />,
+      icon: <Layers className="h-3 w-3" />,
       label: t('overview')
     },
     {
       id: 'geography',
-      icon: <Globe className="h-5 w-5" />,
+      icon: <Globe className="h-3 w-3" />,
       label: t('geography')
     },
     {
       id: 'demographics',
-      icon: <Users className="h-5 w-5" />,
+      icon: <Users className="h-3 w-3" />,
       label: t('demographics')
     },
     {
       id: 'economy',
-      icon: <TrendingUp className="h-5 w-5" />,
+      icon: <TrendingUp className="h-3 w-3" />,
       label: t('economy')
     }
   ];
   
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-      <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-gray-100 dark:divide-gray-700">
+      <div className="grid grid-cols-2 divide-x divide-gray-100 dark:divide-gray-700">
         {categories.map((category) => (
           <button
             key={category.id}
-            className={`flex items-center justify-center space-x-2 px-3 py-3 text-sm transition-colors ${
+            className={`flex items-center justify-center space-x-1 px-2 py-1.5 text-xs transition-colors ${
               activeCategory === category.id
                 ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50'
@@ -60,7 +59,7 @@ const DataCategoryNav: React.FC<DataCategoryNavProps> = ({
             <div className={`${activeCategory === category.id ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
               {category.icon}
             </div>
-            <span className="font-medium">{category.label}</span>
+            <span className="font-medium text-[10px]">{category.label}</span>
           </button>
         ))}
       </div>

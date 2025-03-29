@@ -7,11 +7,10 @@ import { CountryData, DataMetric } from '@/types/country';
 
 // アニメーション設定
 const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
+  hidden: { opacity: 0 },
   visible: { 
-    y: 0, 
     opacity: 1,
-    transition: { duration: 0.5 }
+    transition: { duration: 0.3 }
   }
 };
 
@@ -35,7 +34,7 @@ const MapLayer = ({
   visualizationType: 'map' | 'chart';
 }) => (
   <motion.div 
-    className="absolute inset-0 z-0"
+    className="absolute inset-0 z-0 scale-105 origin-center"
     variants={itemVariants}
   >
     {visualizationType === 'map' ? (
@@ -47,7 +46,7 @@ const MapLayer = ({
         selectedCountry={selectedCountry}
       />
     ) : (
-      <div className="h-full bg-gray-50 p-4">
+      <div className="h-full bg-gray-50 dark:bg-gray-900 p-4">
         <DataChart 
           countries={countries}
           loading={loading}
