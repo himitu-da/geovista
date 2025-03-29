@@ -14,7 +14,7 @@ export function useCountryData() {
       try {
         setLoading(true);
         
-        // This assumes a 'countries' table in your Supabase database
+        // Supabaseから国データを取得
         const { data, error } = await supabase
           .from('countries')
           .select('*');
@@ -24,6 +24,7 @@ export function useCountryData() {
         }
 
         if (data) {
+          // 受け取ったデータを設定
           setCountries(data as CountryData[]);
         }
       } catch (err) {
