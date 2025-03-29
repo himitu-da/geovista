@@ -110,12 +110,12 @@ const WorldMap: React.FC<WorldMapProps> = ({
       </MapContainer>
       
       {/* 左下に凡例を表示 */}
-      <div className="absolute bottom-4 left-4 z-[400]">
+      <div className="absolute bottom-12 left-4 z-[400]">
         <Legend metric={selectedMetric} />
       </div>
       
       {/* 帰属表示オーバーレイ */}
-      <div className="absolute bottom-0.5 right-0.5 z-[400] text-[6px] sm:text-[8px] text-gray-700 bg-white/80 px-1 py-0.5 rounded-tl-md shadow-sm">
+      <div className="absolute bottom-7 right-1 z-[400] text-[7px] sm:text-[8px] text-gray-700 bg-white/80 px-1.5 py-0.5 rounded-tl-md shadow-sm">
         &copy; <a href="https://www.openstreetmap.org/copyright" className="hover:text-blue-600 font-medium">OpenStreetMap</a>
       </div>
     </div>

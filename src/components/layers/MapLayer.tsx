@@ -33,7 +33,7 @@ const MapLayer = ({
 }) => {
   return (
     <motion.div 
-      className="absolute inset-0 z-0 scale-105 origin-center"
+      className="absolute inset-0 z-0"
       variants={itemVariants}
     >
       <WorldMap 

@@ -12,7 +12,7 @@ const LanguageToggle: React.FC = () => {
 
   return (
     <button 
-      className="bg-white rounded-md p-2 shadow-md text-gray-700 hover:bg-gray-100 flex items-center gap-1"
+      className="bg-white rounded-md p-2 shadow-md text-gray-700 hover:bg-gray-100 flex items-center gap-1.5"
       onClick={toggleLanguage}
       aria-label={`Switch language to ${language === 'en' ? 'Japanese' : 'English'}`}
     >

@@ -38,7 +38,7 @@ const MapControls: React.FC<MapControlsProps> = ({ mapRef }) => {
   return (
     <>
       {/* 右下のマップコントロール */}
-      <div className="absolute right-4 bottom-12 z-[400] flex flex-col gap-1">
+      <div className="absolute right-4 bottom-16 z-[400] flex flex-col gap-1.5">
         <button
           onClick={handleZoomIn}
           className="bg-white rounded-md p-1.5 shadow-md text-gray-700 hover:bg-gray-100"

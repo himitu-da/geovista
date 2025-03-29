@@ -56,8 +56,8 @@ const Index = () => {
         onCountrySelect={setSelectedCountry}
       />
       
-      {/* シンプルなドロップダウンコントロール */}
-      <div className="absolute top-4 right-4 z-20">
+      {/* メトリック選択ドロップダウン */}
+      <div className="absolute top-4 right-24 z-20">
         <MetricDropdown 
           selectedMetric={selectedMetric}
           onMetricChange={setSelectedMetric}
