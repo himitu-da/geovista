@@ -39,6 +39,15 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
   const { language, t } = useLanguage();
   const { toast } = useToast();
 
+  useEffect(() => {
+    // ログ出力用
+    console.log("PinMarker mounted at position:", position);
+    
+    return () => {
+      console.log("PinMarker unmounted from position:", position);
+    };
+  }, [position]);
+
   // Generate location description
   const handleGenerateDescription = async () => {
     setLoading(true);
@@ -75,16 +84,17 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
     if (!description || speechLoading) return;
     
     setSpeechLoading(true);
-    console.log("Generating speech for description");
+    console.log("Generating speech for description, length:", description.length);
     
     try {
+      // 独自の音声生成関数を呼び出す
       const audio = await generateSpeech(description, language);
       
       if (!audio) {
         throw new Error("No audio data received");
       }
       
-      console.log("Speech generated successfully, setting audio data");
+      console.log("Speech generated successfully, data length:", audio.length);
       setSpeechData(audio);
       
       // Show success toast
@@ -107,6 +117,35 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
     } finally {
       setSpeechLoading(false);
     }
+  };
+
+  // 独立した音声読み上げボタン
+  const renderTextToSpeechButton = () => {
+    if (!description) return null;
+
+    return (
+      <div className="flex justify-center mb-3">
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 px-3 py-1 text-xs flex items-center gap-1.5 text-blue-600 border-blue-200 hover:bg-blue-50"
+          onClick={handleGenerateSpeech}
+          disabled={speechLoading}
+        >
+          {speechLoading ? (
+            <>
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <span>{t('generating')}</span>
+            </>
+          ) : (
+            <>
+              <Volume2 className="h-3.5 w-3.5" />
+              <span>{t('listen')}</span>
+            </>
+          )}
+        </Button>
+      </div>
+    );
   };
 
   return (
@@ -184,21 +223,26 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
             </Button>
           ) : (
             <motion.div 
-              className="bg-white rounded-md border border-gray-200 max-h-[400px] overflow-y-auto shadow-sm"
+              className="bg-white rounded-md border border-gray-200 shadow-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              {/* Location description with text-to-speech button */}
-              <LocationDescription 
-                description={description}
-                onTextToSpeech={handleGenerateSpeech}
-                speechLoading={speechLoading}
-              />
+              {/* 独立した音声再生ボタン（追加） */}
+              {renderTextToSpeechButton()}
+              
+              {/* Location description */}
+              <div className="max-h-[400px] overflow-y-auto">
+                <LocationDescription 
+                  description={description}
+                  onTextToSpeech={handleGenerateSpeech}
+                  speechLoading={speechLoading}
+                />
+              </div>
               
               {/* Audio player - render only when speech data is available */}
               {speechData && (
-                <div className="p-2 border-t">
+                <div className="p-3 border-t">
                   <AudioPlayer 
                     audioBase64={speechData}
                     onEnded={() => console.log("Audio playback ended")}

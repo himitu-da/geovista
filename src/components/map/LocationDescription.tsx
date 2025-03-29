@@ -34,6 +34,16 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({
 }) => {
   const { language, t } = useLanguage();
   
+  // ボタンがクリックされたときのハンドラー
+  const handleTextToSpeechClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("Text-to-speech button clicked");
+    if (onTextToSpeech) {
+      onTextToSpeech();
+    }
+  };
+  
   // Determine appropriate icon and color scheme based on section type
   const getSectionInfo = (text: string): { 
     icon: JSX.Element; 
@@ -141,45 +151,55 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({
     };
   };
 
+  // 独立した読み上げボタンをレンダリング（最も安全な方法）
+  const renderTextToSpeechButton = () => {
+    if (!onTextToSpeech) return null;
+    
+    return (
+      <div className="mb-4 flex justify-end">
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 px-3 py-1 text-xs flex items-center gap-1.5 text-blue-600 border-blue-200 hover:bg-blue-50"
+          onClick={handleTextToSpeechClick}
+          disabled={speechLoading}
+        >
+          {speechLoading ? (
+            <>
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <span>{t('generating')}</span>
+            </>
+          ) : (
+            <>
+              <Volume2 className="h-3.5 w-3.5" />
+              <span>{t('listen')}</span>
+            </>
+          )}
+        </Button>
+      </div>
+    );
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="text-xs location-description"
+      className="text-xs location-description p-3"
     >
+      {/* 最初に独立したテキスト読み上げボタンを表示 */}
+      {renderTextToSpeechButton()}
+      
       <ReactMarkdown
         components={{
           h1: ({ node, children, ...props }) => {
             return (
               <div className="mb-3">
-                <div className="text-sm font-bold text-blue-600 border-b pb-1.5 mb-2 flex items-center justify-between">
+                <div className="text-sm font-bold text-blue-600 border-b pb-1.5 mb-2 flex items-center">
                   <h1 className="flex items-center" {...props}>
                     <Star className="w-4 h-4 mr-1.5 text-blue-500" />
                     {children}
                   </h1>
-                  
-                  {/* Text-to-speech button - ensure it's always visible */}
-                  {onTextToSpeech && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-6 px-1.5 py-0 text-xs flex items-center gap-1 text-blue-600"
-                      onClick={() => {
-                        console.log("Text-to-speech button clicked");
-                        onTextToSpeech();
-                      }}
-                      disabled={speechLoading}
-                      title={t('textToSpeech')}
-                    >
-                      {speechLoading ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                      ) : (
-                        <Volume2 className="h-3 w-3" />
-                      )}
-                      {speechLoading ? t('generating') : t('listen')}
-                    </Button>
-                  )}
                 </div>
                 <div className="bg-blue-50 p-2 rounded-md border border-blue-100 shadow-sm">
                   <p className="text-xs text-blue-800 italic">
