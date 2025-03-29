@@ -85,11 +85,11 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Apple-specific colors - コントラスト向上
+				// Apple-specific colors - さらにコントラスト向上
 				'apple-blue': {
-					DEFAULT: '#0066CC', // より濃いブルー
-					light: '#409CFF',
-					dark: '#004C99',
+					DEFAULT: '#0055CC', // より濃いブルー
+					light: '#3080FF',
+					dark: '#003C99',
 				},
 				'apple-gray': {
 					50: '#f5f5f7',
@@ -97,7 +97,7 @@ export default {
 					200: '#d2d2d7',
 					300: '#a1a1a6',
 					400: '#6e6e73', // より暗いグレー
-					500: '#515156', // より暗いグレー
+					500: '#4a4a4d', // より暗いグレー
 					600: '#3a3a3c',
 					700: '#1d1d1f',
 					800: '#121214', // より暗いグレー追加
@@ -109,10 +109,10 @@ export default {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			boxShadow: {
-				'apple-sm': '0 2px 5px rgba(0, 0, 0, 0.08)', // シャドウ濃度アップ
-				'apple-md': '0 4px 12px rgba(0, 0, 0, 0.1)', // シャドウ濃度アップ
-				'apple-lg': '0 12px 32px rgba(0, 0, 0, 0.15)', // シャドウ濃度アップ
-				'apple-xl': '0 24px 48px rgba(0, 0, 0, 0.2)', // シャドウ濃度アップ
+				'apple-sm': '0 2px 6px rgba(0, 0, 0, 0.1)', // シャドウ濃度アップ
+				'apple-md': '0 4px 14px rgba(0, 0, 0, 0.12)', // シャドウ濃度アップ
+				'apple-lg': '0 12px 32px rgba(0, 0, 0, 0.18)', // シャドウ濃度アップ
+				'apple-xl': '0 24px 48px rgba(0, 0, 0, 0.25)', // シャドウ濃度アップ
 			},
 			keyframes: {
 				'accordion-down': {
@@ -130,11 +130,16 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'float': 'float 6s ease-in-out infinite'
 			}
 		}
 	},
