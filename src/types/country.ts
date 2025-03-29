@@ -1,4 +1,3 @@
-
 export interface CountryData {
   id: string;
   name: string;
@@ -7,6 +6,7 @@ export interface CountryData {
   area_km2: number | null;
   geometry: GeoJSON.Feature;
   gdp_per_capita?: number;
+  population_density?: number;
 }
 
 export interface CountryDataState {

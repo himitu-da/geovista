@@ -23,6 +23,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchQuery, setSearchQuery }) =>
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-8 sm:pl-10 pr-2 sm:pr-4 py-1 sm:py-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm"
+          aria-label={t('searchCountries')}
         />
       </div>
     </div>

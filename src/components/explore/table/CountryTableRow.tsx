@@ -11,7 +11,7 @@ interface CountryTableRowProps {
   selectedMetric: DataMetric;
   selectedCountry: string | null;
   onCountrySelect: (countryId: string | null) => void;
-  formatMetricValue: (value: number | null, metric: string) => string;
+  formatMetricValue: (country: CountryData, metric: DataMetric) => string;
   showMetricColumn?: boolean;
 }
 
@@ -39,6 +39,25 @@ const CountryTableRow = ({
     }
   };
 
+  // 人口密度を計算
+  const getPopulationDensity = () => {
+    if (!country.area_km2 || country.area_km2 === 0) return null;
+    return country.population / country.area_km2;
+  };
+
+  const getMetricValue = (metric: DataMetric) => {
+    switch (metric) {
+      case 'population_density':
+        return getPopulationDensity();
+      case 'population':
+        return country.population;
+      case 'gdp_per_capita':
+        return country.gdp_per_capita || null;
+      default:
+        return null;
+    }
+  };
+
   return (
     <motion.tr
       layout
@@ -59,20 +78,13 @@ const CountryTableRow = ({
       </td>
       <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
         <div className="text-xs sm:text-sm text-gray-900 dark:text-gray-100">
-          {formatMetricValue(country.population, 'population')}
+          {formatMetricValue(country, 'population')}
         </div>
       </td>
       {showMetricColumn && (
         <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
           <div className="text-xs sm:text-sm text-gray-900 dark:text-gray-100">
-            {formatMetricValue(
-              selectedMetric === 'population_density' 
-                ? country.population_density 
-                : selectedMetric === 'gdp_per_capita' 
-                  ? country.gdp_per_capita 
-                  : country.population,
-              selectedMetric
-            )}
+            {formatMetricValue(country, selectedMetric)}
           </div>
         </td>
       )}
