@@ -12,7 +12,7 @@ interface InsightCardProps {
   delay: number;
 }
 
-// コンパクトなインサイトカード
+// Compact insight card
 const InsightCard: React.FC<InsightCardProps> = ({ title, icon, color, delay }) => (
   <motion.div
     initial={{ opacity: 0, y: 5 }}
@@ -34,31 +34,62 @@ const InsightCard: React.FC<InsightCardProps> = ({ title, icon, color, delay }) 
 );
 
 const FeaturedInsights: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
-  const insights = [
-    {
-      id: 'population-growth',
-      title: '世界の人口増加傾向',
-      icon: <Users className="h-2.5 w-2.5 text-white" />,
-      color: 'bg-gradient-to-r from-purple-500 to-purple-600',
-      delay: 0.1
-    },
-    {
-      id: 'economic-centers',
-      title: '新興経済国の台頭',
-      icon: <TrendingUp className="h-2.5 w-2.5 text-white" />,
-      color: 'bg-gradient-to-r from-amber-500 to-amber-600',
-      delay: 0.2
-    },
-    {
-      id: 'urbanization',
-      title: '都市化の進行と影響',
-      icon: <Map className="h-2.5 w-2.5 text-white" />,
-      color: 'bg-gradient-to-r from-blue-500 to-blue-600',
-      delay: 0.3
+  // Create insights based on current language
+  const getInsights = () => {
+    if (language === 'es') {
+      return [
+        {
+          id: 'population-growth',
+          title: 'Tendencias de crecimiento poblacional mundial',
+          icon: <Users className="h-2.5 w-2.5 text-white" />,
+          color: 'bg-gradient-to-r from-purple-500 to-purple-600',
+          delay: 0.1
+        },
+        {
+          id: 'economic-centers',
+          title: 'Surgimiento de economías emergentes',
+          icon: <TrendingUp className="h-2.5 w-2.5 text-white" />,
+          color: 'bg-gradient-to-r from-amber-500 to-amber-600',
+          delay: 0.2
+        },
+        {
+          id: 'urbanization',
+          title: 'Urbanización y sus impactos',
+          icon: <Map className="h-2.5 w-2.5 text-white" />,
+          color: 'bg-gradient-to-r from-blue-500 to-blue-600',
+          delay: 0.3
+        }
+      ];
+    } else {
+      return [
+        {
+          id: 'population-growth',
+          title: 'Global Population Growth Trends',
+          icon: <Users className="h-2.5 w-2.5 text-white" />,
+          color: 'bg-gradient-to-r from-purple-500 to-purple-600',
+          delay: 0.1
+        },
+        {
+          id: 'economic-centers',
+          title: 'Rise of Emerging Economies',
+          icon: <TrendingUp className="h-2.5 w-2.5 text-white" />,
+          color: 'bg-gradient-to-r from-amber-500 to-amber-600',
+          delay: 0.2
+        },
+        {
+          id: 'urbanization',
+          title: 'Urbanization and Its Effects',
+          icon: <Map className="h-2.5 w-2.5 text-white" />,
+          color: 'bg-gradient-to-r from-blue-500 to-blue-600',
+          delay: 0.3
+        }
+      ];
     }
-  ];
+  };
+  
+  const insights = getInsights();
   
   return (
     <div className="space-y-1">

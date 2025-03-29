@@ -5,6 +5,7 @@ import { Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CountryData, DataMetric } from '@/types/country';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CountryTableRowProps {
   country: CountryData;
@@ -24,6 +25,7 @@ const CountryTableRow = ({
   showMetricColumn = true
 }: CountryTableRowProps) => {
   const isMobile = useIsMobile();
+  const { language } = useLanguage();
   const isSelected = selectedCountry === country.id;
   
   const rowVariants = {
@@ -39,7 +41,7 @@ const CountryTableRow = ({
     }
   };
 
-  // 人口密度を計算
+  // Calculate population density
   const getPopulationDensity = () => {
     if (!country.area_km2 || country.area_km2 === 0) return null;
     return country.population / country.area_km2;
@@ -96,7 +98,11 @@ const CountryTableRow = ({
           onClick={() => onCountrySelect(isSelected ? null : country.id)}
         >
           <Eye className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-0.5 sm:mr-1" />
-          <span className="text-[8px] sm:text-xs">{isSelected ? "隠す" : "表示"}</span>
+          <span className="text-[8px] sm:text-xs">
+            {isSelected 
+              ? (language === 'es' ? 'Ocultar' : 'Hide') 
+              : (language === 'es' ? 'Mostrar' : 'Show')}
+          </span>
         </Button>
       </td>
     </motion.tr>

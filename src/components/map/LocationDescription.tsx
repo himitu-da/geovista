@@ -3,23 +3,41 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { motion } from 'framer-motion';
 import { Map, Clock, Home, Camera, Book, Users, MapPin } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface LocationDescriptionProps {
   description: string;
 }
 
 /**
- * 場所の説明を美しく表示するコンポーネント
+ * Component for beautifully displaying location descriptions
  */
 const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }) => {
-  // 見出しタイプに基づいてアイコンを選択する関数
+  const { language } = useLanguage();
+  
+  // Function to select icon based on heading type
   const getHeadingIcon = (text: string) => {
     const lowerText = text.toLowerCase();
-    if (lowerText.includes('地理')) return <Map className="w-4 h-4 mr-1.5 text-blue-500" />;
-    if (lowerText.includes('歴史')) return <Clock className="w-4 h-4 mr-1.5 text-amber-500" />;
-    if (lowerText.includes('文化')) return <Users className="w-4 h-4 mr-1.5 text-purple-500" />;
-    if (lowerText.includes('見どころ')) return <Camera className="w-4 h-4 mr-1.5 text-green-500" />;
-    if (lowerText.includes('概要')) return <Book className="w-4 h-4 mr-1.5 text-gray-500" />;
+    
+    // English heading keywords
+    if (language === 'en') {
+      if (lowerText.includes('geography')) return <Map className="w-4 h-4 mr-1.5 text-blue-500" />;
+      if (lowerText.includes('history')) return <Clock className="w-4 h-4 mr-1.5 text-amber-500" />;
+      if (lowerText.includes('culture')) return <Users className="w-4 h-4 mr-1.5 text-purple-500" />;
+      if (lowerText.includes('points of interest') || lowerText.includes('attractions')) 
+        return <Camera className="w-4 h-4 mr-1.5 text-green-500" />;
+      if (lowerText.includes('overview')) return <Book className="w-4 h-4 mr-1.5 text-gray-500" />;
+    } 
+    // Spanish heading keywords
+    else {
+      if (lowerText.includes('geografía')) return <Map className="w-4 h-4 mr-1.5 text-blue-500" />;
+      if (lowerText.includes('historia')) return <Clock className="w-4 h-4 mr-1.5 text-amber-500" />;
+      if (lowerText.includes('cultura')) return <Users className="w-4 h-4 mr-1.5 text-purple-500" />;
+      if (lowerText.includes('puntos de interés') || lowerText.includes('atracciones')) 
+        return <Camera className="w-4 h-4 mr-1.5 text-green-500" />;
+      if (lowerText.includes('resumen')) return <Book className="w-4 h-4 mr-1.5 text-gray-500" />;
+    }
+    
     return <MapPin className="w-4 h-4 mr-1.5 text-red-500" />;
   };
 
@@ -36,7 +54,7 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
             <h1 className="text-sm font-bold mb-2 text-blue-600 border-b pb-1.5" {...props} />
           ),
           h2: ({ node, children, ...props }) => {
-            // 見出しテキストを取得して適切なアイコンを選択
+            // Get heading text and select appropriate icon
             const headingText = children ? children.toString() : '';
             const icon = getHeadingIcon(headingText);
             

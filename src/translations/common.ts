@@ -1,50 +1,50 @@
 
 import { TranslationRecord } from './types';
 
-// 共通の翻訳
+// Common translations
 export const commonTranslations: Record<string, TranslationRecord> = {
   loadingMapData: {
     en: "Loading map data...",
-    ja: "地図データを読み込み中..."
+    es: "Cargando datos del mapa..."
   },
   searchCountry: {
     en: "Search for a country...",
-    ja: "国名を検索..."
+    es: "Buscar un país..."
   },
   homeView: {
     en: "Home View",
-    ja: "ホームビュー"
+    es: "Vista Inicial"
   },
   zoomIn: {
     en: "Zoom In",
-    ja: "ズームイン"
+    es: "Acercar"
   },
   zoomOut: {
     en: "Zoom Out",
-    ja: "ズームアウト"
+    es: "Alejar"
   },
   searchByCountry: {
     en: "Search by Country",
-    ja: "国名で検索"
+    es: "Buscar por País"
   },
   returnToHome: {
     en: "Return to Home",
-    ja: "ホームに戻る"
+    es: "Volver a Inicio"
   },
   navigation: {
     en: "Navigation",
-    ja: "ナビゲーション"
+    es: "Navegación"
   },
   home: {
     en: "Home",
-    ja: "ホーム"
+    es: "Inicio"
   },
   explorer: {
     en: "Explorer",
-    ja: "エクスプローラー"
+    es: "Explorador"
   },
   languageToggle: {
-    en: "日本語",
-    ja: "English"
+    en: "Español",
+    es: "English"
   },
 };

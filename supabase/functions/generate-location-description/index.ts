@@ -14,34 +14,51 @@ serve(async (req) => {
   }
 
   try {
-    const { latitude, longitude } = await req.json();
+    const { latitude, longitude, language } = await req.json();
     
-    // Gemini APIキーを取得
+    // Get API key
     const apiKey = Deno.env.get('CLAUDE_API_KEY');
     if (!apiKey) {
       throw new Error('API key not found');
     }
 
-    // Gemini APIのエンドポイント
+    // Gemini API endpoint
     const apiUrl = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
     
-    // 位置情報に基づいて生成するプロンプト
-    const prompt = `
-    緯度: ${latitude}、経度: ${longitude} にある場所について詳細に説明してください。
-    以下の構造で回答を提供してください：
+    // Create appropriate prompt based on language
+    const promptEn = `
+    For the location at latitude: ${latitude}, longitude: ${longitude}, provide a detailed description.
+    Structure your response as follows:
 
-    - タイトル: この場所の簡潔な名称または地域名
-    - 概要: この場所の短い概要（1-2文）
-    - 地理: この場所の地理的特徴について（2-3文）
-    - 歴史: この場所の歴史的背景（2-3文）
-    - 文化: この地域の文化的特徴（2-3文）
-    - 見どころ: 観光名所や訪問すべき場所（箇条書きで3つ）
+    - Title: A concise name or region for this location
+    - Overview: A brief overview of this place (1-2 sentences)
+    - Geography: Geographical features of this location (2-3 sentences)
+    - History: Historical background of this area (2-3 sentences)
+    - Culture: Cultural characteristics of this region (2-3 sentences)
+    - Points of Interest: Places to visit (3 bullet points)
 
-    各セクションを明確に分け、マークダウン形式で構造化してください。
-    回答は日本語で、合計で400文字程度でお願いします。
+    Structure each section clearly and use markdown formatting.
+    Keep your response to about 400 characters in English.
     `;
 
-    // Gemini APIリクエスト
+    const promptEs = `
+    Para la ubicación en latitud: ${latitude}, longitud: ${longitude}, proporciona una descripción detallada.
+    Estructura tu respuesta de la siguiente manera:
+
+    - Título: Un nombre o región conciso para esta ubicación
+    - Resumen: Una breve descripción de este lugar (1-2 oraciones)
+    - Geografía: Características geográficas de esta ubicación (2-3 oraciones)
+    - Historia: Antecedentes históricos de esta área (2-3 oraciones)
+    - Cultura: Características culturales de esta región (2-3 oraciones)
+    - Puntos de Interés: Lugares para visitar (3 puntos)
+
+    Estructura cada sección claramente y usa formato markdown.
+    Mantén tu respuesta en aproximadamente 400 caracteres en español.
+    `;
+
+    // Select prompt based on language
+    const prompt = language === 'es' ? promptEs : promptEn;
+
     console.log("Sending request to Gemini API with prompt:", prompt);
     const response = await fetch(`${apiUrl}?key=${apiKey}`, {
       method: 'POST',
@@ -74,8 +91,10 @@ serve(async (req) => {
     const data = await response.json();
     console.log("API Response:", JSON.stringify(data));
     
-    // レスポンスからテキストを抽出
-    let description = "説明を生成できませんでした。";
+    // Extract text from response
+    let description = language === 'es' 
+      ? "No se pudo generar una descripción." 
+      : "Could not generate description.";
     
     if (data.candidates && 
         data.candidates[0] && 

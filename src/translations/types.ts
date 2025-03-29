@@ -1,12 +1,12 @@
 
 export type TranslationRecord = {
   en: string;
-  ja: string;
+  es: string;
 };
 
 export type TranslationsMap = Record<string, TranslationRecord>;
 
-export type Language = 'en' | 'ja';
+export type Language = 'en' | 'es';
 
 export interface LandingTranslations {
   en: {
@@ -47,7 +47,7 @@ export interface LandingTranslations {
     globalExploration: string;
     globalExplorationDesc: string;
   };
-  ja: {
+  es: {
     launchExplorer: string;
     dataVizPlatform: string;
     exploreWorldData: string;

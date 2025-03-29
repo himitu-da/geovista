@@ -16,33 +16,33 @@ const STORAGE_KEY = 'preferred_language';
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  // ブラウザの言語設定から初期値を取得するロジック
+  // Get initial language from browser settings or local storage
   const getBrowserLanguage = (): Language => {
-    // ローカルストレージから言語設定を取得
+    // Get from local storage first
     const savedLanguage = localStorage.getItem(STORAGE_KEY) as Language | null;
-    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ja')) {
+    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'es')) {
       return savedLanguage;
     }
     
-    // ブラウザの言語設定を確認
+    // Check browser language
     const browserLang = navigator.language.split('-')[0].toLowerCase();
-    return browserLang === 'ja' ? 'ja' : 'en'; // jaならja、それ以外はen
+    return browserLang === 'es' ? 'es' : 'en'; // Spanish or default to English
   };
 
-  const [language, setLanguage] = useState<Language>('en'); // デフォルトは英語
+  const [language, setLanguage] = useState<Language>('en'); // Default is English
 
-  // 初期化時にブラウザの言語を取得
+  // Initialize with browser language on load
   useEffect(() => {
     setLanguage(getBrowserLanguage());
   }, []);
 
-  // 言語変更時にローカルストレージに保存
+  // Save language preference to localStorage when changed
   const handleSetLanguage = (newLang: Language) => {
     setLanguage(newLang);
     localStorage.setItem(STORAGE_KEY, newLang);
   };
 
-  // 翻訳関数
+  // Translation function
   const t = (key: string): string => {
     if (!translations[key]) {
       console.warn(`Translation key "${key}" not found`);
@@ -58,7 +58,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   );
 };
 
-// 言語コンテキストを使用するためのカスタムフック
+// Custom hook for using language context
 export const useLanguage = (): LanguageContextType => {
   const context = useContext(LanguageContext);
   if (context === undefined) {
@@ -67,6 +67,6 @@ export const useLanguage = (): LanguageContextType => {
   return context;
 };
 
-// 翻訳データをエクスポート（コンポーネントから直接アクセスできるように）
+// Export translations and Language type
 export { translations };
 export type { Language };

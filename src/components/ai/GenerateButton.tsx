@@ -2,6 +2,7 @@
 import React from 'react';
 import { Loader2, Sparkles } from 'lucide-react';
 import { ButtonAnimation } from '@/components/animations/ButtonAnimation';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface GenerateButtonProps {
   loading: boolean;
@@ -14,6 +15,8 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
   disabled,
   onClick
 }) => {
+  const { language } = useLanguage();
+  
   return (
     <ButtonAnimation>
       <button
@@ -24,12 +27,12 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
         {loading ? (
           <span className="flex items-center">
             <Loader2 className="animate-spin h-3 w-3 mr-1.5" /> 
-            生成中...
+            {language === 'es' ? 'Generando...' : 'Generating...'}
           </span>
         ) : (
           <span className="flex items-center">
             <Sparkles className="h-3 w-3 mr-1.5" />
-            インサイトを生成
+            {language === 'es' ? 'Generar insights' : 'Generate insights'}
           </span>
         )}
       </button>

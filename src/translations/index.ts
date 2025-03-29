@@ -4,15 +4,15 @@ import { commonTranslations } from './common';
 import { explorerTranslations } from './explorer';
 import { landingTranslations } from './landing';
 
-// 全ての翻訳をマージ
+// Merge all translations
 export const translations: TranslationsMap = {
   ...commonTranslations,
   ...explorerTranslations,
-  // landingTranslations を TranslationsMap 形式に変換
-  ...Object.entries(landingTranslations.en).reduce<Record<string, { en: string; ja: string }>>((acc, [key, value]) => {
+  // Convert landingTranslations to TranslationsMap format
+  ...Object.entries(landingTranslations.en).reduce<Record<string, { en: string; es: string }>>((acc, [key, value]) => {
     acc[key] = {
       en: landingTranslations.en[key],
-      ja: landingTranslations.ja[key]
+      es: landingTranslations.es[key]
     };
     return acc;
   }, {})

@@ -1,134 +1,138 @@
 
 import { TranslationRecord } from './types';
 
-// エクスプローラー画面用の翻訳
+// Explorer page translations
 export const explorerTranslations: Record<string, TranslationRecord> = {
   visualizationType: {
     en: "Visualization Type",
-    ja: "可視化タイプ"
+    es: "Tipo de Visualización"
   },
   dataMetrics: {
     en: "Data Metrics",
-    ja: "データ指標"
+    es: "Métricas de Datos"
   },
   aiInsights: {
     en: "AI Insights",
-    ja: "AIインサイト"
+    es: "Insights de IA"
   },
   information: {
     en: "Information",
-    ja: "情報"
+    es: "Información"
   },
   map: {
     en: "Map",
-    ja: "マップ"
+    es: "Mapa"
   },
   chart: {
     en: "Chart",
-    ja: "チャート"
+    es: "Gráfico"
   },
   populationDensity: {
     en: "Population Density",
-    ja: "人口密度"
+    es: "Densidad de Población"
   },
   totalPopulation: {
     en: "Total Population",
-    ja: "総人口"
+    es: "Población Total"
   },
   gdpPerCapita: {
     en: "GDP Per Capita",
-    ja: "一人当たりGDP"
+    es: "PIB Per Cápita"
   },
   selectedCountry: {
     en: "Selected Country",
-    ja: "選択された国"
+    es: "País Seleccionado"
   },
   population: {
     en: "Population",
-    ja: "人口"
+    es: "Población"
   },
   area: {
     en: "Area",
-    ja: "面積"
+    es: "Área"
   },
   aboutTheApp: {
     en: "This application is a tool for visually exploring data from countries around the world.",
-    ja: "このアプリケーションは世界各国のデータを視覚的に探索するためのツールです。"
+    es: "Esta aplicación es una herramienta para explorar visualmente datos de países de todo el mundo."
   },
   compareCountries: {
     en: "You can compare countries using various metrics and get AI-generated insights.",
-    ja: "様々な指標で国を比較し、AIによる洞察を得ることができます。"
+    es: "Puede comparar países utilizando varias métricas y obtener insights generados por IA."
   },
   features: {
     en: "Features",
-    ja: "機能"
+    es: "Características"
   },
   mapView: {
     en: "Map View: Highlight countries geographically",
-    ja: "マップビュー: 地理的に国をハイライト"
+    es: "Vista de Mapa: Resaltar países geográficamente"
   },
   chartView: {
     en: "Chart View: Compare data from top 20 countries",
-    ja: "チャートビュー: トップ20カ国のデータを比較"
+    es: "Vista de Gráfico: Comparar datos de los 20 principales países"
   },
   aiInsightFeature: {
     en: "AI Insights: Generate insights from selected country data",
-    ja: "AIインサイト: 選択した国のデータから洞察を生成"
+    es: "Insights de IA: Generar insights a partir de datos de países seleccionados"
   },
   enjoyExploring: {
     en: "Enjoy exploring the data",
-    ja: "データ探索をお楽しみください"
+    es: "Disfrute explorando los datos"
   },
   globalDataVisualization: {
     en: "Interactive Global Data Visualization",
-    ja: "インタラクティブなグローバルデータビジュアライゼーション"
+    es: "Visualización Interactiva de Datos Globales"
   },
   featuredInsights: {
     en: "Featured Insights",
-    ja: "注目のインサイト"
+    es: "Insights Destacados"
   },
   searchCountries: {
     en: "Search countries...",
-    ja: "国を検索..."
+    es: "Buscar países..."
   },
   country: {
     en: "Country",
-    ja: "国名"
+    es: "País"
   },
   actions: {
     en: "Actions",
-    ja: "アクション"
+    es: "Acciones"
   },
   viewOnMap: {
     en: "View on Map",
-    ja: "地図で見る"
+    es: "Ver en Mapa"
   },
   viewing: {
     en: "Viewing",
-    ja: "表示中"
+    es: "Viendo"
   },
   mapExplorer: {
     en: "Map Explorer",
-    ja: "マップエクスプローラー"
+    es: "Explorador de Mapas"
   },
   dataExplorer: {
     en: "Data Explorer",
-    ja: "データエクスプローラー"
+    es: "Explorador de Datos"
   },
   overview: {
     en: "Overview",
-    ja: "概要"
+    es: "Resumen"
   },
   geography: {
     en: "Geography",
-    ja: "地理"
+    es: "Geografía"
   },
   demographics: {
     en: "Demographics",
-    ja: "人口統計"
+    es: "Demografía"
   },
   economy: {
     en: "Economy",
-    ja: "経済"
+    es: "Economía"
   },
+  noCountriesFound: {
+    en: "No countries found",
+    es: "No se encontraron países"
+  }
 };

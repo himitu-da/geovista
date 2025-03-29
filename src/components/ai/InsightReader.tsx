@@ -3,6 +3,7 @@ import React from 'react';
 import { Headphones, PauseCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ButtonAnimation } from '@/components/animations/ButtonAnimation';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface InsightReaderProps {
   insight: string;
@@ -15,6 +16,8 @@ const InsightReader: React.FC<InsightReaderProps> = ({
   isPlaying,
   onTogglePlay
 }) => {
+  const { language } = useLanguage();
+  
   if (!insight) return null;
   
   return (
@@ -26,12 +29,12 @@ const InsightReader: React.FC<InsightReaderProps> = ({
         {isPlaying ? (
           <>
             <PauseCircle className="h-3.5 w-3.5 mr-1.5" />
-            一時停止
+            {language === 'es' ? 'Pausar' : 'Pause'}
           </>
         ) : (
           <>
             <Headphones className="h-3.5 w-3.5 mr-1.5" />
-            読み上げ
+            {language === 'es' ? 'Escuchar' : 'Listen'}
           </>
         )}
       </button>

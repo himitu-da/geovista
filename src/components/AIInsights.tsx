@@ -5,8 +5,9 @@ import { Lightbulb } from 'lucide-react';
 import InsightGenerator from './ai/InsightGenerator';
 import InsightReader from './ai/InsightReader';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 
-// インサイトジェネレーターの遅延時間（ミリ秒）
+// Insight generation delay (milliseconds)
 const INSIGHT_GENERATION_DELAY = 1500;
 
 interface AIInsightsProps {
@@ -15,17 +16,18 @@ interface AIInsightsProps {
 }
 
 /**
- * AIインサイトコンポーネント
- * 選択された国と指標に基づいてAI生成のインサイトを表示
+ * AI Insights component
+ * Displays AI-generated insights based on selected country and metric
  */
 const AIInsights: React.FC<AIInsightsProps> = ({ country, metric }) => {
   const [insight, setInsight] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  const { language } = useLanguage();
 
   /**
-   * Claude APIからインサイトをリクエストする関数（エッジ関数で実装予定）
+   * Request insights from Claude API (to be implemented with edge function)
    */
   const generateInsights = async () => {
     if (!country) return;
@@ -33,46 +35,64 @@ const AIInsights: React.FC<AIInsightsProps> = ({ country, metric }) => {
     setLoading(true);
     
     try {
-      // API呼び出しの遅延をシミュレート
+      // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, INSIGHT_GENERATION_DELAY));
       
-      // 選択されたメトリックと国に基づくプレースホルダーインサイトを生成
+      // Generate placeholder insight based on selected metric and country
       const insightText = generatePlaceholderInsight(country, metric);
       setInsight(insightText);
     } catch (error) {
       console.error('Error generating insights:', error);
-      setInsight('インサイトの生成に失敗しました。後でもう一度お試しください。');
+      setInsight(language === 'es' 
+        ? 'Error al generar insights. Por favor, inténtelo de nuevo más tarde.' 
+        : 'Failed to generate insights. Please try again later.');
     } finally {
       setLoading(false);
     }
   };
 
   /**
-   * 指標タイプに基づいてプレースホルダーのインサイトテキストを生成
+   * Generate placeholder insight text based on metric type
    */
   const generatePlaceholderInsight = (country: CountryData, metric: DataMetric): string => {
-    switch (metric) {
-      case 'population_density':
-        return `${country.name}の人口密度は1平方キロメートルあたり${Math.round((country.population / (country.area_km2 || 1)))}人です。これは世界平均と比較して${(country.population / (country.area_km2 || 1)) > 100 ? '比較的高い' : '比較的低い'}値であり、地理的特徴や歴史的な居住パターンに影響されています。`;
-      
-      case 'population':
-        return `${country.population.toLocaleString()}人の人口を持つ${country.name}は、その地域の${country.population > 50000000 ? '最も人口が多い' : '人口が少ない'}国々の中に位置しています。人口動向は出生率、移民パターン、経済的機会によって形成されることがよくあります。`;
-      
-      case 'gdp_per_capita':
-        return `${country.name}の一人当たりGDPは、人口で割った経済生産を反映しています。この指標は天然資源、産業発展、教育レベル、貿易関係などの要因に影響されます。`;
-      
-      default:
-        return '選択された指標に関する情報は現在利用できません。';
+    if (language === 'es') {
+      switch (metric) {
+        case 'population_density':
+          return `La densidad de población de ${country.name} es de ${Math.round((country.population / (country.area_km2 || 1)))} personas por kilómetro cuadrado. Este es un valor ${(country.population / (country.area_km2 || 1)) > 100 ? 'relativamente alto' : 'relativamente bajo'} en comparación con el promedio mundial, influenciado por características geográficas y patrones de asentamiento históricos.`;
+        
+        case 'population':
+          return `Con una población de ${country.population.toLocaleString()} personas, ${country.name} se sitúa entre los países ${country.population > 50000000 ? 'más poblados' : 'menos poblados'} de su región. Las tendencias demográficas suelen estar moldeadas por tasas de natalidad, patrones de migración y oportunidades económicas.`;
+        
+        case 'gdp_per_capita':
+          return `El PIB per cápita de ${country.name} refleja la producción económica dividida por la población. Este indicador está influenciado por factores como recursos naturales, desarrollo industrial, niveles educativos y relaciones comerciales.`;
+        
+        default:
+          return 'La información sobre el indicador seleccionado no está disponible actualmente.';
+      }
+    } else {
+      switch (metric) {
+        case 'population_density':
+          return `${country.name}'s population density is ${Math.round((country.population / (country.area_km2 || 1)))} people per square kilometer. This is a ${(country.population / (country.area_km2 || 1)) > 100 ? 'relatively high' : 'relatively low'} value compared to the world average, influenced by geographical features and historical settlement patterns.`;
+        
+        case 'population':
+          return `With a population of ${country.population.toLocaleString()}, ${country.name} ranks among the ${country.population > 50000000 ? 'most populous' : 'less populous'} countries in its region. Demographic trends are often shaped by birth rates, migration patterns, and economic opportunities.`;
+        
+        case 'gdp_per_capita':
+          return `${country.name}'s GDP per capita reflects economic output divided by population. This indicator is influenced by factors such as natural resources, industrial development, education levels, and trade relationships.`;
+        
+        default:
+          return 'Information about the selected indicator is currently not available.';
+      }
     }
   };
 
   /**
-   * ElevenLabsを使用してインサイトを読み上げる関数（エッジ関数で実装予定）
+   * Use ElevenLabs to read insight (to be implemented with edge function)
    */
   const toggleAudio = async () => {
     if (!insight) return;
     
-    // 既存のオーディオがある場合は再生/一時停止を切り替え
+    // Toggle existing audio playback if available
     if (audio) {
       if (isPlaying) {
         audio.pause();
@@ -86,13 +106,13 @@ const AIInsights: React.FC<AIInsightsProps> = ({ country, metric }) => {
     
     try {
       setIsPlaying(true);
-      // ElevenLabs APIの統合のプレースホルダー
+      // ElevenLabs API integration placeholder
 
-      // オーディオ再生をシミュレート
+      // Simulate audio playback
       const audioElement = new Audio('https://elevenlabs.io/audio/sample.mp3');
       setAudio(audioElement);
       
-      // イベントリスナーの設定
+      // Set up event listeners
       audioElement.onended = () => {
         setIsPlaying(false);
       };
@@ -119,7 +139,7 @@ const AIInsights: React.FC<AIInsightsProps> = ({ country, metric }) => {
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-sm font-medium text-gray-700 flex items-center">
           <Lightbulb className="mr-2 h-4 w-4 text-amber-500" />
-          AIインサイト
+          {language === 'es' ? 'Insights de IA' : 'AI Insights'}
         </h3>
         
         <InsightGenerator 
@@ -136,6 +156,7 @@ const AIInsights: React.FC<AIInsightsProps> = ({ country, metric }) => {
         country={country}
         isPlaying={isPlaying}
         onTogglePlay={toggleAudio}
+        language={language}
       />
     </motion.div>
   );
@@ -146,17 +167,19 @@ interface InsightContentProps {
   country: CountryData | undefined;
   isPlaying: boolean;
   onTogglePlay: () => void;
+  language: string;
 }
 
 /**
- * インサイトコンテンツコンポーネント
- * インサイトの表示とプロンプトメッセージを切り替え
+ * Insight content component
+ * Toggles between insight display and prompt message
  */
 const InsightContent: React.FC<InsightContentProps> = ({ 
   insight, 
   country, 
   isPlaying, 
-  onTogglePlay 
+  onTogglePlay,
+  language
 }) => (
   <AnimatePresence mode="wait">
     {insight ? (
@@ -183,8 +206,12 @@ const InsightContent: React.FC<InsightContentProps> = ({
         className="text-xs text-gray-500 italic"
       >
         {country 
-          ? '「インサイトを生成」をクリックして、この国に関するAI駆動の分析を取得します。' 
-          : '地図上で国を選択して、AI駆動のインサイトを取得します。'
+          ? (language === 'es' 
+              ? 'Haga clic en "Generar insights" para obtener un análisis impulsado por IA de este país.' 
+              : 'Click "Generate insights" to get AI-driven analysis for this country.') 
+          : (language === 'es'
+              ? 'Seleccione un país en el mapa para obtener insights impulsados por IA.'
+              : 'Select a country on the map to get AI-driven insights.')
         }
       </motion.p>
     )}
