@@ -27,30 +27,30 @@ const SidebarVisualizationSection: React.FC<SidebarVisualizationSectionProps> = 
   return (
     <>
       <Card className="border-none shadow-none">
-        <CardContent className="p-2">
-          <div className="flex p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
+        <CardContent className="p-1">
+          <div className="flex p-0.5 bg-gray-100 dark:bg-gray-800 rounded-lg">
             <button 
-              className={`flex items-center justify-center px-3 py-2 ${
+              className={`flex items-center justify-center px-2 py-1 ${
                 visualizationType === 'map' 
                   ? 'bg-white dark:bg-gray-700 text-gray-800 dark:text-white shadow-sm'
                   : 'bg-transparent text-gray-600 dark:text-gray-300'
-              } rounded-md font-medium text-sm transition-all duration-200 flex-1`}
+              } rounded-md font-medium text-xs transition-all duration-200 flex-1`}
               onClick={() => onVisualizationTypeChange('map')}
               aria-pressed={visualizationType === 'map'}
             >
-              <Map className="mr-2 h-4 w-4" />
+              <Map className="mr-1 h-3 w-3" />
               {t('map')}
             </button>
             <button 
-              className={`flex items-center justify-center px-3 py-2 ${
+              className={`flex items-center justify-center px-2 py-1 ${
                 visualizationType === 'chart' 
                   ? 'bg-white dark:bg-gray-700 text-gray-800 dark:text-white shadow-sm'
                   : 'bg-transparent text-gray-600 dark:text-gray-300'
-              } rounded-md font-medium text-sm transition-all duration-200 flex-1`}
+              } rounded-md font-medium text-xs transition-all duration-200 flex-1`}
               onClick={() => onVisualizationTypeChange('chart')}
               aria-pressed={visualizationType === 'chart'}
             >
-              <BarChart3 className="mr-2 h-4 w-4" />
+              <BarChart3 className="mr-1 h-3 w-3" />
               {t('chart')}
             </button>
           </div>
@@ -61,6 +61,7 @@ const SidebarVisualizationSection: React.FC<SidebarVisualizationSectionProps> = 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
+        className="scale-90 origin-top-left"
       >
         <Legend metric={selectedMetric} />
       </motion.div>

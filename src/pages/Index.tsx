@@ -51,15 +51,17 @@ const Index = () => {
       {/* エラーメッセージ */}
       <ErrorMessage error={error} />
       
-      {/* ベースレイヤーとしてのフルスクリーンマップ */}
-      <MapLayer 
-        countries={countries} 
-        loading={loading} 
-        selectedMetric={selectedMetric}
-        selectedCountry={selectedCountry}
-        onCountrySelect={setSelectedCountry}
-        visualizationType={visualizationType}
-      />
+      {/* ベースレイヤーとしてのフルスクリーンマップ (拡大して80%以上を占めるようにする) */}
+      <div className="absolute inset-0 scale-[1.05] origin-center">
+        <MapLayer 
+          countries={countries} 
+          loading={loading} 
+          selectedMetric={selectedMetric}
+          selectedCountry={selectedCountry}
+          onCountrySelect={setSelectedCountry}
+          visualizationType={visualizationType}
+        />
+      </div>
       
       {/* UIレイヤー */}
       <UILayer 

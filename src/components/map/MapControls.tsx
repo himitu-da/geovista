@@ -40,9 +40,9 @@ const MapControls: React.FC<MapControlsProps> = ({
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="absolute bottom-6 right-6 z-[400] flex flex-col gap-2"
+      className="absolute bottom-4 right-4 z-[400] flex flex-col gap-1.5"
     >
-      <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full shadow-md p-1.5 flex flex-col gap-1.5">
+      <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full shadow-md p-1 flex flex-col gap-1">
         {[
           { icon: Home, action: 'reset', title: 'homeView' },
           { icon: ZoomIn, action: 'zoomIn', title: 'zoomIn' },
@@ -51,10 +51,10 @@ const MapControls: React.FC<MapControlsProps> = ({
           <button 
             key={index}
             onClick={() => handleMapAction(button.action as 'reset' | 'zoomIn' | 'zoomOut')}
-            className="w-9 h-9 flex items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+            className="w-7 h-7 flex items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
             title={t(button.title)}
           >
-            <button.icon size={18} />
+            <button.icon size={16} />
           </button>
         ))}
       </div>
@@ -62,14 +62,14 @@ const MapControls: React.FC<MapControlsProps> = ({
       <button 
         onClick={() => setShowSearch(!showSearch)}
         className={cn(
-          "w-12 h-12 flex items-center justify-center rounded-full shadow-md transition-colors",
+          "w-9 h-9 flex items-center justify-center rounded-full shadow-md transition-colors",
           showSearch 
             ? "bg-blue-600 text-white hover:bg-blue-700" 
             : "bg-white/90 dark:bg-gray-800/90 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
         )}
         title={t('searchByCountry')}
       >
-        <Search size={20} />
+        <Search size={18} />
       </button>
     </motion.div>
   );

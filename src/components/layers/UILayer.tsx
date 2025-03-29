@@ -59,8 +59,8 @@ const UILayer = ({
         variants={itemVariants}
         className="flex flex-col h-full pointer-events-none"
       >
-        {/* ヘッダー - ポインターイベント有効 */}
-        <div className="pointer-events-auto">
+        {/* ヘッダー - ポインターイベント有効 （最小化） */}
+        <div className="pointer-events-auto h-12">
           <Header />
         </div>
         
@@ -79,26 +79,28 @@ const UILayer = ({
             </div>
           </SidebarProvider>
           
-          {/* データビューパネル（右側） */}
-          <div className="pointer-events-auto flex-grow max-w-xs lg:max-w-sm hidden md:block">
-            <div className="h-full p-4 flex flex-col space-y-4 overflow-auto">
-              <DataExplorerTabs 
-                activeTab={activeTab}
-                onTabChange={onTabChange}
-                activeCategory={activeCategory}
-                onCategoryChange={onCategoryChange}
-                countries={countries}
-                selectedMetric={selectedMetric}
-                onCountrySelect={onCountrySelect}
-                selectedCountry={selectedCountry}
-                onVisualizationTypeChange={onVisualizationTypeChange}
-              />
+          {/* データビューパネル（右側） - 必要な場合のみ表示 */}
+          {selectedCountry && (
+            <div className="pointer-events-auto max-w-[20vw] hidden lg:block opacity-90 hover:opacity-100 transition-opacity">
+              <div className="h-full p-2 flex flex-col space-y-2 overflow-auto">
+                <DataExplorerTabs 
+                  activeTab={activeTab}
+                  onTabChange={onTabChange}
+                  activeCategory={activeCategory}
+                  onCategoryChange={onCategoryChange}
+                  countries={countries}
+                  selectedMetric={selectedMetric}
+                  onCountrySelect={onCountrySelect}
+                  selectedCountry={selectedCountry}
+                  onVisualizationTypeChange={onVisualizationTypeChange}
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
         
-        {/* フッター - ポインターイベント有効 */}
-        <div className="pointer-events-auto">
+        {/* フッター - ポインターイベント有効 （最小化） */}
+        <div className="pointer-events-auto h-8">
           <Footer />
         </div>
       </motion.div>
