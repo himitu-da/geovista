@@ -137,7 +137,7 @@ export const translations: Translations = {
     ja: "English"
   },
   // Landing page translations
-  launchExplorer: {
+  launchApp: {
     en: "Launch Explorer",
     ja: "エクスプローラーを起動"
   },
