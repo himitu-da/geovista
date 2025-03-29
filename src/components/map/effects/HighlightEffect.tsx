@@ -1,5 +1,5 @@
-// src/components/map/effects/HighlightEffect.tsx
-import { useEffect, useRef } from 'react';
+
+import { useEffect } from 'react';
 import L from 'leaflet';
 
 interface HighlightEffectProps {
@@ -16,28 +16,8 @@ const HighlightEffect: React.FC<HighlightEffectProps> = ({
   selectedCountry,
   countryGeoJson
 }) => {
-  // マーカーのレイヤー参照を保持
-  const markerLayerRef = useRef<L.CircleMarker | null>(null);
-  const animationFrameRef = useRef<number | null>(null);
-  
-  // クリーンアップ関数
-  const cleanupEffect = () => {
-    if (markerLayerRef.current && map) {
-      map.removeLayer(markerLayerRef.current);
-      markerLayerRef.current = null;
-    }
-    
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-      animationFrameRef.current = null;
-    }
-  };
-  
   // 選択されている国が画面の焦点に来るようにアニメーション
   useEffect(() => {
-    // クリーンアップ
-    cleanupEffect();
-    
     if (!selectedCountry || !map || !countryGeoJson) return;
     
     const highlightPulse = () => {
@@ -45,9 +25,7 @@ const HighlightEffect: React.FC<HighlightEffectProps> = ({
         (feature: any) => feature.properties.id === selectedCountry
       );
       
-      if (!selectedFeature) return;
-      
-      try {
+      if (selectedFeature) {
         const geoJSON = L.geoJSON(selectedFeature.geometry as any);
         const bounds = geoJSON.getBounds();
         const center = bounds.getCenter();
@@ -62,14 +40,11 @@ const HighlightEffect: React.FC<HighlightEffectProps> = ({
           opacity: 0.8
         }).addTo(map);
         
-        markerLayerRef.current = marker;
-        
-        // パルスアニメーション変数
+        // パルスアニメーション
         let scale = 1;
         let opacity = 0.4;
         let growing = false;
         
-        // アニメーション関数
         const animate = () => {
           if (growing) {
             scale += 0.05;
@@ -85,28 +60,25 @@ const HighlightEffect: React.FC<HighlightEffectProps> = ({
             }
           }
           
-          if (marker && map.hasLayer(marker)) {
-            marker.setStyle({
-              radius: 15 * scale,
-              fillOpacity: Math.max(0.1, opacity)
-            });
-            
-            animationFrameRef.current = requestAnimationFrame(animate);
-          }
+          marker.setStyle({
+            radius: 15 * scale,
+            fillOpacity: Math.max(0.1, opacity)
+          });
+          
+          setTimeout(animate, 50);
         };
         
-        // アニメーション開始
-        animationFrameRef.current = requestAnimationFrame(animate);
+        animate();
         
-      } catch (error) {
-        console.error('Error creating highlight effect:', error);
+        // クリーンアップ
+        return () => {
+          map.removeLayer(marker);
+        };
       }
     };
     
-    highlightPulse();
-    
-    // クリーンアップ
-    return cleanupEffect;
+    const cleanup = highlightPulse();
+    return cleanup;
   }, [selectedCountry, map, countryGeoJson]);
   
   return null;

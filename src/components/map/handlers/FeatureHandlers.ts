@@ -1,15 +1,7 @@
-// src/components/map/handlers/FeatureHandlers.ts
+
 import L from 'leaflet';
 import { DataMetric } from '@/types/country';
 import { getColorForValue } from '@/utils/mapUtils';
-
-/**
- * GeoJSON Featureの型定義拡張
- */
-interface ExtendedLayer extends L.Layer {
-  feature?: any;
-  setStyle?: (style: L.PathOptions) => void;
-}
 
 /**
  * GeoJSONフィーチャーのスタイルを設定する関数
@@ -20,11 +12,10 @@ export const styleFeature = (feature: any, selectedCountry: string | null, selec
   
   let value: number | null = null;
   
-  // 選択された指標に基づいてスタイル値を計算
   if (selectedMetric === 'population_density') {
     const population = feature.properties.population || 0;
     const area = feature.properties.area_km2;
-    value = area && area > 0 ? population / area : null;
+    value = area ? population / area : null;
   } else if (selectedMetric === 'population') {
     value = feature.properties.population;
   } else if (selectedMetric === 'gdp_per_capita') {
@@ -52,7 +43,7 @@ export const generateCountryTooltip = (props: any, selectedMetric: DataMetric): 
   let valueToShow = '';
   let formattedValue = '';
   
-  if (selectedMetric === 'population_density' && props.area_km2 && props.area_km2 > 0) {
+  if (selectedMetric === 'population_density' && props.area_km2) {
     const density = props.population / props.area_km2;
     valueToShow = `人口密度`;
     formattedValue = `${density.toFixed(1)} 人/km²`;
@@ -72,20 +63,14 @@ export const generateCountryTooltip = (props: any, selectedMetric: DataMetric): 
 };
 
 /**
- * レイヤーのスタイルをリセットする関数
+ * レイヤーをリセットする関数
  */
 export const resetLayerStyle = (layer: L.Layer, selectedCountry: string | null) => {
-  // 拡張型を使用して型エラーを回避
-  const extendedLayer = layer as ExtendedLayer;
-  
-  if (extendedLayer.feature && extendedLayer.setStyle && 
-      extendedLayer.feature.properties && 
-      extendedLayer.feature.properties.id !== selectedCountry) {
-    
-    extendedLayer.setStyle({
+  if ((layer as any).feature.properties.id !== selectedCountry) {
+    (layer as any).setStyle({
       weight: 1,
-      fillOpacity: 0.75,
-      dashArray: '1'
+      fillOpacity: 0.75,  // 常に高い不透明度を維持
+      dashArray: '1'      // 細かいダッシュに変更
     });
   }
 };

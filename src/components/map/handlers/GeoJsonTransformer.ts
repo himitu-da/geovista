@@ -1,4 +1,4 @@
-// src/components/map/handlers/GeoJsonTransformer.ts
+
 import { CountryData } from '@/types/country';
 import { captureException } from '@/lib/sentry';
 import L from 'leaflet';
@@ -13,26 +13,6 @@ export const transformToGeoJson = (countries: CountryData[]) => {
     return {
       type: 'FeatureCollection',
       features: countries.map(country => {
-        // geometry形式の確認と適切な処理
-        let geometry;
-        if (country.geometry) {
-          if (typeof country.geometry === 'object') {
-            if ('geometry' in country.geometry) {
-              // 既にFeature形式の場合はgeometryプロパティを取り出す
-              geometry = country.geometry.geometry;
-            } else {
-              // geometryオブジェクトが直接存在する場合はそのまま使用
-              geometry = country.geometry;
-            }
-          }
-        }
-        
-        // geometryがない場合のフォールバック
-        if (!geometry) {
-          geometry = { type: 'Polygon', coordinates: [] };
-          console.warn(`Warning: No valid geometry for country ${country.name}`);
-        }
-        
         return {
           type: 'Feature',
           properties: {
@@ -41,11 +21,9 @@ export const transformToGeoJson = (countries: CountryData[]) => {
             code: country.code,
             population: country.population,
             area_km2: country.area_km2,
-            gdp_per_capita: country.gdp_per_capita || 0,
-            population_density: country.population_density || 
-              (country.area_km2 ? country.population / country.area_km2 : 0)
+            gdp_per_capita: country.gdp_per_capita || 0
           },
-          geometry
+          geometry: country.geometry.geometry
         };
       })
     };
@@ -68,26 +46,11 @@ export const fitMapToCountry = (
   map: L.Map,
   options?: { duration?: number, maxZoom?: number }
 ) => {
-  if (!country || !country.geometry || !map) return false;
+  if (!country || !country.geometry || !country.geometry.geometry || !map) return false;
   
   try {
     // GeoJSONオブジェクトを作成
-    let geometry;
-    
-    if (typeof country.geometry === 'object') {
-      if ('geometry' in country.geometry) {
-        geometry = country.geometry.geometry;
-      } else {
-        geometry = country.geometry;
-      }
-    }
-    
-    if (!geometry) {
-      console.warn(`Warning: Cannot fit to country ${country.name} - invalid geometry`);
-      return false;
-    }
-    
-    const geoJSON = L.geoJSON(geometry as any);
+    const geoJSON = L.geoJSON(country.geometry.geometry as any);
     
     // 境界を取得し、地図をこれらの境界に合わせる
     const bounds = geoJSON.getBounds();
