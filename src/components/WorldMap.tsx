@@ -114,7 +114,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
         &copy; <a href="https://www.openstreetmap.org/copyright" className="hover:text-blue-600 font-medium">OpenStreetMap</a>
       </div>
       
-      {/* Pin tooltip with animation */}
+      {/* Pin instruction tooltip with animation */}
       <PinInstructionTooltip />
     </div>
   );
