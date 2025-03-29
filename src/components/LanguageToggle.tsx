@@ -17,6 +17,7 @@ const LanguageToggle: React.FC = () => {
       size="sm" 
       className="rounded-full flex items-center gap-1.5 hover:bg-blue-50 hover:text-blue-600 transition-colors"
       onClick={toggleLanguage}
+      aria-label={`Switch language to ${language === 'en' ? 'Japanese' : 'English'}`}
     >
       <Globe className="h-4 w-4" />
       <span>{t('languageToggle')}</span>
