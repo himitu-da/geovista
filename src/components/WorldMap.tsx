@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { MapContainer, TileLayer, ZoomControl } from 'react-leaflet';
+import React, { useState, useRef } from 'react';
+import { MapContainer, TileLayer, ZoomControl, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { CountryData, DataMetric } from '@/types/country';
 import MapDataHandler from './map/MapDataHandler';
@@ -21,6 +21,20 @@ let DefaultIcon = L.icon({
 });
 
 L.Marker.prototype.options.icon = DefaultIcon;
+
+// Map controller component to set the map reference
+function MapController({ setMapRef }: { setMapRef: React.Dispatch<React.SetStateAction<L.Map | null>> }) {
+  const map = useMap();
+  
+  React.useEffect(() => {
+    setMapRef(map);
+    return () => {
+      setMapRef(null);
+    };
+  }, [map, setMapRef]);
+  
+  return null;
+}
 
 interface WorldMapProps {
   countries: CountryData[];
@@ -206,8 +220,10 @@ const WorldMap: React.FC<WorldMapProps> = ({
         minZoom={2}
         maxZoom={8}
         maxBounds={[[-90, -180], [90, 180]]}
-        whenCreated={setMapRef}
       >
+        {/* Map controller to get reference to the map */}
+        <MapController setMapRef={setMapRef} />
+        
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
