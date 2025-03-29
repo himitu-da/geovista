@@ -1,7 +1,9 @@
 
 import React, { useState } from 'react';
 import { CountryData, DataMetric } from '@/types/country';
-import { Info, MicIcon, Loader2 } from 'lucide-react';
+import { Info } from 'lucide-react';
+import InsightGenerator from './ai/InsightGenerator';
+import InsightReader from './ai/InsightReader';
 
 interface AIInsightsProps {
   country: CountryData | undefined;
@@ -20,7 +22,6 @@ const AIInsights: React.FC<AIInsightsProps> = ({ country, metric }) => {
     
     setLoading(true);
     // Placeholder for Claude API integration
-    // This would be replaced with actual API call to Anthropic Claude
     try {
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -46,7 +47,7 @@ const AIInsights: React.FC<AIInsightsProps> = ({ country, metric }) => {
   };
 
   // Function to read insights using ElevenLabs (to be implemented with edge function)
-  const readInsights = async () => {
+  const toggleAudio = async () => {
     if (!insight) return;
     
     if (audio) {
@@ -63,7 +64,6 @@ const AIInsights: React.FC<AIInsightsProps> = ({ country, metric }) => {
     try {
       setIsPlaying(true);
       // Placeholder for ElevenLabs API integration
-      // This would be replaced with actual API call
 
       // Simulate audio playback
       const audioElement = new Audio('https://elevenlabs.io/audio/sample.mp3');
@@ -92,34 +92,24 @@ const AIInsights: React.FC<AIInsightsProps> = ({ country, metric }) => {
           <Info className="mr-2 h-4 w-4 text-blue-500" />
           AI Insights
         </h3>
-        {!insight && (
-          <button
-            onClick={generateInsights}
-            disabled={loading || !country}
-            className="text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium py-1 px-2 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <span className="flex items-center">
-                <Loader2 className="animate-spin h-3 w-3 mr-1" /> 
-                Generating...
-              </span>
-            ) : (
-              'Generate Insights'
-            )}
-          </button>
-        )}
+        
+        <InsightGenerator 
+          country={country}
+          metric={metric}
+          loading={loading}
+          insight={insight}
+          onGenerate={generateInsights}
+        />
       </div>
       
       {insight ? (
         <div className="text-sm text-gray-600">
           <p className="mb-2">{insight}</p>
-          <button
-            onClick={readInsights}
-            className="flex items-center text-xs bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium py-1 px-2 rounded transition-colors"
-          >
-            <MicIcon className="h-3 w-3 mr-1" />
-            {isPlaying ? 'Pause' : 'Listen'}
-          </button>
+          <InsightReader 
+            insight={insight}
+            isPlaying={isPlaying}
+            onTogglePlay={toggleAudio}
+          />
         </div>
       ) : (
         <p className="text-xs text-gray-500 italic">

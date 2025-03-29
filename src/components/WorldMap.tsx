@@ -3,7 +3,9 @@ import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { CountryData, DataMetric } from '@/types/country';
-import { captureException } from '@/lib/sentry';
+import MapboxKeyForm from './map/MapboxKeyForm';
+import MapDataHandler from './map/MapDataHandler';
+import { initializeMap } from '@/utils/mapUtils';
 
 interface WorldMapProps {
   countries: CountryData[];
@@ -32,12 +34,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
     }
   }, []);
 
-  const handleKeySubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const target = event.target as typeof event.target & {
-      mapbox_key: { value: string };
-    };
-    const newKey = target.mapbox_key.value;
+  const handleKeySubmit = (newKey: string) => {
     localStorage.setItem('mapbox_key', newKey);
     setMapKey(newKey);
   };
@@ -46,289 +43,19 @@ const WorldMap: React.FC<WorldMapProps> = ({
   useEffect(() => {
     if (!mapKey || !mapContainer.current) return;
     
-    try {
-      mapboxgl.accessToken = mapKey;
-      
-      if (map.current) return; // Initialize map only once
-      
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/light-v11',
-        center: [0, 20],
-        zoom: 1.5,
-      });
-
-      // Add navigation controls
-      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-      
-      // Add event listener for when the map is loaded
-      map.current.on('load', () => {
-        console.log('Map loaded successfully');
-      });
-      
-      // Cleanup function
-      return () => {
-        map.current?.remove();
-        map.current = null;
-      };
-    } catch (err) {
-      captureException(err);
-      console.error('Error initializing map:', err);
-    }
+    if (map.current) return; // Initialize map only once
+    
+    map.current = initializeMap(mapContainer.current, mapKey);
+    
+    // Cleanup function
+    return () => {
+      map.current?.remove();
+      map.current = null;
+    };
   }, [mapKey]);
 
-  // Function to get color based on metric
-  const getColorExpression = (metric: DataMetric) => {
-    if (metric === 'population_density') {
-      return [
-        'interpolate',
-        ['linear'],
-        ['get', 'population_density'],
-        0, '#e2f1ff',
-        10, '#c8e1ff',
-        50, '#94c8ff',
-        100, '#64a9ff',
-        500, '#3485ed',
-        1000, '#0061db'
-      ];
-    } 
-    else if (metric === 'population') {
-      return [
-        'interpolate',
-        ['linear'],
-        ['get', 'population'],
-        0, '#e2f1ff',
-        1000000, '#c8e1ff',
-        10000000, '#94c8ff',
-        50000000, '#64a9ff',
-        100000000, '#3485ed',
-        500000000, '#0061db'
-      ];
-    }
-    else if (metric === 'gdp_per_capita') {
-      return [
-        'interpolate',
-        ['linear'],
-        ['get', 'gdp_per_capita'],
-        0, '#e2f1ff',
-        1000, '#c8e1ff',
-        5000, '#94c8ff',
-        15000, '#64a9ff',
-        30000, '#3485ed',
-        50000, '#0061db'
-      ];
-    }
-    
-    // Default fallback
-    return [
-      'interpolate',
-      ['linear'],
-      ['get', 'population_density'],
-      0, '#e2f1ff',
-      10, '#c8e1ff',
-      50, '#94c8ff',
-      100, '#64a9ff',
-      500, '#3485ed',
-      1000, '#0061db'
-    ];
-  };
-
-  // Add GeoJSON data to map when countries data is loaded or metric changes
-  useEffect(() => {
-    if (!map.current || !mapKey || loading || countries.length === 0) return;
-    
-    try {
-      // Wait for map to be loaded
-      if (!map.current.isStyleLoaded()) {
-        map.current.once('style.load', () => {
-          addCountriesToMap();
-        });
-      } else {
-        addCountriesToMap();
-      }
-    } catch (err) {
-      captureException(err);
-      console.error('Error adding countries to map:', err);
-    }
-    
-    function addCountriesToMap() {
-      if (!map.current) return;
-      
-      // Create a GeoJSON feature collection from the countries data
-      const geojson = {
-        type: 'FeatureCollection',
-        features: countries.map(country => {
-          // Calculate population density if needed
-          const population_density = country.area_km2 ? (country.population / country.area_km2) : null;
-          
-          return {
-            type: 'Feature',
-            properties: {
-              id: country.id,
-              name: country.name,
-              code: country.code,
-              population: country.population,
-              population_density: population_density,
-              gdp_per_capita: country.gdp_per_capita || 0,
-              selected: country.id === selectedCountry
-            },
-            geometry: country.geometry.geometry
-          };
-        })
-      };
-      
-      // Remove existing layers and sources if they exist
-      if (map.current.getSource('countries')) {
-        map.current.removeLayer('countries-fill');
-        map.current.removeLayer('countries-line');
-        map.current.removeLayer('countries-selected');
-        map.current.removeSource('countries');
-      }
-      
-      // Add the countries source
-      map.current.addSource('countries', {
-        type: 'geojson',
-        data: geojson as any
-      });
-      
-      // Add a fill layer
-      map.current.addLayer({
-        id: 'countries-fill',
-        type: 'fill',
-        source: 'countries',
-        paint: {
-          'fill-color': getColorExpression(selectedMetric),
-          'fill-opacity': [
-            'case',
-            ['boolean', ['get', 'selected'], false],
-            1,
-            ['boolean', ['to-boolean', selectedCountry], false],
-            0.5,
-            0.8
-          ]
-        }
-      });
-      
-      // Add a highlighting layer for selected country
-      map.current.addLayer({
-        id: 'countries-selected',
-        type: 'fill',
-        source: 'countries',
-        filter: ['==', 'selected', true],
-        paint: {
-          'fill-color': getColorExpression(selectedMetric),
-          'fill-outline-color': '#000000',
-          'fill-opacity': 1
-        }
-      });
-      
-      // Add a line layer
-      map.current.addLayer({
-        id: 'countries-line',
-        type: 'line',
-        source: 'countries',
-        paint: {
-          'line-color': '#627BC1',
-          'line-width': [
-            'case',
-            ['boolean', ['get', 'selected'], false],
-            2,
-            1
-          ]
-        }
-      });
-      
-      // Add a popup on hover
-      const popup = new mapboxgl.Popup({
-        closeButton: false,
-        closeOnClick: false
-      });
-      
-      map.current.on('mouseenter', 'countries-fill', (e) => {
-        if (!map.current || !e.features || e.features.length === 0) return;
-        
-        map.current.getCanvas().style.cursor = 'pointer';
-        
-        const feature = e.features[0];
-        const props = feature.properties;
-        
-        const coordinates = e.lngLat;
-        
-        let valueToShow = '';
-        if (selectedMetric === 'population_density' && props.population_density) {
-          valueToShow = `Density: ${Number(props.population_density).toFixed(2)} people/km²`;
-        } else if (selectedMetric === 'gdp_per_capita' && props.gdp_per_capita) {
-          valueToShow = `GDP Per Capita: $${Number(props.gdp_per_capita).toLocaleString()}`;
-        } else {
-          valueToShow = `Population: ${Number(props.population).toLocaleString()}`;
-        }
-        
-        const popupContent = `
-          <div class="p-2">
-            <h3 class="font-bold text-lg">${props.name}</h3>
-            <p>${valueToShow}</p>
-          </div>
-        `;
-        
-        popup.setLngLat(coordinates).setHTML(popupContent).addTo(map.current);
-      });
-      
-      map.current.on('mouseleave', 'countries-fill', () => {
-        if (!map.current) return;
-        map.current.getCanvas().style.cursor = '';
-        popup.remove();
-      });
-      
-      // Add click event for selecting a country
-      map.current.on('click', 'countries-fill', (e) => {
-        if (!map.current || !e.features || e.features.length === 0) return;
-        
-        const feature = e.features[0];
-        const props = feature.properties;
-        
-        // Toggle selection if already selected
-        if (props.id === selectedCountry) {
-          onCountrySelect(null);
-        } else {
-          onCountrySelect(props.id);
-        }
-      });
-    }
-  }, [countries, loading, mapKey, selectedMetric, selectedCountry, onCountrySelect]);
-
   if (!mapKey) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full p-6">
-        <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-          <h2 className="text-xl font-bold mb-4">Mapbox API Key Required</h2>
-          <p className="mb-4">
-            Please enter your Mapbox public access token to load the map. 
-            You can get one from <a href="https://account.mapbox.com/access-tokens/" className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">Mapbox</a>.
-          </p>
-          <form onSubmit={handleKeySubmit} className="space-y-4">
-            <div>
-              <label htmlFor="mapbox_key" className="block mb-1 font-medium">
-                Mapbox Public Token
-              </label>
-              <input
-                type="text"
-                id="mapbox_key"
-                name="mapbox_key"
-                className="w-full p-2 border rounded"
-                placeholder="Enter your Mapbox public token"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Save & Load Map
-            </button>
-          </form>
-        </div>
-      </div>
-    );
+    return <MapboxKeyForm onKeySubmit={handleKeySubmit} />;
   }
 
   return (
@@ -342,6 +69,17 @@ const WorldMap: React.FC<WorldMapProps> = ({
         </div>
       )}
       <div ref={mapContainer} className="w-full h-full" />
+      
+      {/* This component handles all data-related interactions with the map */}
+      {map.current && !loading && countries.length > 0 && (
+        <MapDataHandler
+          map={map.current}
+          countries={countries}
+          selectedMetric={selectedMetric}
+          selectedCountry={selectedCountry}
+          onCountrySelect={onCountrySelect}
+        />
+      )}
     </div>
   );
 };
