@@ -6,82 +6,82 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 240 0% 11%;
+    --foreground: 240 0% 9%; /* より濃い前景色 */
 
     --card: 0 0% 100%;
-    --card-foreground: 240 0% 11%;
+    --card-foreground: 240 0% 9%; /* より濃い前景色 */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 0% 11%;
+    --popover-foreground: 240 0% 9%; /* より濃い前景色 */
 
-    --primary: 211 100% 45%;
+    --primary: 213 100% 45%; /* より鮮やかな青 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 1% 97%;
-    --secondary-foreground: 240 0% 11%;
+    --secondary: 240 2% 95%;
+    --secondary-foreground: 240 0% 9%; /* より濃い前景色 */
 
-    --muted: 240 1% 97%;
-    --muted-foreground: 240 0% 46%;
+    --muted: 240 1% 95%;
+    --muted-foreground: 240 0% 40%; /* よりコントラストの高いミュートカラー */
 
-    --accent: 240 1% 97%;
-    --accent-foreground: 240 0% 11%;
+    --accent: 240 1% 95%;
+    --accent-foreground: 240 0% 9%; /* より濃い前景色 */
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84.2% 55%; /* より濃いデストラクティブカラー */
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 1% 90%;
-    --input: 240 1% 90%;
-    --ring: 240 0% 11%;
+    --border: 240 1% 85%; /* より鮮明な境界線 */
+    --input: 240 1% 85%; /* より鮮明な入力境界線 */
+    --ring: 240 0% 9%; /* より濃いリング */
 
     --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-foreground: 240 5.3% 20%;
+    --sidebar-primary: 240 5.9% 8%; /* より濃いサイドバープライマリ */
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
+    --sidebar-accent: 240 4.8% 94%;
+    --sidebar-accent-foreground: 240 5.9% 8%; /* より濃いサイドバーアクセント前景色 */
+    --sidebar-border: 220 13% 88%; /* より鮮明なサイドバー境界線 */
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 240 0% 11%;
+    --background: 240 0% 9%; /* より深いダークモード背景 */
     --foreground: 0 0% 98%;
 
-    --card: 240 0% 11%;
+    --card: 240 0% 9%; /* より深いダークモード背景 */
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 0% 11%;
+    --popover: 240 0% 9%; /* より深いダークモード背景 */
     --popover-foreground: 0 0% 98%;
 
-    --primary: 211 100% 45%;
+    --primary: 213 100% 50%; /* より明るい青 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 2% 18%;
+    --secondary: 240 3% 15%; /* よりコントラストの高いセカンダリ */
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 2% 18%;
-    --muted-foreground: 240 0% 66%;
+    --muted: 240 3% 15%; /* よりコントラストの高いミュートカラー */
+    --muted-foreground: 240 0% 70%; /* よりコントラストの高いミュート前景色 */
 
-    --accent: 240 2% 18%;
+    --accent: 240 3% 15%; /* よりコントラストの高いアクセント */
     --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 62.8% 35%; /* より濃いデストラクティブカラー */
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 2% 18%;
-    --input: 240 2% 18%;
-    --ring: 240 0% 86%;
+    --border: 240 3% 20%; /* より鮮明な境界線 */
+    --input: 240 3% 20%; /* より鮮明な入力境界線 */
+    --ring: 240 0% 90%; /* より明るいリング */
     
-    --sidebar-background: 240 0% 11%;
-    --sidebar-foreground: 240 1% 97%;
-    --sidebar-primary: 211 100% 45%;
+    --sidebar-background: 240 0% 9%; /* より深いダークモード背景 */
+    --sidebar-foreground: 240 2% 97%;
+    --sidebar-primary: 213 100% 50%; /* より明るい青 */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 2% 18%;
-    --sidebar-accent-foreground: 240 1% 97%;
-    --sidebar-border: 240 2% 18%;
-    --sidebar-ring: 211 100% 45%;
+    --sidebar-accent: 240 3% 15%; /* よりコントラストの高いアクセント */
+    --sidebar-accent-foreground: 240 2% 97%;
+    --sidebar-border: 240 3% 20%; /* より鮮明な境界線 */
+    --sidebar-ring: 213 100% 50%; /* より明るい青 */
   }
 }
 
@@ -98,7 +98,7 @@
   
   /* Apple-inspired styling for components */
   .country-popup .leaflet-popup-content-wrapper {
-    @apply rounded-xl shadow-lg border border-gray-100 bg-white/95 backdrop-blur-sm;
+    @apply rounded-xl shadow-lg border border-gray-200 bg-white/95 backdrop-blur-sm; /* より明確な境界線 */
   }
   
   .country-popup .leaflet-popup-tip {
@@ -118,11 +118,11 @@
   }
   
   .glass-effect {
-    @apply backdrop-blur-md bg-white/80 dark:bg-black/80 border border-white/10 dark:border-white/5;
+    @apply backdrop-blur-md bg-white/90 dark:bg-black/90 border border-white/20 dark:border-white/10; /* コントラスト向上 */
   }
   
   .text-gradient-primary {
-    @apply bg-gradient-to-r from-blue-600 via-blue-500 to-sky-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 bg-clip-text text-transparent; /* より濃い青のグラデーション */
   }
   
   @keyframes fadeIn {
@@ -138,5 +138,15 @@
   
   .animate-fade-in {
     animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  /* シャドウの強化 */
+  .shadow-contrast {
+    @apply shadow-[0_4px_12px_rgba(0,0,0,0.15)];
+  }
+  
+  /* ボタンのホバー効果を強化 */
+  .hover-contrast {
+    @apply transition-all hover:brightness-110 hover:shadow-lg;
   }
 }

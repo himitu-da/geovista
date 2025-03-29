@@ -28,11 +28,11 @@ const ParticleBackground: React.FC = () => {
   const isMouseMovingRef = useRef(false);
   const mouseMovingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 統一されたカラーパレット
+  // より高いコントラストを持つカラーパレット
   const colorPalette = [
-    'rgba(101, 130, 255, opacity)', // メインブルー
-    'rgba(66, 103, 255, opacity)',  // ディープブルー
-    'rgba(133, 153, 255, opacity)'  // ライトブルー
+    'rgba(79, 114, 255, opacity)',  // 明るいブルー
+    'rgba(46, 82, 218, opacity)',   // ミディアムブルー
+    'rgba(14, 52, 190, opacity)'    // ディープブルー
   ];
 
   useEffect(() => {
@@ -52,14 +52,14 @@ const ParticleBackground: React.FC = () => {
     const createParticles = () => {
       particlesRef.current = [];
       for (let i = 0; i < particleCount; i++) {
-        const opacity = Math.random() * 0.5 + 0.1;
+        const opacity = Math.random() * 0.6 + 0.2; // 透明度を高めて、コントラストを向上
         const colorIndex = Math.floor(Math.random() * colorPalette.length);
         const color = colorPalette[colorIndex].replace('opacity', opacity.toString());
         
         particlesRef.current.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 2 + 1,
+          size: Math.random() * 3 + 1.5, // サイズを大きくして視認性を向上
           speedX: (Math.random() - 0.5) * 0.5,
           speedY: (Math.random() - 0.5) * 0.5,
           opacity,
@@ -119,9 +119,9 @@ const ParticleBackground: React.FC = () => {
             
             if (distance < 120) {
               ctx.beginPath();
-              // 接続線は一貫性のために同じブルー系統で、透明度のみ変化させる
-              ctx.strokeStyle = `rgba(101, 130, 255, ${0.15 * (1 - distance / 120)})`;
-              ctx.lineWidth = 0.5;
+              // より濃い青色を使用して接続線のコントラストを向上
+              ctx.strokeStyle = `rgba(79, 114, 255, ${0.25 * (1 - distance / 120)})`; // 透明度を上げてコントラスト向上
+              ctx.lineWidth = 0.7; // 線を太くして視認性を向上
               ctx.moveTo(particle.x, particle.y);
               ctx.lineTo(otherParticle.x, otherParticle.y);
               ctx.stroke();
@@ -174,9 +174,9 @@ const ParticleBackground: React.FC = () => {
   return (
     <motion.canvas
       ref={canvasRef}
-      className="fixed inset-0 z-0 opacity-30 pointer-events-none"
+      className="fixed inset-0 z-0 opacity-40 pointer-events-none" // 不透明度を上げてコントラストを向上
       initial={{ opacity: 0 }}
-      animate={{ opacity: 0.3 }}
+      animate={{ opacity: 0.4 }} // 不透明度を上げる
       transition={{ duration: 1.5 }}
     />
   );

@@ -116,7 +116,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
         />
       )}
       
-      {/* Full screen map */}
+      {/* Full screen map - コントラスト向上のために明るいタイルを使用 */}
       <MapContainer 
         center={[20, 0]} 
         zoom={2} 
@@ -131,9 +131,10 @@ const WorldMap: React.FC<WorldMapProps> = ({
         {/* Map controller to get reference to the map */}
         <MapController setMapRef={setMapRef} />
         
+        {/* コントラストの高いマップタイルを使用 */}
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         />
         
         {!loading && countries.length > 0 && (
@@ -146,9 +147,9 @@ const WorldMap: React.FC<WorldMapProps> = ({
         )}
       </MapContainer>
       
-      {/* Attribution overlay in bottom right */}
-      <div className="absolute bottom-0 right-0 z-[400] text-xs text-gray-500 bg-white/70 px-2 py-1 rounded-tl-md">
-        &copy; <a href="https://www.openstreetmap.org/copyright" className="hover:text-blue-500">OpenStreetMap</a>
+      {/* Attribution overlay in bottom right - より高いコントラスト */}
+      <div className="absolute bottom-0 right-0 z-[400] text-xs text-gray-700 bg-white/80 px-2 py-1 rounded-tl-md shadow-sm">
+        &copy; <a href="https://www.openstreetmap.org/copyright" className="hover:text-blue-600 font-medium">OpenStreetMap</a>
       </div>
     </div>
   );

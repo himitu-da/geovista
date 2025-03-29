@@ -85,17 +85,22 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Apple-specific colors
-				'apple-blue': '#0071e3',
+				// Apple-specific colors - コントラスト向上
+				'apple-blue': {
+					DEFAULT: '#0066CC', // より濃いブルー
+					light: '#409CFF',
+					dark: '#004C99',
+				},
 				'apple-gray': {
 					50: '#f5f5f7',
 					100: '#e8e8ed',
 					200: '#d2d2d7',
 					300: '#a1a1a6',
-					400: '#86868b',
-					500: '#6e6e73',
+					400: '#6e6e73', // より暗いグレー
+					500: '#515156', // より暗いグレー
 					600: '#3a3a3c',
 					700: '#1d1d1f',
+					800: '#121214', // より暗いグレー追加
 				},
 			},
 			borderRadius: {
@@ -104,10 +109,10 @@ export default {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			boxShadow: {
-				'apple-sm': '0 2px 5px -1px rgba(0, 0, 0, 0.05)',
-				'apple-md': '0 4px 12px -2px rgba(0, 0, 0, 0.05)',
-				'apple-lg': '0 12px 32px -4px rgba(0, 0, 0, 0.1)',
-				'apple-xl': '0 24px 48px -8px rgba(0, 0, 0, 0.15)',
+				'apple-sm': '0 2px 5px rgba(0, 0, 0, 0.08)', // シャドウ濃度アップ
+				'apple-md': '0 4px 12px rgba(0, 0, 0, 0.1)', // シャドウ濃度アップ
+				'apple-lg': '0 12px 32px rgba(0, 0, 0, 0.15)', // シャドウ濃度アップ
+				'apple-xl': '0 24px 48px rgba(0, 0, 0, 0.2)', // シャドウ濃度アップ
 			},
 			keyframes: {
 				'accordion-down': {

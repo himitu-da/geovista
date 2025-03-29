@@ -33,21 +33,21 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
       {...animationConfig}
       className="absolute top-4 left-4 z-[400]"
     >
-      <form onSubmit={handleSearch} className="flex">
+      <form onSubmit={handleSearch} className="flex shadow-apple-md">
         <input 
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={t('searchCountry')}
-          className="py-1.5 px-2.5 text-sm rounded-l-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent shadow-sm w-40"
+          className="py-2 px-3 text-sm rounded-l-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent w-48 bg-white text-gray-800"
           aria-label={t('searchCountry')}
         />
         <button 
           type="submit" 
-          className="bg-blue-500 text-white py-1.5 px-2.5 rounded-r-md hover:bg-blue-600 transition-colors"
+          className="bg-blue-600 text-white py-2 px-3 rounded-r-md hover:bg-blue-700 transition-colors"
           aria-label={t('search')}
         >
-          <Search size={14} />
+          <Search size={16} />
         </button>
       </form>
     </motion.div>
