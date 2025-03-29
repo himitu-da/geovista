@@ -13,6 +13,7 @@ import { ChevronDown } from 'lucide-react';
 interface MetricDropdownProps {
   selectedMetric: DataMetric;
   onMetricChange: (metric: DataMetric) => void;
+  isInHeader?: boolean;
 }
 
 /**
@@ -20,7 +21,8 @@ interface MetricDropdownProps {
  */
 const MetricDropdown: React.FC<MetricDropdownProps> = ({
   selectedMetric,
-  onMetricChange
+  onMetricChange,
+  isInHeader = false
 }) => {
   const { t } = useLanguage();
   
@@ -40,18 +42,18 @@ const MetricDropdown: React.FC<MetricDropdownProps> = ({
   
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2.5 bg-white rounded-lg shadow-md text-sm font-medium">
+      <DropdownMenuTrigger className={`flex items-center gap-2 px-3 py-1.5 ${isInHeader ? 'bg-gray-50 w-full justify-center' : 'bg-white'} rounded-lg shadow-sm text-xs font-medium`}>
         {getMetricLabel(selectedMetric)}
-        <ChevronDown className="h-4 w-4" />
+        <ChevronDown className="h-3 w-3" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-white shadow-lg border-0">
-        <DropdownMenuItem onClick={() => onMetricChange('population_density')} className="hover:bg-gray-100">
+      <DropdownMenuContent align={isInHeader ? "center" : "end"} className="bg-white shadow-lg border-0 z-[500]">
+        <DropdownMenuItem onClick={() => onMetricChange('population_density')} className="hover:bg-gray-100 text-xs">
           {t('populationDensity')}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onMetricChange('population')} className="hover:bg-gray-100">
+        <DropdownMenuItem onClick={() => onMetricChange('population')} className="hover:bg-gray-100 text-xs">
           {t('totalPopulation')}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onMetricChange('gdp_per_capita')} className="hover:bg-gray-100">
+        <DropdownMenuItem onClick={() => onMetricChange('gdp_per_capita')} className="hover:bg-gray-100 text-xs">
           {t('gdpPerCapita')}
         </DropdownMenuItem>
       </DropdownMenuContent>
