@@ -66,13 +66,13 @@ export const HeroSection = () => {
         >
           <Link to="/explore">
             <ButtonAnimation>
-              <Button size="lg" className="px-8 py-6 rounded-full text-lg shadow-apple-md hover:shadow-apple-lg transition-all bg-primary hover:bg-primary/90">
+              <Button size="lg" className="px-8 py-6 rounded-full text-lg shadow-apple-md hover:shadow-apple-lg transition-all bg-primary hover:bg-primary/90 w-full sm:w-auto">
                 {t('startExploring')}
               </Button>
             </ButtonAnimation>
           </Link>
           <ButtonAnimation>
-            <a href="#features" className="inline-flex items-center justify-center px-8 py-6 text-lg font-medium text-apple-gray-700 bg-white rounded-full shadow-apple-sm hover:shadow-apple-md transition-all">
+            <a href="#features" className="inline-flex items-center justify-center px-8 py-6 text-lg font-medium text-apple-gray-700 bg-white border border-gray-200 rounded-full shadow-apple-sm hover:shadow-apple-md transition-all w-full sm:w-auto">
               {t('viewFeatures')}
             </a>
           </ButtonAnimation>
