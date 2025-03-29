@@ -25,10 +25,19 @@ export function useCountryData() {
 
         if (data) {
           setCountries(data as CountryData[]);
+        } else {
+          // If no data is returned but also no error (e.g., empty array)
+          setCountries([]);
         }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch country data';
-        setError(errorMessage);
+        
+        if (errorMessage.includes('not configured')) {
+          setError('Supabase connection not configured. Please set up your Supabase credentials.');
+        } else {
+          setError(errorMessage);
+        }
+        
         captureException(err);
         console.error('Error fetching countries:', err);
       } finally {
