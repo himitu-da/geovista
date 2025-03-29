@@ -36,12 +36,12 @@ const WorldMap: React.FC<WorldMapProps> = ({
   selectedCountry 
 }) => {
   return (
-    <div className="relative w-full h-full rounded-xl overflow-hidden border border-gray-100 shadow-[0_4px_25px_rgba(0,0,0,0.05)]">
+    <div className="relative w-full h-full rounded-2xl overflow-hidden border border-gray-100 shadow-apple-md">
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 backdrop-blur-sm z-[1000]">
           <div className="flex flex-col items-center">
-            <div className="h-10 w-10 border-4 border-gray-300 border-t-gray-900 rounded-full animate-spin mb-3"></div>
-            <p className="text-gray-800 font-medium tracking-tight">Loading map data...</p>
+            <div className="h-10 w-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-3"></div>
+            <p className="text-apple-gray-600 font-medium tracking-tight">Loading map data...</p>
           </div>
         </div>
       )}
@@ -52,6 +52,9 @@ const WorldMap: React.FC<WorldMapProps> = ({
         style={{ height: '100%', width: '100%' }}
         zoomControl={false}
         className="z-0"
+        minZoom={2}
+        maxZoom={8}
+        maxBounds={[[-90, -180], [90, 180]]}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
