@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import WorldMap from '@/components/WorldMap';
+import Footer from '@/components/layout/Footer';
 import { CountryData, DataMetric } from '@/types/country';
 
 // アニメーション設定
@@ -42,6 +43,7 @@ const MapLayer = ({
         onCountrySelect={onCountrySelect}
         selectedCountry={selectedCountry}
       />
+      <Footer />
     </motion.div>
   );
 }

@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Button } from '@/components/ui/button';
 import { Globe } from 'lucide-react';
 
 const LanguageToggle: React.FC = () => {
@@ -12,16 +11,14 @@ const LanguageToggle: React.FC = () => {
   };
 
   return (
-    <Button 
-      variant="outline" 
-      size="sm" 
-      className="rounded-full flex items-center gap-1.5 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+    <button 
+      className="bg-white rounded-md p-2 shadow-md text-gray-700 hover:bg-gray-100 flex items-center gap-1"
       onClick={toggleLanguage}
       aria-label={`Switch language to ${language === 'en' ? 'Japanese' : 'English'}`}
     >
-      <Globe className="h-4 w-4" />
-      <span>{t('languageToggle')}</span>
-    </Button>
+      <Globe size={16} />
+      <span className="text-xs font-medium">{language === 'en' ? '日本語' : 'English'}</span>
+    </button>
   );
 };
 
