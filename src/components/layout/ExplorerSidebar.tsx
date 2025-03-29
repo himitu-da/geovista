@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { DataMetric, CountryData } from '@/types/country';
-import { Badge } from 'lucide-react';
+import { BadgeInfo } from 'lucide-react';
 import AIInsights from '@/components/AIInsights';
 import { 
   Sidebar, 
@@ -54,17 +54,17 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
   
   return (
     <Sidebar variant={isMobile ? "inset" : "floating"} collapsible="icon">
-      <SidebarHeader className="flex items-center justify-between p-1 sm:p-2">
-        <div className="flex items-center gap-1 sm:gap-2">
-          <Badge className="h-4 w-4 sm:h-6 sm:w-6" />
-          <span className="font-medium text-xs sm:text-sm">{t('explorer')}</span>
+      <SidebarHeader className="flex items-center justify-between p-1">
+        <div className="flex items-center gap-1">
+          <BadgeInfo className="h-3 w-3 sm:h-4 sm:w-4" />
+          <span className="font-medium text-[10px] sm:text-xs truncate">{t('explorer')}</span>
         </div>
         <SidebarTrigger />
       </SidebarHeader>
       
-      <SidebarContent>
+      <SidebarContent className="overflow-y-auto overflow-x-hidden">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] sm:text-xs">{t('navigation')}</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[9px] sm:text-[10px]">{t('navigation')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarNavigation 
               activeSection={activeSection}
@@ -92,7 +92,7 @@ const ExplorerSidebar: React.FC<ExplorerSidebarProps> = ({
       </SidebarContent>
       
       <SidebarFooter>
-        <div className="text-[8px] sm:text-xs text-gray-500 p-1 sm:p-2">
+        <div className="text-[8px] text-gray-500 p-1 truncate">
           {t('enjoyExploring')}
         </div>
       </SidebarFooter>
@@ -130,7 +130,7 @@ const renderActiveSection = (
     case 'visualization':
       return (
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] sm:text-xs">{t('visualizationType')}</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[9px] sm:text-[10px]">{t('visualizationType')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarVisualizationSection 
               visualizationType={visualizationType}
@@ -144,7 +144,7 @@ const renderActiveSection = (
     case 'metrics':
       return (
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] sm:text-xs">{t('dataMetrics')}</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[9px] sm:text-[10px]">{t('dataMetrics')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMetricsSection 
               selectedMetric={selectedMetric}
@@ -159,7 +159,7 @@ const renderActiveSection = (
     case 'insights':
       return selectedCountry ? (
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] sm:text-xs">{t('aiInsights')}</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[9px] sm:text-[10px]">{t('aiInsights')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <AIInsights 
               country={countries.find(c => c.id === selectedCountry)} 
@@ -172,7 +172,7 @@ const renderActiveSection = (
     case 'info':
       return (
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] sm:text-xs">{t('information')}</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[9px] sm:text-[10px]">{t('information')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarInfoSection />
           </SidebarGroupContent>
