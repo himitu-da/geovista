@@ -1,11 +1,24 @@
 
-import React, { useRef, useEffect, useState } from 'react';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import React from 'react';
+import { MapContainer, TileLayer, ZoomControl } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 import { CountryData, DataMetric } from '@/types/country';
-import MapboxKeyForm from './map/MapboxKeyForm';
 import MapDataHandler from './map/MapDataHandler';
-import { initializeMap } from '@/utils/mapUtils';
+import L from 'leaflet';
+
+// Fix Leaflet default icon issue
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
+// Initialize default Leaflet icon
+let DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41]
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
 
 interface WorldMapProps {
   countries: CountryData[];
@@ -22,64 +35,39 @@ const WorldMap: React.FC<WorldMapProps> = ({
   onCountrySelect,
   selectedCountry 
 }) => {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const [mapKey, setMapKey] = useState<string>('');
-
-  useEffect(() => {
-    // Check if API key is stored in localStorage
-    const storedMapKey = localStorage.getItem('mapbox_key');
-    if (storedMapKey) {
-      setMapKey(storedMapKey);
-    }
-  }, []);
-
-  const handleKeySubmit = (newKey: string) => {
-    localStorage.setItem('mapbox_key', newKey);
-    setMapKey(newKey);
-  };
-
-  // Initialize map when component mounts
-  useEffect(() => {
-    if (!mapKey || !mapContainer.current) return;
-    
-    if (map.current) return; // Initialize map only once
-    
-    map.current = initializeMap(mapContainer.current, mapKey);
-    
-    // Cleanup function
-    return () => {
-      map.current?.remove();
-      map.current = null;
-    };
-  }, [mapKey]);
-
-  if (!mapKey) {
-    return <MapboxKeyForm onKeySubmit={handleKeySubmit} />;
-  }
-
   return (
     <div className="relative w-full h-full rounded-lg overflow-hidden">
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-10">
+        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-[1000]">
           <div className="flex flex-col items-center">
             <div className="h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-2"></div>
             <p className="text-blue-500 font-medium">Loading map data...</p>
           </div>
         </div>
       )}
-      <div ref={mapContainer} className="w-full h-full" />
       
-      {/* This component handles all data-related interactions with the map */}
-      {map.current && !loading && countries.length > 0 && (
-        <MapDataHandler
-          map={map.current}
-          countries={countries}
-          selectedMetric={selectedMetric}
-          selectedCountry={selectedCountry}
-          onCountrySelect={onCountrySelect}
+      <MapContainer 
+        center={[20, 0]} 
+        zoom={2} 
+        style={{ height: '100%', width: '100%' }}
+        zoomControl={false}
+        className="z-0"
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-      )}
+        <ZoomControl position="topright" />
+        
+        {!loading && countries.length > 0 && (
+          <MapDataHandler
+            countries={countries}
+            selectedMetric={selectedMetric}
+            selectedCountry={selectedCountry}
+            onCountrySelect={onCountrySelect}
+          />
+        )}
+      </MapContainer>
     </div>
   );
 };

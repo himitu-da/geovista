@@ -1,91 +1,80 @@
 
 import { DataMetric } from '@/types/country';
-import mapboxgl from 'mapbox-gl';
 import { captureException } from '@/lib/sentry';
 
-// Get color expression based on metric
-export const getColorExpression = (metric: DataMetric): mapboxgl.Expression => {
+// Get color based on metric value
+export const getColorForValue = (value: number | null, metric: DataMetric): string => {
+  if (value === null) return '#e2f1ff'; // Default light color for null values
+  
+  if (metric === 'population_density') {
+    if (value < 10) return '#e2f1ff';
+    if (value < 50) return '#c8e1ff';
+    if (value < 100) return '#94c8ff';
+    if (value < 500) return '#64a9ff';
+    if (value < 1000) return '#3485ed';
+    return '#0061db';
+  } 
+  else if (metric === 'population') {
+    if (value < 1000000) return '#e2f1ff';
+    if (value < 10000000) return '#c8e1ff';
+    if (value < 50000000) return '#94c8ff';
+    if (value < 100000000) return '#64a9ff';
+    if (value < 500000000) return '#3485ed';
+    return '#0061db';
+  }
+  else if (metric === 'gdp_per_capita') {
+    if (value < 1000) return '#e2f1ff';
+    if (value < 5000) return '#c8e1ff';
+    if (value < 15000) return '#94c8ff';
+    if (value < 30000) return '#64a9ff';
+    if (value < 50000) return '#3485ed';
+    return '#0061db';
+  }
+  
+  // Default fallback
+  return '#e2f1ff';
+};
+
+// Get color stops for the legend
+export const getColorStops = (metric: DataMetric): { value: number; color: string }[] => {
   if (metric === 'population_density') {
     return [
-      'interpolate',
-      ['linear'],
-      ['get', 'population_density'],
-      0, '#e2f1ff',
-      10, '#c8e1ff',
-      50, '#94c8ff',
-      100, '#64a9ff',
-      500, '#3485ed',
-      1000, '#0061db'
-    ] as mapboxgl.Expression;
+      { value: 0, color: '#e2f1ff' },
+      { value: 10, color: '#c8e1ff' },
+      { value: 50, color: '#94c8ff' },
+      { value: 100, color: '#64a9ff' },
+      { value: 500, color: '#3485ed' },
+      { value: 1000, color: '#0061db' }
+    ];
   } 
   else if (metric === 'population') {
     return [
-      'interpolate',
-      ['linear'],
-      ['get', 'population'],
-      0, '#e2f1ff',
-      1000000, '#c8e1ff',
-      10000000, '#94c8ff',
-      50000000, '#64a9ff',
-      100000000, '#3485ed',
-      500000000, '#0061db'
-    ] as mapboxgl.Expression;
+      { value: 0, color: '#e2f1ff' },
+      { value: 1000000, color: '#c8e1ff' },
+      { value: 10000000, color: '#94c8ff' },
+      { value: 50000000, color: '#64a9ff' },
+      { value: 100000000, color: '#3485ed' },
+      { value: 500000000, color: '#0061db' }
+    ];
   }
   else if (metric === 'gdp_per_capita') {
     return [
-      'interpolate',
-      ['linear'],
-      ['get', 'gdp_per_capita'],
-      0, '#e2f1ff',
-      1000, '#c8e1ff',
-      5000, '#94c8ff',
-      15000, '#64a9ff',
-      30000, '#3485ed',
-      50000, '#0061db'
-    ] as mapboxgl.Expression;
+      { value: 0, color: '#e2f1ff' },
+      { value: 1000, color: '#c8e1ff' },
+      { value: 5000, color: '#94c8ff' },
+      { value: 15000, color: '#64a9ff' },
+      { value: 30000, color: '#3485ed' },
+      { value: 50000, color: '#0061db' }
+    ];
   }
   
   // Default fallback
   return [
-    'interpolate',
-    ['linear'],
-    ['get', 'population_density'],
-    0, '#e2f1ff',
-    10, '#c8e1ff',
-    50, '#94c8ff',
-    100, '#64a9ff',
-    500, '#3485ed',
-    1000, '#0061db'
-  ] as mapboxgl.Expression;
-};
-
-// Initialize mapbox map
-export const initializeMap = (
-  container: HTMLDivElement,
-  mapboxKey: string
-): mapboxgl.Map | null => {
-  try {
-    mapboxgl.accessToken = mapboxKey;
-    
-    const map = new mapboxgl.Map({
-      container: container,
-      style: 'mapbox://styles/mapbox/light-v11',
-      center: [0, 20],
-      zoom: 1.5,
-    });
-
-    // Add navigation controls
-    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-    
-    // Add event listener for when the map is loaded
-    map.on('load', () => {
-      console.log('Map loaded successfully');
-    });
-    
-    return map;
-  } catch (err) {
-    captureException(err);
-    console.error('Error initializing map:', err);
-    return null;
-  }
+    { value: 0, color: '#e2f1ff' },
+    { value: 10, color: '#c8e1ff' },
+    { value: 50, color: '#94c8ff' },
+    { value: 100, color: '#64a9ff' },
+    { value: 500, color: '#3485ed' },
+    { value: 1000, color: '#0061db' }
+  ];
 };
