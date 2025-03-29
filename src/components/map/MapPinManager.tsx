@@ -4,48 +4,54 @@ import { useMapEvents } from 'react-leaflet';
 import PinMarker from './PinMarker';
 import { generateLocationDescription } from '@/utils/aiUtils';
 import { useToast } from '@/components/ui/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 /**
- * マップピンマネージャーコンポーネント
- * マップ上でのピンの追加・削除を管理
+ * Map pin manager component
+ * Manages the addition and removal of pins on the map
  */
 const MapPinManager: React.FC = () => {
   const [pins, setPins] = useState<[number, number][]>([]);
   const { toast } = useToast();
+  const { language } = useLanguage();
 
-  // マップイベントリスナー
+  // Map event listener
   const map = useMapEvents({
     contextmenu: (e) => {
-      // 右クリックでピンを追加
+      // Add pin on right-click
       const { lat, lng } = e.latlng;
       setPins(prev => [...prev, [lat, lng]]);
       
       toast({
-        title: 'ピンを追加しました',
-        description: `緯度: ${lat.toFixed(4)}, 経度: ${lng.toFixed(4)}`,
+        title: language === 'es' ? 'Pin añadido' : 'Pin added',
+        description: language === 'es' 
+          ? `Latitud: ${lat.toFixed(4)}, Longitud: ${lng.toFixed(4)}`
+          : `Latitude: ${lat.toFixed(4)}, Longitude: ${lng.toFixed(4)}`,
         duration: 2000,
       });
     },
   });
 
-  // ピンの削除
+  // Remove pin
   const handleRemovePin = (index: number) => {
     setPins(prev => prev.filter((_, i) => i !== index));
     
     toast({
-      title: 'ピンを削除しました',
+      title: language === 'es' ? 'Pin eliminado' : 'Pin removed',
       duration: 2000,
     });
   };
 
-  // 場所の説明を生成
-  const handleGenerateDescription = async (position: [number, number]): Promise<string> => {
+  // Generate location description
+  const handleGenerateDescription = async (position: [number, number], lang: string): Promise<string> => {
     try {
-      const description = await generateLocationDescription(position);
+      const description = await generateLocationDescription(position, lang);
       return description;
     } catch (error) {
       console.error('Error generating description:', error);
-      return '説明の生成に失敗しました。';
+      return language === 'es' 
+        ? 'Error al generar la descripción.' 
+        : 'Failed to generate description.';
     }
   };
 

@@ -8,8 +8,8 @@ interface FeatureListItemProps {
 }
 
 /**
- * 特徴リストアイテムコンポーネント
- * 機能の詳細リスト項目
+ * Feature list item component
+ * Display feature details in a list
  */
 export const FeatureListItem: React.FC<FeatureListItemProps> = ({ icon, text }) => {
   const fadeIn = {

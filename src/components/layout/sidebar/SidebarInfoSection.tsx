@@ -4,8 +4,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 /**
- * アプリケーションの情報セクションコンポーネント
- * アプリの概要や使い方を表示する
+ * Information section component for the application
+ * Displays app overview and usage instructions
  */
 const SidebarInfoSection: React.FC = () => {
   const { t } = useLanguage();

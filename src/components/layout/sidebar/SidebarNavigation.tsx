@@ -11,8 +11,8 @@ interface SidebarNavigationProps {
 }
 
 /**
- * サイドバーナビゲーションメニューコンポーネント
- * 各セクションへの切り替えメニューを提供
+ * Sidebar navigation menu component
+ * Provides navigation between different sections
  */
 const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   activeSection,

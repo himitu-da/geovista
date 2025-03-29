@@ -11,25 +11,25 @@ interface MapControlsProps {
 }
 
 /**
- * マップコントロールコンポーネント
- * ズーム、リセット、言語切り替え、ホームボタンを含む
+ * Map controls component
+ * Includes zoom, reset, language toggle, and home buttons
  */
 const MapControls: React.FC<MapControlsProps> = ({ mapRef }) => {
   const { t } = useLanguage();
   
-  // ズームインハンドラー
+  // Zoom in handler
   const handleZoomIn = () => {
     if (!mapRef) return;
     mapRef.zoomIn();
   };
 
-  // ズームアウトハンドラー
+  // Zoom out handler
   const handleZoomOut = () => {
     if (!mapRef) return;
     mapRef.zoomOut();
   };
 
-  // 初期位置にリセット
+  // Reset to initial position
   const handleReset = () => {
     if (!mapRef) return;
     mapRef.setView([20, 0], 2);
@@ -37,7 +37,7 @@ const MapControls: React.FC<MapControlsProps> = ({ mapRef }) => {
 
   return (
     <>
-      {/* 右下のマップコントロール */}
+      {/* Bottom right map controls */}
       <div className="absolute right-4 bottom-16 z-[400] flex flex-col gap-1.5">
         <button
           onClick={handleZoomIn}
@@ -62,7 +62,7 @@ const MapControls: React.FC<MapControlsProps> = ({ mapRef }) => {
         </button>
       </div>
       
-      {/* 左上のロゴ */}
+      {/* Top left logo */}
       <div className="absolute left-4 top-4 z-[400]">
         <Link
           to="/"
@@ -74,7 +74,7 @@ const MapControls: React.FC<MapControlsProps> = ({ mapRef }) => {
         </Link>
       </div>
       
-      {/* 右上の言語切り替え */}
+      {/* Top right language toggle */}
       <div className="absolute right-4 top-4 z-[400]">
         <LanguageToggle />
       </div>
