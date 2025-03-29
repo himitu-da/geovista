@@ -7,7 +7,6 @@ import { DataMetric } from '@/types/country';
 import ErrorMessage from '@/components/ErrorMessage';
 import MapLayer from '@/components/layers/MapLayer';
 import MetricDropdown from '@/components/controls/MetricDropdown';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 // アニメーション設定
 const containerVariants = {
@@ -34,7 +33,6 @@ const Index = () => {
   // UIの状態
   const [selectedMetric, setSelectedMetric] = useState<DataMetric>('population_density');
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
-  const isMobile = useIsMobile();
 
   // 国データのフェッチ
   const { countries, loading, error } = useCountryData();
@@ -58,15 +56,13 @@ const Index = () => {
         onCountrySelect={setSelectedCountry}
       />
       
-      {/* メトリック選択ドロップダウン - デスクトップ表示 */}
-      {!isMobile && (
-        <div className="absolute top-4 right-24 z-20">
-          <MetricDropdown 
-            selectedMetric={selectedMetric}
-            onMetricChange={setSelectedMetric}
-          />
-        </div>
-      )}
+      {/* メトリック選択ドロップダウン */}
+      <div className="absolute top-4 right-24 z-20">
+        <MetricDropdown 
+          selectedMetric={selectedMetric}
+          onMetricChange={setSelectedMetric}
+        />
+      </div>
     </motion.div>
   );
 };
