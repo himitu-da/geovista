@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -133,59 +134,50 @@
 
   /* 構造化されたロケーション説明のスタイル改善 */
   .location-description h1 {
-    font-size: 0.95rem;
+    font-size: 1rem;
+    font-weight: 700;
     border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 0.25rem;
+    padding-bottom: 0.5rem;
     margin-bottom: 0.75rem;
     color: #2563eb;
   }
 
   .location-description h2 {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 600;
-    margin-top: 0.75rem;
-    margin-bottom: 0.25rem;
+    margin-top: 1rem;
+    margin-bottom: 0;
+    padding: 0.5rem 0.75rem;
     display: flex;
     align-items: center;
+    border-radius: 0.375rem 0.375rem 0 0;
   }
 
   .location-description p {
     line-height: 1.5;
     font-size: 0.8rem;
     margin-bottom: 0.5rem;
+    background-color: white;
+    padding: 0.75rem;
+    border-radius: 0 0 0.375rem 0.375rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
 
   .location-description ul {
-    padding-left: 1rem;
-    margin-top: 0.25rem;
-    margin-bottom: 0.5rem;
+    padding: 0.75rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    background-color: white;
+    border-radius: 0 0 0.375rem 0.375rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
 
   .location-description li {
     margin-bottom: 0.25rem;
     font-size: 0.8rem;
     line-height: 1.4;
-  }
-  
-  /* 説明テキストのセクションスタイル */
-  .location-description .section-geography {
-    @apply bg-blue-50 border-l-2 border-l-blue-500 rounded-md p-2 my-2;
-  }
-  
-  .location-description .section-history {
-    @apply bg-amber-50 border-l-2 border-l-amber-500 rounded-md p-2 my-2;
-  }
-  
-  .location-description .section-culture {
-    @apply bg-purple-50 border-l-2 border-l-purple-500 rounded-md p-2 my-2;
-  }
-  
-  .location-description .section-poi {
-    @apply bg-green-50 border-l-2 border-l-green-500 rounded-md p-2 my-2;
-  }
-  
-  .location-description .section-overview {
-    @apply bg-gray-50 border-l-2 border-l-gray-500 rounded-md p-2 my-2;
+    display: flex;
+    align-items: flex-start;
   }
 }
 

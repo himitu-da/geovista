@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import LocationDescription from './LocationDescription';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
-import { Tooltip } from '@/components/ui/tooltip';
 
 interface PinMarkerProps {
   position: [number, number];
@@ -44,9 +43,7 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
       console.error('Failed to generate description:', error);
       setDescription(language === 'es' 
         ? 'Error al generar descripción. Por favor, inténtelo de nuevo.' 
-        : language === 'ja'
-          ? '説明の生成に失敗しました。もう一度お試しください。'
-          : 'Failed to generate description. Please try again.');
+        : 'Failed to generate description. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -71,8 +68,7 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
           <div className="flex justify-between items-center mb-2 border-b pb-2">
             <h3 className="text-sm font-medium flex items-center">
               <MapPin className="w-4 h-4 mr-1.5 text-red-500" />
-              {language === 'es' ? 'Ubicación Seleccionada' : 
-               language === 'ja' ? '選択された位置' : 'Selected Location'}
+              {language === 'es' ? 'Ubicación Seleccionada' : 'Selected Location'}
             </h3>
             <Button 
               variant="ghost"
@@ -84,19 +80,16 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
               }}
             >
               <MapPinOff className="h-3 w-3" />
-              {language === 'es' ? 'Eliminar' : 
-               language === 'ja' ? '削除' : 'Remove'}
+              {language === 'es' ? 'Eliminar' : 'Remove'}
             </Button>
           </div>
           
           <div className="text-xs mb-3 bg-gray-50 p-2 rounded-md border border-gray-200">
             <div className="grid grid-cols-2 gap-2">
-              <div>{language === 'es' ? 'Latitud' : 
-                    language === 'ja' ? '緯度' : 'Latitude'}: 
+              <div>{language === 'es' ? 'Latitud' : 'Latitude'}: 
                 <span className="font-medium ml-1">{position[0].toFixed(4)}</span>
               </div>
-              <div>{language === 'es' ? 'Longitud' : 
-                    language === 'ja' ? '経度' : 'Longitude'}: 
+              <div>{language === 'es' ? 'Longitud' : 'Longitude'}: 
                 <span className="font-medium ml-1">{position[1].toFixed(4)}</span>
               </div>
             </div>
@@ -113,14 +106,12 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
               {loading ? (
                 <>
                   <Loader2 className="mr-1.5 h-3 w-3 animate-spin" />
-                  {language === 'es' ? 'Generando...' : 
-                   language === 'ja' ? '生成中...' : 'Generating...'}
+                  {language === 'es' ? 'Generando...' : 'Generating...'}
                 </>
               ) : (
                 <>
                   <Check className="mr-1.5 h-3 w-3" />
-                  {language === 'es' ? 'Generar descripción del lugar' : 
-                   language === 'ja' ? '場所の説明を生成' : 'Generate location description'}
+                  {language === 'es' ? 'Generar descripción del lugar' : 'Generate location description'}
                 </>
               )}
             </Button>

@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
-import { useMapEvents, Marker, Popup } from 'react-leaflet';
+import React, { useState } from 'react';
+import { useMapEvents, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import PinMarker from './PinMarker';
 import { generateLocationDescription } from '@/utils/aiUtils';
@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
-import { MapPin, X, MousePointer2, Smartphone, Check } from 'lucide-react';
+import { MapPin, MousePointer2, Smartphone } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 // 半透明なピンアイコンを作成
@@ -25,7 +25,7 @@ const ghostPinIcon = new L.Icon({
 /**
  * ピン追加の説明ツールチップコンポーネント - MapPinManager内に統合
  */
-const PinInstructionTooltip: React.FC = () => {
+const PinInstructionTooltip = () => {
   const { t } = useLanguage();
   const isMobile = useIsMobile();
 
@@ -91,25 +91,25 @@ const MapPinManager: React.FC = () => {
   const [pendingPin, setPendingPin] = useState<[number, number] | null>(null);
   const { toast } = useToast();
   const { language, t } = useLanguage();
-  const isMobile = useIsMobile();
 
-  // Map event listener
+  // Map event listener - タップ/クリックで即座にピンを追加
   const map = useMapEvents({
-    // Handle right-click for desktop
-    contextmenu: (e) => {
-      // デスクトップの右クリックで半透明ピンを表示
-      setPendingPin([e.latlng.lat, e.latlng.lng]);
-    },
-    // Handle tap/click for mobile
     click: (e) => {
-      if (isMobile) {
-        // モバイルのタップで半透明ピンを表示
-        setPendingPin([e.latlng.lat, e.latlng.lng]);
-      }
+      // Removeボタンのクリックイベントを防止するための小さな遅延
+      setTimeout(() => {
+        // クリック位置の要素を確認
+        const element = document.elementFromPoint(e.originalEvent.clientX, e.originalEvent.clientY);
+        const isRemoveButton = element?.closest('button')?.textContent?.includes('Remove');
+        
+        if (!isRemoveButton) {
+          const newPosition: [number, number] = [e.latlng.lat, e.latlng.lng];
+          addPin(newPosition[0], newPosition[1]);
+        }
+      }, 10);
     }
   });
 
-  // Common function to add a pin
+  // ピンを追加
   const addPin = (lat: number, lng: number) => {
     setPins(prev => [...prev, [lat, lng]]);
     
@@ -122,7 +122,7 @@ const MapPinManager: React.FC = () => {
     });
   };
 
-  // Remove pin
+  // ピンを削除
   const handleRemovePin = (index: number) => {
     setPins(prev => prev.filter((_, i) => i !== index));
     
@@ -132,7 +132,7 @@ const MapPinManager: React.FC = () => {
     });
   };
 
-  // Generate location description
+  // ロケーション説明を生成
   const handleGenerateDescription = async (position: [number, number], lang: string): Promise<string> => {
     try {
       const description = await generateLocationDescription(position, lang);
@@ -143,24 +143,6 @@ const MapPinManager: React.FC = () => {
         ? 'Error al generar la descripción.' 
         : 'Failed to generate description.';
     }
-  };
-
-  // 確認ダイアログが閉じられたときのハンドラー
-  const handleDialogClose = () => {
-    setPendingPin(null);
-  };
-
-  // ピン追加の確認
-  const handleConfirmAddPin = () => {
-    if (pendingPin) {
-      addPin(pendingPin[0], pendingPin[1]);
-      setPendingPin(null);
-    }
-  };
-
-  // クリックイベントを停止する（ポップアップの背景クリック防止）
-  const stopPropagation = (e: React.MouseEvent) => {
-    e.stopPropagation();
   };
 
   return (
@@ -175,77 +157,7 @@ const MapPinManager: React.FC = () => {
         />
       ))}
 
-      {/* 半透明の仮ピンとポップアップ */}
-      {pendingPin && (
-        <Marker 
-          position={pendingPin} 
-          icon={ghostPinIcon}
-          zIndexOffset={1000}
-        >
-          <Popup
-            className="pin-confirmation-popup"
-            closeButton={false}
-            autoPan={false}
-            autoClose={false}
-            closeOnClick={false}
-            eventHandlers={{
-              popupclose: handleDialogClose
-            }}
-          >
-            <motion.div 
-              className="w-48 p-2" 
-              onClick={stopPropagation}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium flex items-center">
-                  <MapPin className="w-4 h-4 mr-1.5 text-gray-500" />
-                  {t('confirmAddPin')}
-                </h3>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="h-6 w-6 p-0" 
-                  onClick={handleDialogClose}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-              
-              <div className="bg-gray-50 p-1.5 rounded-md mb-2 text-[10px] text-gray-600">
-                <div className="grid grid-cols-2 gap-0.5">
-                  <div>{language === 'es' ? 'Lat' : 'Lat'}: <span className="font-medium">{pendingPin[0].toFixed(4)}</span></div>
-                  <div>{language === 'es' ? 'Lon' : 'Lon'}: <span className="font-medium">{pendingPin[1].toFixed(4)}</span></div>
-                </div>
-              </div>
-              
-              <div className="flex gap-2 justify-end mt-3">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="h-7 px-2 text-xs"
-                  onClick={handleDialogClose}
-                >
-                  {t('cancel')}
-                </Button>
-                <Button 
-                  variant="default" 
-                  size="sm"
-                  className="h-7 px-2.5 text-xs flex items-center gap-1"
-                  onClick={handleConfirmAddPin}
-                >
-                  <Check className="h-3.5 w-3.5" />
-                  {t('add')}
-                </Button>
-              </div>
-            </motion.div>
-          </Popup>
-        </Marker>
-      )}
-
-      {/* 左下の説明ツールチップを表示 */}
+      {/* ピン追加の説明ツールチップ */}
       <PinInstructionTooltip />
     </>
   );

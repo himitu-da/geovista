@@ -31,104 +31,68 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
     const lowerText = text.toLowerCase();
     
     // 英語の見出しキーワード
-    if (language === 'en') {
-      if (lowerText.includes('geography')) 
-        return { 
-          icon: <Map className="w-4 h-4 mr-1.5" />, 
-          color: 'text-blue-600', 
-          bgColor: 'bg-blue-50'
-        };
-      if (lowerText.includes('history')) 
-        return { 
-          icon: <Clock className="w-4 h-4 mr-1.5" />, 
-          color: 'text-amber-600', 
-          bgColor: 'bg-amber-50'
-        };
-      if (lowerText.includes('culture')) 
-        return { 
-          icon: <Users className="w-4 h-4 mr-1.5" />, 
-          color: 'text-purple-600', 
-          bgColor: 'bg-purple-50'
-        };
-      if (lowerText.includes('points of interest') || lowerText.includes('attractions')) 
-        return { 
-          icon: <Camera className="w-4 h-4 mr-1.5" />, 
-          color: 'text-green-600', 
-          bgColor: 'bg-green-50'
-        };
-      if (lowerText.includes('overview')) 
-        return { 
-          icon: <Book className="w-4 h-4 mr-1.5" />, 
-          color: 'text-gray-600', 
-          bgColor: 'bg-gray-50'
-        };
-    } 
+    if (lowerText.includes('geography')) 
+      return { 
+        icon: <Map className="w-4 h-4 mr-1.5" />, 
+        color: 'text-blue-600', 
+        bgColor: 'bg-blue-50'
+      };
+    if (lowerText.includes('history')) 
+      return { 
+        icon: <Clock className="w-4 h-4 mr-1.5" />, 
+        color: 'text-amber-600', 
+        bgColor: 'bg-amber-50'
+      };
+    if (lowerText.includes('culture')) 
+      return { 
+        icon: <Users className="w-4 h-4 mr-1.5" />, 
+        color: 'text-purple-600', 
+        bgColor: 'bg-purple-50'
+      };
+    if (lowerText.includes('points of interest') || lowerText.includes('attractions')) 
+      return { 
+        icon: <Camera className="w-4 h-4 mr-1.5" />, 
+        color: 'text-green-600', 
+        bgColor: 'bg-green-50'
+      };
+    if (lowerText.includes('overview')) 
+      return { 
+        icon: <Book className="w-4 h-4 mr-1.5" />, 
+        color: 'text-gray-600', 
+        bgColor: 'bg-gray-50'
+      };
+    
     // スペイン語の見出しキーワード
-    else if (language === 'es') {
-      if (lowerText.includes('geografía')) 
-        return { 
-          icon: <Map className="w-4 h-4 mr-1.5" />, 
-          color: 'text-blue-600', 
-          bgColor: 'bg-blue-50'
-        };
-      if (lowerText.includes('historia')) 
-        return { 
-          icon: <Clock className="w-4 h-4 mr-1.5" />, 
-          color: 'text-amber-600', 
-          bgColor: 'bg-amber-50'
-        };
-      if (lowerText.includes('cultura')) 
-        return { 
-          icon: <Users className="w-4 h-4 mr-1.5" />, 
-          color: 'text-purple-600', 
-          bgColor: 'bg-purple-50'
-        };
-      if (lowerText.includes('puntos de interés') || lowerText.includes('atracciones')) 
-        return { 
-          icon: <Camera className="w-4 h-4 mr-1.5" />, 
-          color: 'text-green-600', 
-          bgColor: 'bg-green-50'
-        };
-      if (lowerText.includes('resumen')) 
-        return { 
-          icon: <Book className="w-4 h-4 mr-1.5" />, 
-          color: 'text-gray-600', 
-          bgColor: 'bg-gray-50'
-        };
-    }
-    // 日本語の見出しキーワード
-    else {
-      if (lowerText.includes('地理')) 
-        return { 
-          icon: <Map className="w-4 h-4 mr-1.5" />, 
-          color: 'text-blue-600', 
-          bgColor: 'bg-blue-50'
-        };
-      if (lowerText.includes('歴史')) 
-        return { 
-          icon: <Clock className="w-4 h-4 mr-1.5" />, 
-          color: 'text-amber-600', 
-          bgColor: 'bg-amber-50'
-        };
-      if (lowerText.includes('文化')) 
-        return { 
-          icon: <Users className="w-4 h-4 mr-1.5" />, 
-          color: 'text-purple-600', 
-          bgColor: 'bg-purple-50'
-        };
-      if (lowerText.includes('見どころ') || lowerText.includes('観光')) 
-        return { 
-          icon: <Camera className="w-4 h-4 mr-1.5" />, 
-          color: 'text-green-600', 
-          bgColor: 'bg-green-50'
-        };
-      if (lowerText.includes('概要')) 
-        return { 
-          icon: <Book className="w-4 h-4 mr-1.5" />, 
-          color: 'text-gray-600', 
-          bgColor: 'bg-gray-50'
-        };
-    }
+    if (lowerText.includes('geografía')) 
+      return { 
+        icon: <Map className="w-4 h-4 mr-1.5" />, 
+        color: 'text-blue-600', 
+        bgColor: 'bg-blue-50'
+      };
+    if (lowerText.includes('historia')) 
+      return { 
+        icon: <Clock className="w-4 h-4 mr-1.5" />, 
+        color: 'text-amber-600', 
+        bgColor: 'bg-amber-50'
+      };
+    if (lowerText.includes('cultura')) 
+      return { 
+        icon: <Users className="w-4 h-4 mr-1.5" />, 
+        color: 'text-purple-600', 
+        bgColor: 'bg-purple-50'
+      };
+    if (lowerText.includes('puntos de interés') || lowerText.includes('atracciones')) 
+      return { 
+        icon: <Camera className="w-4 h-4 mr-1.5" />, 
+        color: 'text-green-600', 
+        bgColor: 'bg-green-50'
+      };
+    if (lowerText.includes('resumen')) 
+      return { 
+        icon: <Book className="w-4 h-4 mr-1.5" />, 
+        color: 'text-gray-600', 
+        bgColor: 'bg-gray-50'
+      };
     
     // デフォルト値
     return { 
@@ -172,8 +136,8 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
             const { icon, color, bgColor } = getSectionInfo(headingText);
             
             return (
-              <div className={cn("mt-4 mb-2", bgColor, "rounded-t-md border-l-2", `border-l-${color.replace('text-', '')}`)} {...props}>
-                <h2 className={cn("text-xs font-semibold py-1.5 px-2 flex items-center", color)}>
+              <div className={cn("mt-4 mb-2 rounded-t-md", bgColor)} {...props}>
+                <h2 className={cn("text-sm font-semibold py-2 px-3 flex items-center", color)}>
                   {icon}
                   {children}
                 </h2>
@@ -182,13 +146,13 @@ const LocationDescription: React.FC<LocationDescriptionProps> = ({ description }
           },
           p: ({ node, children, ...props }) => {
             return (
-              <p className="mb-2 leading-relaxed text-gray-700 pl-3 pr-2 text-xs" {...props}>
+              <p className="mb-3 leading-relaxed text-gray-700 px-3 py-2 text-xs bg-white rounded-b-md shadow-sm" {...props}>
                 {children}
               </p>
             );
           },
           ul: ({ node, ...props }) => (
-            <ul className="mb-3 pl-3 list-none space-y-1" {...props} />
+            <ul className="mb-3 px-3 py-2 list-none space-y-1 bg-white rounded-b-md shadow-sm" {...props} />
           ),
           li: ({ node, children, ...props }) => (
             <li className="mb-1 text-gray-700 flex items-start" {...props}>
