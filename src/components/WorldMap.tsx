@@ -11,6 +11,7 @@ import CountryInfoOverlay from './map/CountryInfoOverlay';
 import LoadingOverlay from './map/LoadingOverlay';
 import { initializeLeafletIcons } from './map/leafletUtils';
 import { fitMapToCountry } from './map/handlers/GeoJsonTransformer';
+import Legend from './Legend';
 
 // Leafletのデフォルトアイコンの問題を修正
 initializeLeafletIcons();
@@ -161,6 +162,11 @@ const WorldMap: React.FC<WorldMapProps> = ({
           />
         )}
       </MapContainer>
+      
+      {/* 左下に凡例を表示 */}
+      <div className="absolute bottom-2 left-2 z-[400]">
+        <Legend metric={selectedMetric} />
+      </div>
       
       {/* 帰属表示オーバーレイ */}
       <div className="absolute bottom-0.5 right-0.5 z-[400] text-[6px] sm:text-[8px] text-gray-700 bg-white/80 px-1 py-0.5 rounded-tl-md shadow-sm">

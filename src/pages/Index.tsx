@@ -32,11 +32,9 @@ const Index = () => {
   }, []);
 
   // UIの状態
-  const [visualizationType, setVisualizationType] = useState<'map' | 'chart'>('map');
   const [selectedMetric, setSelectedMetric] = useState<DataMetric>('population_density');
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<DataCategory>('overview');
-  const [activeTab, setActiveTab] = useState<string>('map');
 
   // 国データのフェッチ
   const { countries, loading, error } = useCountryData();
@@ -58,21 +56,16 @@ const Index = () => {
         selectedMetric={selectedMetric}
         selectedCountry={selectedCountry}
         onCountrySelect={setSelectedCountry}
-        visualizationType={visualizationType}
       />
       
       {/* UIレイヤー */}
       <UILayer 
-        visualizationType={visualizationType}
         selectedMetric={selectedMetric}
         selectedCountry={selectedCountry}
         countries={countries}
-        onVisualizationTypeChange={setVisualizationType}
         onMetricChange={setSelectedMetric}
         activeCategory={activeCategory}
         onCategoryChange={setActiveCategory}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
         onCountrySelect={setSelectedCountry}
       />
     </motion.div>

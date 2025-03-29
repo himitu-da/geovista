@@ -7,10 +7,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { DataMetric, CountryData } from '@/types/country';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import DataCategoryNav, { DataCategory } from '@/components/explore/DataCategoryNav';
-import FeaturedInsights from '@/components/explore/FeaturedInsights';
-import CountryDataTable from '@/components/explore/CountryDataTable';
+import { DataCategory } from '@/components/explore/DataCategoryNav';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 // アニメーション設定
@@ -27,28 +24,20 @@ const itemVariants = {
  * ヘッダー、サイドバー、フッターなどのUIコンポーネントを表示
  */
 const UILayer = ({ 
-  visualizationType, 
   selectedMetric, 
   selectedCountry, 
   countries,
-  onVisualizationTypeChange,
   onMetricChange,
   activeCategory,
   onCategoryChange,
-  activeTab,
-  onTabChange,
   onCountrySelect
 }: {
-  visualizationType: 'map' | 'chart';
   selectedMetric: DataMetric;
   selectedCountry: string | null;
   countries: CountryData[];
-  onVisualizationTypeChange: (type: 'map' | 'chart') => void;
   onMetricChange: (metric: DataMetric) => void;
   activeCategory: DataCategory;
   onCategoryChange: (category: DataCategory) => void;
-  activeTab: string;
-  onTabChange: (tab: string) => void;
   onCountrySelect: (countryId: string | null) => void;
 }) => {
   const { t } = useLanguage();
@@ -70,34 +59,15 @@ const UILayer = ({
           <SidebarProvider>
             <div className="h-full pointer-events-auto">
               <ExplorerSidebar 
-                visualizationType={visualizationType}
                 selectedMetric={selectedMetric}
-                onVisualizationTypeChange={onVisualizationTypeChange}
                 onMetricChange={onMetricChange}
                 selectedCountry={selectedCountry}
                 countries={countries}
+                activeCategory={activeCategory}
+                onCategoryChange={onCategoryChange}
               />
             </div>
           </SidebarProvider>
-          
-          {/* データビューパネル（右側） - 必要な場合のみ表示 */}
-          {selectedCountry && !isMobile && (
-            <div className="pointer-events-auto w-52 sm:w-60 max-w-[18vw] hidden lg:block bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-l border-gray-100 dark:border-gray-700 transition-all">
-              <div className="h-full p-1 sm:p-2 flex flex-col space-y-1 sm:space-y-2 overflow-auto">
-                <DataExplorerTabs 
-                  activeTab={activeTab}
-                  onTabChange={onTabChange}
-                  activeCategory={activeCategory}
-                  onCategoryChange={onCategoryChange}
-                  countries={countries}
-                  selectedMetric={selectedMetric}
-                  onCountrySelect={onCountrySelect}
-                  selectedCountry={selectedCountry}
-                  onVisualizationTypeChange={onVisualizationTypeChange}
-                />
-              </div>
-            </div>
-          )}
         </div>
         
         {/* フッター - ポインターイベント有効 （最小化） */}
@@ -106,66 +76,6 @@ const UILayer = ({
         </div>
       </motion.div>
     </div>
-  );
-};
-
-interface DataExplorerTabsProps {
-  activeTab: string;
-  onTabChange: (tab: string) => void;
-  activeCategory: DataCategory;
-  onCategoryChange: (category: DataCategory) => void;
-  countries: CountryData[];
-  selectedMetric: DataMetric;
-  onCountrySelect: (countryId: string | null) => void;
-  selectedCountry: string | null;
-  onVisualizationTypeChange: (type: 'map' | 'chart') => void;
-}
-
-const DataExplorerTabs: React.FC<DataExplorerTabsProps> = ({
-  activeTab,
-  onTabChange,
-  activeCategory,
-  onCategoryChange,
-  countries,
-  selectedMetric,
-  onCountrySelect,
-  selectedCountry,
-  onVisualizationTypeChange
-}) => {
-  const { t } = useLanguage();
-  
-  return (
-    <Tabs defaultValue="map" value={activeTab} onValueChange={onTabChange} className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="map" className="text-[10px] sm:text-xs py-0.5 sm:py-1">{t('mapExplorer')}</TabsTrigger>
-        <TabsTrigger value="data" className="text-[10px] sm:text-xs py-0.5 sm:py-1">{t('dataExplorer')}</TabsTrigger>
-      </TabsList>
-      <TabsContent value="map" className="pt-1 sm:pt-2 space-y-1 sm:space-y-3">
-        {/* カテゴリナビゲーション */}
-        <DataCategoryNav
-          activeCategory={activeCategory}
-          onCategoryChange={onCategoryChange}
-        />
-        
-        {/* フィーチャーインサイト */}
-        <FeaturedInsights />
-      </TabsContent>
-      <TabsContent value="data" className="pt-1 sm:pt-2">
-        {/* データテーブル */}
-        <CountryDataTable
-          countries={countries}
-          selectedMetric={selectedMetric}
-          onCountrySelect={(countryId) => {
-            onVisualizationTypeChange('map');
-            onTabChange('map');
-            setTimeout(() => {
-              onCountrySelect(countryId);
-            }, 300);
-          }}
-          selectedCountry={selectedCountry}
-        />
-      </TabsContent>
-    </Tabs>
   );
 };
 
