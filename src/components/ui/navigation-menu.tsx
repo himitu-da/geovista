@@ -1,9 +1,32 @@
+
 import * as React from "react"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import { cva } from "class-variance-authority"
 import { ChevronDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
+
+// アニメーション設定
+const menuAnimations = {
+  container: {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+  },
+  item: {
+    initial: { opacity: 0, y: -5 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: 5 },
+    transition: { duration: 0.2 }
+  },
+  content: {
+    initial: { opacity: 0, y: -10 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -10 },
+    transition: { duration: 0.3, ease: "easeOut" }
+  }
+};
 
 const NavigationMenu = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Root>,
@@ -17,8 +40,15 @@ const NavigationMenu = React.forwardRef<
     )}
     {...props}
   >
-    {children}
-    <NavigationMenuViewport />
+    <motion.div
+      initial={menuAnimations.container.initial}
+      animate={menuAnimations.container.animate}
+      exit={menuAnimations.container.exit}
+      className="w-full"
+    >
+      {children}
+      <NavigationMenuViewport />
+    </motion.div>
   </NavigationMenuPrimitive.Root>
 ))
 NavigationMenu.displayName = NavigationMenuPrimitive.Root.displayName
@@ -53,11 +83,25 @@ const NavigationMenuTrigger = React.forwardRef<
     className={cn(navigationMenuTriggerStyle(), "group", className)}
     {...props}
   >
-    {children}{" "}
-    <ChevronDown
-      className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180"
-      aria-hidden="true"
-    />
+    <motion.div
+      initial={menuAnimations.item.initial}
+      animate={menuAnimations.item.animate}
+      exit={menuAnimations.item.exit}
+      whileHover={{ y: -2 }}
+      whileTap={{ y: 1 }}
+      className="flex items-center"
+    >
+      {children}{" "}
+      <motion.div
+        whileHover={{ rotate: 180 }}
+        transition={{ duration: 0.3 }}
+      >
+        <ChevronDown
+          className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180"
+          aria-hidden="true"
+        />
+      </motion.div>
+    </motion.div>
   </NavigationMenuPrimitive.Trigger>
 ))
 NavigationMenuTrigger.displayName = NavigationMenuPrimitive.Trigger.displayName
@@ -73,7 +117,16 @@ const NavigationMenuContent = React.forwardRef<
       className
     )}
     {...props}
-  />
+  >
+    <motion.div
+      initial={menuAnimations.content.initial}
+      animate={menuAnimations.content.animate}
+      exit={menuAnimations.content.exit}
+      className="w-full h-full"
+    >
+      {props.children}
+    </motion.div>
+  </NavigationMenuPrimitive.Content>
 ))
 NavigationMenuContent.displayName = NavigationMenuPrimitive.Content.displayName
 
@@ -109,7 +162,13 @@ const NavigationMenuIndicator = React.forwardRef<
     )}
     {...props}
   >
-    <div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-border shadow-md" />
+    <motion.div
+      initial={{ opacity: 0, y: -5 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -5 }}
+      transition={{ duration: 0.2 }}
+      className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-border shadow-md" 
+    />
   </NavigationMenuPrimitive.Indicator>
 ))
 NavigationMenuIndicator.displayName =

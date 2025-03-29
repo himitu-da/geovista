@@ -18,10 +18,26 @@ const ScrollToTop = () => {
   return null;
 };
 
+// ページの読み込み状態を表示するコンポーネント
+const PageLoadAnimator = () => {
+  const { pathname } = useLocation();
+  const [isLoading, setIsLoading] = React.useState(true);
+  
+  useEffect(() => {
+    // 新しいページに遷移したときの読み込み状態をシミュレート
+    setIsLoading(true);
+    const timer = setTimeout(() => setIsLoading(false), 300);
+    return () => clearTimeout(timer);
+  }, [pathname]);
+  
+  return null; // ローディングインジケーターが必要な場合は、ここに追加
+};
+
 export const AppRoutes = () => {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <PageLoadAnimator />
       <AnimatedRoutes>
         <Route 
           path="/" 
