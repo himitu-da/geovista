@@ -26,9 +26,9 @@ export const styleFeature = (feature: any, selectedCountry: string | null, selec
     fillColor: getColorForValue(value, selectedMetric),
     weight: isSelected ? 2 : 1,
     opacity: 1,
-    color: isSelected ? '#0071e3' : '#86868b',
-    fillOpacity: isSelected ? 0.85 : (selectedCountry ? 0.45 : 0.75),
-    dashArray: isSelected ? '' : '2'
+    color: isSelected ? '#0071e3' : '#666',
+    fillOpacity: isSelected ? 0.85 : 0.75,
+    dashArray: isSelected ? '' : '1'
   };
 };
 
@@ -69,8 +69,8 @@ export const resetLayerStyle = (layer: L.Layer, selectedCountry: string | null) 
   if ((layer as any).feature.properties.id !== selectedCountry) {
     (layer as any).setStyle({
       weight: 1,
-      fillOpacity: selectedCountry ? 0.45 : 0.75,
-      dashArray: '2'
+      fillOpacity: 0.75,  // 常に高い不透明度を維持
+      dashArray: '1'      // 細かいダッシュに変更
     });
   }
 };

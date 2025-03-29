@@ -32,11 +32,15 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     isOpen: boolean;
   } | null>(null);
   
-  // 選択された国にズームする効果
+  // 選択された国にズームする効果（飛行時間を短くしてよりスムーズに）
   useEffect(() => {
     if (selectedCountry && countries.length > 0) {
       const country = countries.find(c => c.id === selectedCountry);
-      fitMapToCountry(country, map);
+      
+      // スムーズにズームするために飛行時間を短縮
+      if (country) {
+        fitMapToCountry(country, map, { duration: 0.5 });
+      }
     }
   }, [selectedCountry, countries, map]);
   
@@ -45,7 +49,7 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
     return transformToGeoJson(countries);
   }, [countries]);
   
-  // イベントハンドラーの作成
+  // インタラクションイベントハンドラーの作成（動きをスムーズにするように更新）
   const onFeatureMouseover = useMemo(() => 
     createMouseOverHandler(map, selectedMetric, setPopupInfo), 
     [map, selectedMetric]

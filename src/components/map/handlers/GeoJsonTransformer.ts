@@ -36,8 +36,16 @@ export const transformToGeoJson = (countries: CountryData[]) => {
 
 /**
  * 指定された国に地図を移動する関数
+ * @param country 移動対象の国
+ * @param map 地図オブジェクト
+ * @param options 追加のオプション
+ * @returns 移動が成功したかどうか
  */
-export const fitMapToCountry = (country: CountryData | undefined, map: L.Map) => {
+export const fitMapToCountry = (
+  country: CountryData | undefined, 
+  map: L.Map,
+  options?: { duration?: number, maxZoom?: number }
+) => {
   if (!country || !country.geometry || !country.geometry.geometry || !map) return false;
   
   try {
@@ -46,12 +54,22 @@ export const fitMapToCountry = (country: CountryData | undefined, map: L.Map) =>
     
     // 境界を取得し、地図をこれらの境界に合わせる
     const bounds = geoJSON.getBounds();
-    map.flyToBounds(bounds, { 
-      padding: [50, 50], 
-      maxZoom: 5, 
-      duration: 1, 
+    
+    // デフォルトのオプションを設定し、ユーザーが提供したオプションで上書き
+    const flyOptions = {
+      padding: [20, 20],
+      maxZoom: options?.maxZoom || 5,
+      duration: options?.duration || 0.75,
       easeLinearity: 0.25
-    });
+    };
+    
+    map.flyToBounds(bounds, flyOptions);
+    
+    // マップのドラッグとズーム機能を常に有効に保つ
+    if (!map.dragging.enabled()) map.dragging.enable();
+    if (!map.scrollWheelZoom.enabled()) map.scrollWheelZoom.enable();
+    if (!map.touchZoom.enabled()) map.touchZoom.enable();
+    
     return true;
   } catch (error) {
     console.error('Error fitting bounds:', error);

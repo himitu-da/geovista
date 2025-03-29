@@ -23,6 +23,19 @@ function MapController({ setMapRef }: { setMapRef: React.Dispatch<React.SetState
   
   React.useEffect(() => {
     setMapRef(map);
+    
+    // マップの制限を緩和して自由に動かせるようにする
+    map.dragging.enable();
+    map.touchZoom.enable();
+    map.doubleClickZoom.enable();
+    map.scrollWheelZoom.enable();
+    map.boxZoom.enable();
+    map.keyboard.enable();
+    
+    // スムーズなズーム効果を有効にする
+    map.options.zoomSnap = 0.5;
+    map.options.zoomDelta = 0.5;
+    
     return () => {
       setMapRef(null);
     };
@@ -85,7 +98,12 @@ const WorldMap: React.FC<WorldMapProps> = ({
       
       // 境界を取得し、地図をこれらの境界に合わせる
       const bounds = geoJSON.getBounds();
-      mapRef.fitBounds(bounds, { padding: [20, 20], maxZoom: 5, animate: true });
+      mapRef.flyToBounds(bounds, { 
+        padding: [20, 20], 
+        maxZoom: 5, 
+        duration: 0.75,
+        easeLinearity: 0.25
+      });
     } catch (error) {
       console.error('Error fitting bounds:', error);
     }
@@ -128,18 +146,23 @@ const WorldMap: React.FC<WorldMapProps> = ({
         style={{ height: '100%', width: '100%' }}
         zoomControl={false}
         className="z-0"
-        minZoom={2}
-        maxZoom={8}
-        maxBounds={[[-90, -180], [90, 180]]}
+        minZoom={1}  // 最小ズームレベルを小さく設定
+        maxZoom={10} // 最大ズームレベルを大きく設定
+        worldCopyJump={true} // 日付変更線を超えても世界地図を表示できるようにする
         attributionControl={false}
+        // 以下の制限を取り外す
+        scrollWheelZoom={true}
+        dragging={true}
+        touchZoom={true}
+        doubleClickZoom={true}
       >
         {/* 地図コントローラ */}
         <MapController setMapRef={setMapRef} />
         
-        {/* コントラストの高いマップタイル */}
+        {/* マップタイル */}
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
         
         {/* 国のデータハンドラ */}

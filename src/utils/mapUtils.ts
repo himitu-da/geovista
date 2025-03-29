@@ -7,33 +7,33 @@ import { DataMetric } from '@/types/country';
  */
 const COLOR_RANGES = {
   population_density: [
-    { threshold: 0, color: '#f5f5f7' },
-    { threshold: 10, color: '#d2d2d7' },
-    { threshold: 50, color: '#a1a1a6' },
-    { threshold: 100, color: '#6e6e73' },
-    { threshold: 500, color: '#3a3a3c' },
-    { threshold: 1000, color: '#1d1d1f' }
+    { threshold: 0, color: '#E8F5E9' },    // 明るい緑
+    { threshold: 10, color: '#C8E6C9' },   // 薄緑
+    { threshold: 50, color: '#A5D6A7' },   // 中緑
+    { threshold: 100, color: '#81C784' },  // 濃い緑
+    { threshold: 500, color: '#66BB6A' },  // さらに濃い緑
+    { threshold: 1000, color: '#4CAF50' }  // 最も濃い緑
   ],
   population: [
-    { threshold: 0, color: '#f5f5f7' },
-    { threshold: 1000000, color: '#d2d2d7' },
-    { threshold: 10000000, color: '#a1a1a6' },
-    { threshold: 50000000, color: '#6e6e73' },
-    { threshold: 100000000, color: '#3a3a3c' },
-    { threshold: 500000000, color: '#1d1d1f' }
+    { threshold: 0, color: '#E3F2FD' },    // 明るい青
+    { threshold: 1000000, color: '#BBDEFB' },   // 薄青
+    { threshold: 10000000, color: '#90CAF9' },  // 中青
+    { threshold: 50000000, color: '#64B5F6' },  // 濃い青
+    { threshold: 100000000, color: '#42A5F5' }, // さらに濃い青
+    { threshold: 500000000, color: '#2196F3' }  // 最も濃い青
   ],
   gdp_per_capita: [
-    { threshold: 0, color: '#f5f5f7' },
-    { threshold: 1000, color: '#d2d2d7' },
-    { threshold: 5000, color: '#a1a1a6' },
-    { threshold: 15000, color: '#6e6e73' },
-    { threshold: 30000, color: '#3a3a3c' },
-    { threshold: 50000, color: '#1d1d1f' }
+    { threshold: 0, color: '#FFF3E0' },    // 明るいオレンジ
+    { threshold: 1000, color: '#FFE0B2' },   // 薄オレンジ
+    { threshold: 5000, color: '#FFCC80' },   // 中オレンジ
+    { threshold: 15000, color: '#FFB74D' },  // 濃いオレンジ
+    { threshold: 30000, color: '#FFA726' },  // さらに濃いオレンジ
+    { threshold: 50000, color: '#FF9800' }   // 最も濃いオレンジ
   ]
 };
 
 // デフォルトの色（値が無い場合）
-const DEFAULT_COLOR = '#f5f5f7'; // Appleっぽい明るいグレー
+const DEFAULT_COLOR = '#F5F5F5'; // 明るいグレー
 
 /**
  * 指標値に基づいて色を取得
