@@ -45,7 +45,7 @@ const PinInstructionTooltip: React.FC = () => {
     },
     visible: { 
       opacity: 1,
-      scale: 1.2,
+      scale: 1,
       transition: { 
         duration: 0.4,
         ease: "easeOut"
@@ -83,14 +83,14 @@ const PinInstructionTooltip: React.FC = () => {
       <AnimatePresence>
         {centerVisible && (
           <motion.div 
-            className="fixed z-[500] left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 px-5 py-3 rounded-lg bg-white shadow-md border border-gray-200"
+            className="fixed z-[500] left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-lg bg-white shadow-md border border-gray-200"
             initial="hidden"
             animate="visible"
             exit="exit"
             variants={centerVariants}
           >
-            <div className="flex items-center gap-3 font-medium text-gray-800 text-lg">
-              <MousePointer2 className="w-5 h-5 text-blue-500" />
+            <div className="flex items-center gap-2 font-medium text-gray-800 text-base">
+              <MousePointer2 className="w-4 h-4 text-blue-500" />
               <span>{tooltipText}</span>
             </div>
           </motion.div>
@@ -101,12 +101,12 @@ const PinInstructionTooltip: React.FC = () => {
       <AnimatePresence>
         {cornerVisible && (
           <motion.div 
-            className="fixed z-[500] left-4 bottom-4 px-3 py-1.5 rounded-lg bg-white/80 shadow-sm border border-gray-100"
+            className="fixed z-[500] left-4 bottom-4 px-3 py-1.5 rounded-lg bg-white/70 shadow-sm border border-gray-100"
             initial="hidden"
             animate="visible"
             variants={cornerVariants}
           >
-            <div className="flex items-center gap-1.5 text-sm text-gray-600">
+            <div className="flex items-center gap-1.5 text-xs text-gray-600">
               <MousePointer2 className="w-3 h-3 text-blue-400" />
               <span>{tooltipText}</span>
             </div>
