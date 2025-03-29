@@ -83,7 +83,7 @@ const PinInstructionTooltip: React.FC = () => {
       <AnimatePresence>
         {centerVisible && (
           <motion.div 
-            className="fixed z-[500] left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-lg bg-white shadow-md border border-gray-200"
+            className="fixed z-[500] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-lg bg-white shadow-md border border-gray-200"
             initial="hidden"
             animate="visible"
             exit="exit"
