@@ -1,4 +1,3 @@
-
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
 import { CountryData, DataMetric } from '@/types/country';
@@ -124,10 +123,10 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
         }
       });
       
-      addMapInteractivity();
+      addCountryLayers(map, 'countries-fill');
     }
     
-    function addMapInteractivity() {
+    function addCountryLayers(map: mapboxgl.Map, layerId: string) {
       if (!map) return;
       
       // Add a popup on hover
@@ -136,7 +135,7 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
         closeOnClick: false
       });
       
-      map.on('mouseenter', 'countries-fill', (e) => {
+      map.on('mouseenter', layerId, (e) => {
         if (!map || !e.features || e.features.length === 0) return;
         
         map.getCanvas().style.cursor = 'pointer';
@@ -165,14 +164,14 @@ const MapDataHandler: React.FC<MapDataHandlerProps> = ({
         popup.setLngLat(coordinates).setHTML(popupContent).addTo(map);
       });
       
-      map.on('mouseleave', 'countries-fill', () => {
+      map.on('mouseleave', layerId, () => {
         if (!map) return;
         map.getCanvas().style.cursor = '';
         popup.remove();
       });
       
       // Add click event for selecting a country
-      map.on('click', 'countries-fill', (e) => {
+      map.on('click', layerId, (e) => {
         if (!map || !e.features || e.features.length === 0) return;
         
         const feature = e.features[0];
