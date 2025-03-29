@@ -46,7 +46,12 @@ const MetricDropdown: React.FC<MetricDropdownProps> = ({
         {getMetricLabel(selectedMetric)}
         <ChevronDown className="h-3 w-3" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align={isInHeader ? "center" : "end"} className="bg-white shadow-lg border-0 z-[500]">
+      <DropdownMenuContent 
+        align={isInHeader ? "center" : "end"} 
+        className="bg-white shadow-lg border-0 z-[500]" 
+        sideOffset={5}
+        style={{ backgroundColor: 'white', zIndex: 999 }}
+      >
         <DropdownMenuItem onClick={() => onMetricChange('population_density')} className="hover:bg-gray-100 text-xs">
           {t('populationDensity')}
         </DropdownMenuItem>

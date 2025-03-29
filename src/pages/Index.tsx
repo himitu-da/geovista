@@ -8,6 +8,7 @@ import ErrorMessage from '@/components/ErrorMessage';
 import MapLayer from '@/components/layers/MapLayer';
 import MetricDropdown from '@/components/controls/MetricDropdown';
 import { useIsMobile } from '@/hooks/use-mobile';
+import Header from '@/components/layout/Header';
 
 // アニメーション設定
 const containerVariants = {
@@ -40,34 +41,42 @@ const Index = () => {
   const { countries, loading, error } = useCountryData();
 
   return (
-    <motion.div 
-      className="fixed inset-0 w-screen h-screen overflow-hidden"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      {/* エラーメッセージ */}
-      <ErrorMessage error={error} />
-      
-      {/* ベースレイヤーとしてのフルスクリーンマップ */}
-      <MapLayer 
-        countries={countries} 
-        loading={loading} 
-        selectedMetric={selectedMetric}
-        selectedCountry={selectedCountry}
-        onCountrySelect={setSelectedCountry}
-      />
-      
-      {/* メトリック選択ドロップダウン - デスクトップ表示 */}
-      {!isMobile && (
-        <div className="absolute top-4 right-24 z-20">
-          <MetricDropdown 
-            selectedMetric={selectedMetric}
-            onMetricChange={setSelectedMetric}
-          />
-        </div>
+    <>
+      {isMobile && (
+        <Header
+          selectedMetric={selectedMetric}
+          onMetricChange={setSelectedMetric}
+        />
       )}
-    </motion.div>
+      <motion.div 
+        className="fixed inset-0 w-screen h-screen overflow-hidden"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {/* エラーメッセージ */}
+        <ErrorMessage error={error} />
+        
+        {/* ベースレイヤーとしてのフルスクリーンマップ */}
+        <MapLayer 
+          countries={countries} 
+          loading={loading} 
+          selectedMetric={selectedMetric}
+          selectedCountry={selectedCountry}
+          onCountrySelect={setSelectedCountry}
+        />
+        
+        {/* メトリック選択ドロップダウン - デスクトップ表示 */}
+        {!isMobile && (
+          <div className="absolute top-4 right-24 z-20">
+            <MetricDropdown 
+              selectedMetric={selectedMetric}
+              onMetricChange={setSelectedMetric}
+            />
+          </div>
+        )}
+      </motion.div>
+    </>
   );
 };
 

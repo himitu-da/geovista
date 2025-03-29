@@ -7,12 +7,16 @@ import { Database, Github } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MetricDropdown from '@/components/controls/MetricDropdown';
 import { useLocation } from 'react-router-dom';
+import { DataMetric } from '@/types/country';
 
 /**
  * ヘッダーコンポーネント
  * アプリケーションの上部に表示され、タイトルと言語切り替えコントロールを含む
  */
-const Header: React.FC = () => {
+const Header: React.FC<{
+  selectedMetric?: DataMetric;
+  onMetricChange?: (metric: DataMetric) => void;
+}> = ({ selectedMetric = 'population_density', onMetricChange = () => {} }) => {
   const { t } = useLanguage();
   const isMobile = useIsMobile();
   const location = useLocation();
@@ -30,8 +34,8 @@ const Header: React.FC = () => {
         </Link>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 pb-2 sm:pb-0">
-        <div className="flex items-center space-x-1 sm:space-x-2">
+      <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 pb-2 sm:pb-0 w-full sm:w-auto">
+        <div className="flex items-center space-x-1 sm:space-x-2 w-full sm:w-auto justify-end">
           <a
             href="https://github.com"
             target="_blank"
@@ -46,10 +50,10 @@ const Header: React.FC = () => {
         
         {/* メトリック選択ドロップダウン - モバイル表示かつExploreページの場合 */}
         {isMobile && isExplore && (
-          <div className="w-full">
+          <div className="w-full min-w-[180px] z-[100]">
             <MetricDropdown 
-              selectedMetric="population_density"
-              onMetricChange={() => {}}
+              selectedMetric={selectedMetric}
+              onMetricChange={onMetricChange}
               isInHeader={true}
             />
           </div>
