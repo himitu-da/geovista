@@ -14,3 +14,6 @@ export interface CountryDataState {
   loading: boolean;
   error: string | null;
 }
+
+// データ指標の型定義（シンプル版）
+export type DataMetric = 'population' | 'population_density' | 'gdp_per_capita';

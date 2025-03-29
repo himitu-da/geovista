@@ -2,7 +2,7 @@
 import { CountryData, DataMetric } from '@/types/country';
 
 /**
- * メトリック表示の書式設定
+ * メトリック表示の書式設定（シンプル版）
  */
 export const formatMetricValue = (country: CountryData, metric: DataMetric): string => {
   switch (metric) {
@@ -22,18 +22,14 @@ export const formatMetricValue = (country: CountryData, metric: DataMetric): str
 };
 
 /**
- * 値をフォーマットする関数（CountryTableRowで使用）
+ * 値をフォーマットする関数（CountryTableRowで使用）- シンプル版
  */
 export const formatValue = (value: number | null, metric: string): string => {
   if (value === null) return 'N/A';
   
   switch (metric) {
-    case 'population_density':
-      return `${value.toFixed(1)} 人/km²`;
     case 'population':
       return value.toLocaleString() + ' 人';
-    case 'gdp_per_capita':
-      return `$${value.toLocaleString()}`;
     default:
       return value.toString();
   }

@@ -1,7 +1,5 @@
-
 import L from 'leaflet';
 import { generateCountryTooltip, resetLayerStyle } from './FeatureHandlers';
-import { DataMetric } from '@/types/country';
 
 /**
  * Leafletのフィーチャータイプ定義
@@ -22,7 +20,6 @@ interface LeafletFeature {
  */
 export const createMouseOverHandler = (
   map: L.Map,
-  selectedMetric: DataMetric,
   setPopupInfo: (info: { position: [number, number]; content: string; isOpen: boolean; } | null) => void
 ) => {
   return (event: L.LeafletEvent) => {
@@ -33,7 +30,7 @@ export const createMouseOverHandler = (
     map.getContainer().style.cursor = 'pointer';
     
     // ツールチップ情報の生成
-    const tooltipInfo = generateCountryTooltip(props, selectedMetric);
+    const tooltipInfo = generateCountryTooltip(props);
     
     // レイヤーの境界から中心点を計算
     const bounds = layer.getBounds();

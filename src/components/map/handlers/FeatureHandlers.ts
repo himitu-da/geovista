@@ -2,7 +2,7 @@
 import L from 'leaflet';
 
 /**
- * ホバー時の国の情報を生成する関数
+ * ホバー時の国の情報を生成する関数（シンプル版）
  */
 export const generateCountryTooltip = (props: any): { 
   title: string; 
