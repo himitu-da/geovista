@@ -1,7 +1,10 @@
 
 import { DataMetric } from '@/types/country';
 
-// 指標の色範囲の定義
+/**
+ * 指標ごとの色範囲の定義
+ * 各指標に対して、値の閾値とそれに対応する色を定義
+ */
 const COLOR_RANGES = {
   population_density: [
     { threshold: 0, color: '#f5f5f7' },
@@ -60,5 +63,11 @@ export const getColorForValue = (value: number | null, metric: DataMetric): stri
  * @returns 色停止位置の配列
  */
 export const getColorStops = (metric: DataMetric): { value: number; color: string }[] => {
-  return COLOR_RANGES[metric] || COLOR_RANGES.population_density;
+  const ranges = COLOR_RANGES[metric] || COLOR_RANGES.population_density;
+  
+  // thresholdプロパティをvalueプロパティに変換して返す
+  return ranges.map(({ threshold, color }) => ({
+    value: threshold,
+    color
+  }));
 };
