@@ -67,7 +67,7 @@ export const AnimatedRoutes: React.FC<{
   return (
     <div className="relative w-full h-full overflow-hidden">
       {/* ルート遷移時の背景エフェクト */}
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="sync">
         <motion.div
           key={`bg-${location.pathname}`}
           initial={{ opacity: 0 }}
@@ -86,7 +86,7 @@ export const AnimatedRoutes: React.FC<{
       </AnimatePresence>
       
       {/* メインコンテンツのアニメーション */}
-      <AnimatePresence mode="wait" initial={false}>
+      <AnimatePresence mode="sync" initial={false}>
         <motion.div
           key={location.pathname}
           variants={getVariants()}
@@ -95,7 +95,7 @@ export const AnimatedRoutes: React.FC<{
           exit="exit"
           className="w-full h-full"
         >
-          <Routes location={location} key={location.pathname}>
+          <Routes location={location}>
             {children}
           </Routes>
         </motion.div>
@@ -126,7 +126,7 @@ export const SimpleAnimatedRoutes: React.FC<{ children: React.ReactNode }> = ({ 
   const location = useLocation();
   
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    <AnimatePresence mode="sync" initial={false}>
       <Routes location={location} key={location.pathname}>
         {children}
       </Routes>

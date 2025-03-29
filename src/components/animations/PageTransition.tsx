@@ -162,7 +162,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
   const location = useLocation();
   
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="sync">
       {backgroundEffect && (
         <motion.div
           key={`bg-${location.pathname}`}
