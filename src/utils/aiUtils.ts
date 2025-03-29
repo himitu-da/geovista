@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 /**
  * 与えられた位置（緯度、経度）に基づいて場所の説明を生成する
- * Claude AIを使って、その場所の歴史、地理、文化などの情報を取得
+ * Gemini AIを使って、その場所の歴史、地理、文化などの情報を取得
  */
 export const generateLocationDescription = async (position: [number, number]): Promise<string> => {
   try {
