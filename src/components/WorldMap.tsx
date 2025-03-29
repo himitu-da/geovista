@@ -8,6 +8,7 @@ import L from 'leaflet';
 import MapControls from './map/MapControls';
 import LoadingOverlay from './map/LoadingOverlay';
 import { initializeLeafletIcons } from './map/leafletUtils';
+import MapPinManager from './map/MapPinManager';
 
 // Leafletのデフォルトアイコンの問題を修正
 initializeLeafletIcons();
@@ -100,11 +101,19 @@ const WorldMap: React.FC<WorldMapProps> = ({
             onCountrySelect={onCountrySelect}
           />
         )}
+        
+        {/* ピンマネージャー - 地図上にピンを追加・管理 */}
+        <MapPinManager />
       </MapContainer>
       
       {/* 帰属表示オーバーレイ */}
       <div className="absolute bottom-7 right-1 z-[400] text-[7px] sm:text-[8px] text-gray-700 bg-white/80 px-1.5 py-0.5 rounded-tl-md shadow-sm">
         &copy; <a href="https://www.openstreetmap.org/copyright" className="hover:text-blue-600 font-medium">OpenStreetMap</a>
+      </div>
+      
+      {/* ピン追加のためのヘルプテキスト */}
+      <div className="absolute bottom-10 left-1 z-[400] text-[7px] sm:text-[9px] text-gray-700 bg-white/80 px-1.5 py-0.5 rounded-md shadow-sm">
+        <p className="font-medium">地図上で右クリックするとピンを追加できます</p>
       </div>
     </div>
   );
