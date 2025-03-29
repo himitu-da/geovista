@@ -1,4 +1,3 @@
-
 import { LandingTranslations } from './types';
 
 export const landingTranslations: LandingTranslations = {
@@ -77,5 +76,43 @@ export const landingTranslations: LandingTranslations = {
     geographicalPatternsDesc: 'Descubre patrones geográficos y correlaciones en todo el mundo con nuestras avanzadas herramientas de mapeo.',
     globalExploration: 'Exploración Global',
     globalExplorationDesc: 'Navega a través de datos globales con precisión y descubre perspectivas sobre nuestro mundo interconectado.'
+  },
+  ja: {
+    launchExplorer: 'エクスプローラーを起動',
+    dataVizPlatform: 'データ可視化プラットフォーム',
+    exploreWorldData: '世界のデータを探索',
+    intuitively: '直感的に',
+    landingDescription: 'インタラクティブな可視化を通じて、世界的なトレンドを発見し、人口統計データを分析し、世界中から貴重な洞察を得ることができます。',
+    startExploring: '探索を始める',
+    viewFeatures: '機能を見る',
+    scrollToExplore: 'スクロールして探索',
+    intuitiveDataViz: '直感的なデータ可視化',
+    powerfulTools: 'グローバルデータのパターンを理解するための強力なツールを指先で。',
+    interactiveMap: 'インタラクティブマップ',
+    interactiveMapDesc: 'インタラクティブで反応性の高いマッピングインターフェースで世界中の国を探索できます。',
+    dataAnalysis: 'データ分析',
+    dataAnalysisDesc: '主要な指標を分析し、異なる地域や時間帯間でデータを比較します。',
+    demographicInsights: '人口統計の洞察',
+    demographicInsightsDesc: '人口動向、経済指標、社会的要因を理解します。',
+    simplifyComplexData: '複雑なデータを簡素化',
+    designedFor: '私たちの世界をよりよく理解したい研究者、学生、好奇心旺盛な人々のために設計されています。',
+    feature1: 'グローバル指標とインジケータの明確な可視化',
+    feature2: '信頼できるソースからの包括的なデータセットへのアクセス',
+    feature3: '隠れたパターンを明らかにするAI駆動の洞察',
+    feature4: '精度の高いグローバルトレンドのナビゲーション',
+    worldwideData: '世界中のデータ',
+    dataDashboard: 'データダッシュボード',
+    keyFeatures: '主要機能のデモ',
+    experienceFeatures: '複雑なグローバルデータから貴重な洞察を得るために、私たちのツールがどのように役立つかをご覧ください。',
+    demoPlaceholder: 'インタラクティブデモ近日公開',
+    launchExplorerNow: '今すぐエクスプローラーを起動',
+    readyToExplore: '世界を探索する準備はできましたか？',
+    startYourJourney: '私たちの強力なデータ可視化ツールで発見の旅を始めましょう。',
+    globalDataVisualization: 'グローバルデータ可視化プラットフォーム',
+    allRightsReserved: '全著作権所有',
+    geographicalPatterns: '地理的パターン',
+    geographicalPatternsDesc: '高度なマッピングツールを使用して、世界中の地理的パターンと相関関係を発見します。',
+    globalExploration: 'グローバル探索',
+    globalExplorationDesc: '精度を持ってグローバルデータをナビゲートし、私たちの相互接続された世界に関する洞察を明らかにします。'
   }
 };

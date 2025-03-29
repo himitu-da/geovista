@@ -20,13 +20,15 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   const getBrowserLanguage = (): Language => {
     // Get from local storage first
     const savedLanguage = localStorage.getItem(STORAGE_KEY) as Language | null;
-    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'es')) {
+    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'es' || savedLanguage === 'ja')) {
       return savedLanguage;
     }
     
     // Check browser language
     const browserLang = navigator.language.split('-')[0].toLowerCase();
-    return browserLang === 'es' ? 'es' : 'en'; // Spanish or default to English
+    if (browserLang === 'es') return 'es';
+    if (browserLang === 'ja') return 'ja';
+    return 'en'; // Default to English
   };
 
   const [language, setLanguage] = useState<Language>('en'); // Default is English

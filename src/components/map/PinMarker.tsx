@@ -14,7 +14,7 @@ interface PinMarkerProps {
   onGenerateDescription: (position: [number, number], language: string) => Promise<string>;
 }
 
-// Custom pin icon
+// カスタムピンアイコン
 const customPinIcon = new L.Icon({
   iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -25,7 +25,7 @@ const customPinIcon = new L.Icon({
 });
 
 /**
- * Pin marker component
+ * ピンマーカーコンポーネント
  */
 const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDescription }) => {
   const [description, setDescription] = useState<string>('');
@@ -33,7 +33,7 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(true);
   const { language, t } = useLanguage();
 
-  // Generate description
+  // 説明文を生成する
   const handleGenerateDescription = async () => {
     setLoading(true);
     try {
@@ -41,13 +41,51 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
       setDescription(generatedDescription);
     } catch (error) {
       console.error('Failed to generate description:', error);
-      setDescription(language === 'es' 
-        ? 'Error al generar descripción. Por favor, inténtelo de nuevo.' 
-        : 'Failed to generate description. Please try again.');
+      if (language === 'es') {
+        setDescription('Error al generar descripción. Por favor, inténtelo de nuevo.');
+      } else if (language === 'ja') {
+        setDescription('説明の生成に失敗しました。もう一度お試しください。');
+      } else {
+        setDescription('Failed to generate description. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  // 言語に基づいてUIテキストを取得
+  const getUiText = () => {
+    if (language === 'es') {
+      return {
+        selectedLocation: 'Ubicación Seleccionada',
+        remove: 'Eliminar',
+        latitude: 'Latitud',
+        longitude: 'Longitud',
+        generating: 'Generando...',
+        generateDescription: 'Generar descripción del lugar'
+      };
+    } else if (language === 'ja') {
+      return {
+        selectedLocation: '選択した場所',
+        remove: '削除',
+        latitude: '緯度',
+        longitude: '経度',
+        generating: '生成中...',
+        generateDescription: '場所の説明を生成'
+      };
+    } else {
+      return {
+        selectedLocation: 'Selected Location',
+        remove: 'Remove',
+        latitude: 'Latitude',
+        longitude: 'Longitude',
+        generating: 'Generating...',
+        generateDescription: 'Generate location description'
+      };
+    }
+  };
+
+  const uiText = getUiText();
 
   return (
     <Marker 
@@ -68,7 +106,7 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
           <div className="flex justify-between items-center mb-3 border-b pb-2">
             <h3 className="text-sm font-medium flex items-center">
               <MapPin className="w-4 h-4 mr-1.5 text-red-500" />
-              {language === 'es' ? 'Ubicación Seleccionada' : 'Selected Location'}
+              {uiText.selectedLocation}
             </h3>
             <Button 
               variant="ghost"
@@ -80,16 +118,16 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
               }}
             >
               <MapPinOff className="h-3 w-3" />
-              {language === 'es' ? 'Eliminar' : 'Remove'}
+              {uiText.remove}
             </Button>
           </div>
           
           <div className="text-xs mb-3 bg-gray-50 p-2 rounded-md border border-gray-200 shadow-sm">
             <div className="grid grid-cols-2 gap-2">
-              <div>{language === 'es' ? 'Latitud' : 'Latitude'}: 
+              <div>{uiText.latitude}: 
                 <span className="font-medium ml-1">{position[0].toFixed(4)}</span>
               </div>
-              <div>{language === 'es' ? 'Longitud' : 'Longitude'}: 
+              <div>{uiText.longitude}: 
                 <span className="font-medium ml-1">{position[1].toFixed(4)}</span>
               </div>
             </div>
@@ -106,12 +144,12 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
               {loading ? (
                 <>
                   <Loader2 className="mr-1.5 h-3 w-3 animate-spin" />
-                  {language === 'es' ? 'Generando...' : 'Generating...'}
+                  {uiText.generating}
                 </>
               ) : (
                 <>
                   <Check className="mr-1.5 h-3 w-3" />
-                  {language === 'es' ? 'Generar descripción del lugar' : 'Generate location description'}
+                  {uiText.generateDescription}
                 </>
               )}
             </Button>
