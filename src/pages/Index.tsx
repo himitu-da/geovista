@@ -8,7 +8,6 @@ import ErrorMessage from '@/components/ErrorMessage';
 import MapLayer from '@/components/layers/MapLayer';
 import MetricDropdown from '@/components/controls/MetricDropdown';
 import { useIsMobile } from '@/hooks/use-mobile';
-import Header from '@/components/layout/Header';
 
 // アニメーション設定
 const containerVariants = {
@@ -47,12 +46,6 @@ const Index = () => {
       initial="hidden"
       animate="visible"
     >
-      {/* ヘッダー */}
-      <Header 
-        selectedMetric={selectedMetric}
-        onMetricChange={setSelectedMetric}
-      />
-      
       {/* エラーメッセージ */}
       <ErrorMessage error={error} />
       
@@ -65,7 +58,7 @@ const Index = () => {
         onCountrySelect={setSelectedCountry}
       />
       
-      {/* デスクトップ用メトリック選択ドロップダウン */}
+      {/* メトリック選択ドロップダウン - デスクトップ表示 */}
       {!isMobile && (
         <div className="absolute top-4 right-24 z-20">
           <MetricDropdown 
