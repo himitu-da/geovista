@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { MapPin, X, MousePointer2, Smartphone, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { calculatePinDistances } from '@/utils/geoUtils';
-import PinDistanceDisplay from './PinDistanceDisplay';
 import PinDistanceLines from './PinDistanceLines';
 
 // Semi-transparent pin icon for pending pins
@@ -271,13 +270,6 @@ const MapPinManager: React.FC = () => {
           </Popup>
         </Marker>
       )}
-
-      {/* Show distance information panel when there are multiple pins */}
-      <AnimatePresence>
-        {pins.length >= 2 && (
-          <PinDistanceDisplay distances={pinDistances} />
-        )}
-      </AnimatePresence>
 
       {/* Instruction tooltip (only shown until first pin is added) */}
       <AnimatePresence>
