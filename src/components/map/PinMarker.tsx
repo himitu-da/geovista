@@ -12,7 +12,11 @@ import CoordinatesDisplay from './CoordinatesDisplay';
 import LocationDescription from './LocationDescription';
 import DescriptionControls from './DescriptionControls';
 import AudioPlayer from './AudioPlayer';
-import { generateSpeech } from '@/utils/speechUtils';
+import { 
+  generateSpeech, 
+  generateFallbackSpeech, 
+  SpeechErrorType 
+} from '@/utils/speechUtils';
 
 interface PinMarkerProps {
   position: [number, number];
@@ -44,6 +48,7 @@ const getCustomPinIcon = (index: number) => {
 /**
  * Improved PinMarker component with better separation of concerns
  * Now includes pin index for identification and custom colors
+ * Added better error handling for speech generation
  */
 const PinMarker: React.FC<PinMarkerProps> = ({ 
   position, 
@@ -59,6 +64,7 @@ const PinMarker: React.FC<PinMarkerProps> = ({
   const [speechData, setSpeechData] = useState<string | null>(null);
   const [speechError, setSpeechError] = useState<string | null>(null);
   const [descriptionError, setDescriptionError] = useState<string | null>(null);
+  const [useFallbackSpeech, setUseFallbackSpeech] = useState<boolean>(false);
   
   // Refs
   const popupRef = useRef<L.Popup>(null);
@@ -117,41 +123,91 @@ const PinMarker: React.FC<PinMarkerProps> = ({
   };
 
   /**
-   * Generate speech audio
+   * Generate speech audio with improved error handling and fallback options
    */
   const handleGenerateSpeech = async () => {
     if (!description || speechLoading) return;
     
     setSpeechLoading(true);
     setSpeechError(null);
+    setUseFallbackSpeech(false);
     
     try {
-      const audio = await generateSpeech(description, language);
-      
-      if (!audio) {
-        throw new Error("No audio data received");
+      if (useFallbackSpeech) {
+        // Use browser's built-in speech synthesis as fallback
+        await generateFallbackSpeech(description, language);
+        setSpeechError(null);
+        toast({
+          title: language === 'es' ? 'Usando síntesis de voz del navegador' : 'Using browser speech synthesis',
+          duration: 2000,
+        });
+      } else {
+        // Try ElevenLabs first
+        const audio = await generateSpeech(description, language);
+        
+        if (!audio) {
+          throw new Error("No audio data received");
+        }
+        
+        setSpeechData(audio);
+        setSpeechError(null);
+        
+        toast({
+          title: language === 'es' ? 'Audio generado' : 'Audio generated',
+          duration: 2000,
+        });
       }
-      
-      setSpeechData(audio);
-      setSpeechError(null);
-      
-      toast({
-        title: language === 'es' ? 'Audio generado' : 'Audio generated',
-        duration: 2000,
-      });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to generate speech:', error);
-      setSpeechError(t('errorGeneratingSpeech'));
       
-      toast({
-        title: language === 'es' ? 'Error' : 'Error',
-        description: t('errorGeneratingSpeech'),
-        variant: 'destructive',
-        duration: 3000,
-      });
+      // Check if it's a timeout error
+      if (error?.type === SpeechErrorType.TIMEOUT) {
+        setSpeechError(t('elevenlabsDisabled'));
+        
+        // Offer to use the fallback
+        toast({
+          title: language === 'es' ? 'Error de tiempo de espera' : 'Timeout Error',
+          description: language === 'es' 
+            ? 'El servicio de voz está tardando demasiado. ¿Quieres usar la voz del navegador en su lugar?' 
+            : 'Voice service is taking too long. Want to use browser voice instead?',
+          variant: 'destructive',
+          duration: 5000,
+          action: (
+            <button 
+              onClick={() => {
+                setUseFallbackSpeech(true);
+                handleGenerateSpeech();
+              }}
+              className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-2 border border-gray-400 rounded shadow text-xs"
+            >
+              {language === 'es' ? 'Usar voz del navegador' : 'Use browser voice'}
+            </button>
+          ),
+        });
+      } else {
+        setSpeechError(t('errorGeneratingSpeech'));
+        toast({
+          title: language === 'es' ? 'Error' : 'Error',
+          description: t('errorGeneratingSpeech'),
+          variant: 'destructive',
+          duration: 3000,
+        });
+      }
     } finally {
       setSpeechLoading(false);
     }
+  };
+
+  // Toggle to browser's speech synthesis fallback
+  const toggleFallbackSpeech = () => {
+    setUseFallbackSpeech(prevState => !prevState);
+    setSpeechError(null);
+    toast({
+      title: useFallbackSpeech 
+        ? (language === 'es' ? 'Usando ElevenLabs' : 'Using ElevenLabs') 
+        : (language === 'es' ? 'Usando síntesis de voz del navegador' : 'Using browser speech synthesis'),
+      duration: 2000,
+    });
   };
 
   return (
@@ -217,7 +273,7 @@ const PinMarker: React.FC<PinMarkerProps> = ({
               </div>
               
               {/* Audio player when speech is available */}
-              {speechData && (
+              {speechData && !useFallbackSpeech && (
                 <div className="p-3 border-t">
                   <AudioPlayer 
                     audioBase64={speechData}
@@ -226,10 +282,20 @@ const PinMarker: React.FC<PinMarkerProps> = ({
                 </div>
               )}
               
-              {/* Speech error message */}
+              {/* Speech error message with fallback option */}
               {speechError && (
                 <div className="p-3 border-t">
-                  <p className="text-xs text-red-500">{speechError}</p>
+                  <div className="flex flex-col gap-2">
+                    <p className="text-xs text-red-500">{speechError}</p>
+                    {speechError === t('elevenlabsDisabled') && (
+                      <button 
+                        onClick={toggleFallbackSpeech}
+                        className="text-xs bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium py-1.5 px-3 rounded-full transition-colors"
+                      >
+                        {language === 'es' ? 'Usar voz del navegador' : 'Use browser voice'}
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
             </motion.div>

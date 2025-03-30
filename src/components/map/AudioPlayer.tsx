@@ -14,11 +14,13 @@ interface AudioPlayerProps {
   onEnded?: () => void;
   onError?: (error: string) => void;
   className?: string;
+  errorText?: string | null;
+  isFallback?: boolean;
 }
 
 /**
  * Improved audio player component with better error handling
- * and consistent styling
+ * and support for fallback silent audio
  */
 const AudioPlayer: React.FC<AudioPlayerProps> = ({
   audioBase64,
@@ -26,7 +28,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   onPause,
   onEnded,
   onError,
-  className
+  className,
+  errorText,
+  isFallback = false
 }) => {
   // Player state
   const [isPlaying, setIsPlaying] = useState(false);
@@ -36,7 +40,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   const [currentTime, setCurrentTime] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
   const [showVolumeControl, setShowVolumeControl] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(errorText || null);
   const [isLoading, setIsLoading] = useState(true);
   
   // Refs
@@ -44,6 +48,13 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   
   // Hooks
   const { t, language } = useLanguage();
+
+  // Set error from props
+  useEffect(() => {
+    if (errorText) {
+      setError(errorText);
+    }
+  }, [errorText]);
 
   // Convert base64 audio to a playable source URL
   const createAudioSource = (base64Data: string): string => {
@@ -232,12 +243,50 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     );
   }
   
-  // Error view
-  if (error) {
+  // Fallback or error view - show message but still render player controls
+  if (isFallback || error) {
     return (
-      <div className="p-2 text-xs text-red-500 bg-red-50 rounded-md border border-red-200 flex items-center gap-1.5">
-        <AlertCircle className="h-3 w-3 flex-shrink-0" />
-        <span>{error}</span>
+      <div className="rounded-md border p-2 bg-white/95 shadow-sm">
+        <div className="p-2 text-xs bg-amber-50 rounded-md border border-amber-200 flex items-center gap-1.5 mb-2">
+          <AlertCircle className="h-3 w-3 flex-shrink-0 text-amber-500" />
+          <span className="text-amber-700">{error || t('elevenlabsDisabled')}</span>
+        </div>
+        
+        {/* Render dummy player UI for visual consistency */}
+        <div className="flex items-center gap-2 opacity-70">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-7 w-7 p-0 flex-shrink-0"
+            disabled={true}
+          >
+            <Play className="h-3 w-3" />
+          </Button>
+          
+          <div className="flex-1 flex items-center gap-2">
+            <span className="text-xs text-gray-500 w-8 text-right">00:00</span>
+            <Slider
+              value={[0]}
+              min={0}
+              max={100}
+              step={0.1}
+              className="flex-1"
+              disabled={true}
+            />
+            <span className="text-xs text-gray-500 w-8">00:00</span>
+          </div>
+          
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-7 w-7 p-0 flex-shrink-0"
+            disabled={true}
+          >
+            <Volume2 className="h-3 w-3" />
+          </Button>
+        </div>
       </div>
     );
   }

@@ -1,6 +1,6 @@
 // src/components/map/DescriptionControls.tsx
 import React from 'react';
-import { Loader2, Volume2, Check } from 'lucide-react';
+import { Loader2, Volume2, Check, Headphones } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
@@ -15,6 +15,7 @@ interface DescriptionControlsProps {
 
 /**
  * Controls for generating and interacting with location descriptions
+ * Improved with better loading indicators and feedback
  */
 const DescriptionControls: React.FC<DescriptionControlsProps> = ({
   loading,
@@ -78,7 +79,7 @@ const DescriptionControls: React.FC<DescriptionControlsProps> = ({
           </>
         ) : (
           <>
-            <Volume2 className="h-3.5 w-3.5" />
+            <Headphones className="h-3.5 w-3.5" />
             <span>{t('listen')}</span>
           </>
         )}
