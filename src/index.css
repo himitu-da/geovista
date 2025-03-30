@@ -237,3 +237,90 @@
     @apply outline-none ring-2 ring-primary ring-offset-2;
   }
 }
+
+/* Distance line tooltip styling */
+.distance-tooltip .leaflet-tooltip-content {
+  @apply bg-blue-50 border border-blue-200 shadow-sm px-2 py-1 rounded-md;
+}
+
+.distance-tooltip .leaflet-tooltip-pane .leaflet-tooltip {
+  @apply border-none bg-transparent shadow-none;
+}
+
+.distance-tooltip.leaflet-tooltip.leaflet-tooltip-top:before {
+  @apply border-t-blue-50;
+}
+
+/* Pin index tooltip styling */
+.pin-index-tooltip .leaflet-tooltip-content {
+  @apply p-0 border-none;
+}
+
+.pin-index-tooltip .leaflet-tooltip-pane .leaflet-tooltip {
+  @apply border-none bg-transparent shadow-none;
+}
+
+.pin-index-tooltip.leaflet-tooltip.leaflet-tooltip-top:before {
+  @apply border-none;
+}
+
+/* Distance line tooltip styling - Improved */
+.distance-tooltip .leaflet-tooltip-content {
+  @apply bg-blue-100 border border-blue-300 shadow-md px-3 py-1.5 rounded-md font-medium text-blue-700;
+}
+
+.distance-tooltip .leaflet-tooltip-pane .leaflet-tooltip {
+  @apply border-none bg-transparent shadow-none;
+}
+
+.distance-tooltip.leaflet-tooltip.leaflet-tooltip-top:before {
+  @apply border-t-blue-100;
+}
+
+/* Pin index tooltip styling */
+.pin-index-tooltip .leaflet-tooltip-content {
+  @apply p-0 border-none;
+}
+
+.pin-index-tooltip .leaflet-tooltip-pane .leaflet-tooltip {
+  @apply border-none bg-transparent shadow-none;
+}
+
+.pin-index-tooltip.leaflet-tooltip.leaflet-tooltip-top:before {
+  @apply border-none;
+}
+
+/* Distance display panel styling */
+.distance-display {
+  @apply max-h-60 overflow-y-auto;
+}
+
+.distance-display::-webkit-scrollbar {
+  @apply w-1;
+}
+
+.distance-display::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded-full;
+}
+
+.distance-display::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+
+/* Pin connection lines - Improved */
+.pin-connection-line {
+  @apply transition-opacity duration-300;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1));
+}
+
+.pin-connection-line:hover {
+  @apply opacity-100;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+}
+
+/* Additional styling for better visibility */
+.leaflet-interactive {
+  cursor: pointer !important;
+}

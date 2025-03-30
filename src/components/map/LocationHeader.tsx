@@ -7,12 +7,13 @@ import { motion } from 'framer-motion';
 
 interface LocationHeaderProps {
   onRemove: () => void;
+  pinIndex: number; // Added pinIndex prop
 }
 
 /**
- * Header component for location popup displaying title and remove button
+ * Header component for location popup displaying title, pin index and remove button
  */
-const LocationHeader: React.FC<LocationHeaderProps> = ({ onRemove }) => {
+const LocationHeader: React.FC<LocationHeaderProps> = ({ onRemove, pinIndex }) => {
   const { t } = useLanguage();
   
   return (
@@ -24,7 +25,10 @@ const LocationHeader: React.FC<LocationHeaderProps> = ({ onRemove }) => {
     >
       <h3 className="text-sm font-medium flex items-center">
         <MapPin className="w-4 h-4 mr-1.5 text-red-500" />
-        {t('selectedLocation')}
+        {t('selectedLocation')} 
+        <span className="ml-1 bg-blue-100 text-blue-700 px-1.5 rounded-full text-xs font-bold">
+          {pinIndex + 1}
+        </span>
       </h3>
       <Button 
         variant="ghost"

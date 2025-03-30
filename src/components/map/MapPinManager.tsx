@@ -1,5 +1,5 @@
-
-import React, { useState, useEffect } from 'react';
+// src/components/map/MapPinManager.tsx
+import React, { useState, useEffect, useMemo } from 'react';
 import { useMapEvents, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import PinMarker from './PinMarker';
@@ -9,9 +9,12 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { MapPin, X, MousePointer2, Smartphone, Check } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { calculatePinDistances } from '@/utils/geoUtils';
+import PinDistanceDisplay from './PinDistanceDisplay';
+import PinDistanceLines from './PinDistanceLines';
 
-// 半透明なピンアイコンを作成
+// Semi-transparent pin icon for pending pins
 const ghostPinIcon = new L.Icon({
   iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-grey.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -23,19 +26,19 @@ const ghostPinIcon = new L.Icon({
 });
 
 /**
- * ピン追加の説明ツールチップコンポーネント - MapPinManager内に統合
+ * Add pin instruction tooltip component
  */
 const PinInstructionTooltip: React.FC = () => {
   const { t } = useLanguage();
   const isMobile = useIsMobile();
 
-  // 翻訳テキストを取得
+  // Get translation text
   const tooltipText = t('addPin');
 
-  // デバイスに適したアイコンを使用
+  // Use appropriate icon based on device
   const IconComponent = isMobile ? Smartphone : MousePointer2;
 
-  // アニメーションバリアント
+  // Animation variants
   const tooltipVariants = {
     initial: { 
       opacity: 0,
@@ -84,32 +87,49 @@ const PinInstructionTooltip: React.FC = () => {
 
 /**
  * Map pin manager component
- * 半透明のピンとポップアップを表示して、UXを改善したバージョン
+ * Handles adding, removing, and displaying pins on the map
+ * Now with distance calculation between pins
  */
 const MapPinManager: React.FC = () => {
+  // State for pins and UI
   const [pins, setPins] = useState<[number, number][]>([]);
   const [pendingPin, setPendingPin] = useState<[number, number] | null>(null);
+  const [showTooltip, setShowTooltip] = useState<boolean>(true);
+  
+  // Hooks
   const { toast } = useToast();
   const { language, t } = useLanguage();
   const isMobile = useIsMobile();
 
-  // Map event listener
+  // Calculate distances between pins (when more than one pin exists)
+  const pinDistances = useMemo(() => {
+    return calculatePinDistances(pins);
+  }, [pins]);
+
+  // Hide the instruction tooltip after adding the first pin
+  useEffect(() => {
+    if (pins.length > 0) {
+      setShowTooltip(false);
+    }
+  }, [pins]);
+
+  // Map event handler
   const map = useMapEvents({
     // Handle right-click for desktop
     contextmenu: (e) => {
-      // デスクトップの右クリックで半透明ピンを表示
+      // Show semi-transparent pin on right-click
       setPendingPin([e.latlng.lat, e.latlng.lng]);
     },
     // Handle tap/click for mobile
     click: (e) => {
       if (isMobile) {
-        // モバイルのタップで半透明ピンを表示
+        // Show semi-transparent pin on tap (mobile)
         setPendingPin([e.latlng.lat, e.latlng.lng]);
       }
     }
   });
 
-  // Common function to add a pin
+  // Add a pin to the map
   const addPin = (lat: number, lng: number) => {
     setPins(prev => [...prev, [lat, lng]]);
     
@@ -122,7 +142,7 @@ const MapPinManager: React.FC = () => {
     });
   };
 
-  // Remove pin
+  // Remove a pin from the map
   const handleRemovePin = (index: number) => {
     setPins(prev => prev.filter((_, i) => i !== index));
     
@@ -132,7 +152,7 @@ const MapPinManager: React.FC = () => {
     });
   };
 
-  // Generate location description
+  // Generate description for a location
   const handleGenerateDescription = async (position: [number, number], lang: string): Promise<string> => {
     try {
       const description = await generateLocationDescription(position, lang);
@@ -145,12 +165,12 @@ const MapPinManager: React.FC = () => {
     }
   };
 
-  // 確認ダイアログが閉じられたときのハンドラー
+  // Handle dialog close (cancel pending pin)
   const handleDialogClose = () => {
     setPendingPin(null);
   };
 
-  // ピン追加の確認
+  // Confirm adding the pending pin
   const handleConfirmAddPin = () => {
     if (pendingPin) {
       addPin(pendingPin[0], pendingPin[1]);
@@ -158,24 +178,31 @@ const MapPinManager: React.FC = () => {
     }
   };
 
-  // クリックイベントを停止する（ポップアップの背景クリック防止）
+  // Stop event propagation (prevent clicks from bubbling through popups)
   const stopPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
 
   return (
     <>
-      {/* 既存のピン */}
+      {/* Display lines between pins with distance information */}
+      <PinDistanceLines 
+        pins={pins} 
+        distances={pinDistances}
+      />
+      
+      {/* Existing pins */}
       {pins.map((position, index) => (
         <PinMarker
           key={`pin-${index}-${position[0]}-${position[1]}`}
           position={position}
           onRemove={() => handleRemovePin(index)}
           onGenerateDescription={handleGenerateDescription}
+          pinIndex={index}
         />
       ))}
 
-      {/* 半透明の仮ピンとポップアップ */}
+      {/* Semi-transparent pending pin with confirmation popup */}
       {pendingPin && (
         <Marker 
           position={pendingPin} 
@@ -245,8 +272,17 @@ const MapPinManager: React.FC = () => {
         </Marker>
       )}
 
-      {/* 左下の説明ツールチップを表示 */}
-      <PinInstructionTooltip />
+      {/* Show distance information panel when there are multiple pins */}
+      <AnimatePresence>
+        {pins.length >= 2 && (
+          <PinDistanceDisplay distances={pinDistances} />
+        )}
+      </AnimatePresence>
+
+      {/* Instruction tooltip (only shown until first pin is added) */}
+      <AnimatePresence>
+        {showTooltip && <PinInstructionTooltip />}
+      </AnimatePresence>
     </>
   );
 };

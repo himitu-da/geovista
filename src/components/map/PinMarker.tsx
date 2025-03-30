@@ -1,12 +1,12 @@
 // src/components/map/PinMarker.tsx
 import React, { useState, useEffect, useRef } from 'react';
-import { Marker, Popup } from 'react-leaflet';
+import { Marker, Popup, Tooltip } from 'react-leaflet';
 import L from 'leaflet';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
 
-// Import our new modular components
+// Import our modular components
 import LocationHeader from './LocationHeader';
 import CoordinatesDisplay from './CoordinatesDisplay';
 import LocationDescription from './LocationDescription';
@@ -18,22 +18,39 @@ interface PinMarkerProps {
   position: [number, number];
   onRemove: () => void;
   onGenerateDescription: (position: [number, number], language: string) => Promise<string>;
+  pinIndex: number; // Added pinIndex prop
 }
 
-// Custom pin icon
-const customPinIcon = new L.Icon({
-  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
+// Get custom pin icon based on index
+const getCustomPinIcon = (index: number) => {
+  // Colors for different pin indices (up to 10 colors, then repeat)
+  const colors = [
+    'red', 'blue', 'green', 'orange', 'purple', 
+    'darkred', 'darkblue', 'darkgreen', 'cadetblue', 'darkpurple'
+  ];
+  
+  const color = colors[index % colors.length];
+  
+  return new L.Icon({
+    iconUrl: `https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+};
 
 /**
  * Improved PinMarker component with better separation of concerns
+ * Now includes pin index for identification and custom colors
  */
-const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDescription }) => {
+const PinMarker: React.FC<PinMarkerProps> = ({ 
+  position, 
+  onRemove, 
+  onGenerateDescription,
+  pinIndex 
+}) => {
   // State management
   const [description, setDescription] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -50,6 +67,9 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
   // Hooks
   const { language, t } = useLanguage();
   const { toast } = useToast();
+
+  // Get custom icon for this pin
+  const pinIcon = getCustomPinIcon(pinIndex);
 
   /**
    * Generate location description with error handling
@@ -137,12 +157,24 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
   return (
     <Marker 
       position={position} 
-      icon={customPinIcon}
+      icon={pinIcon}
       eventHandlers={{
         popupopen: () => setIsPopupOpen(true),
         popupclose: () => setIsPopupOpen(false),
       }}
     >
+      {/* Show pin index in tooltip */}
+      <Tooltip 
+        permanent={true} 
+        direction="top" 
+        offset={[0, -20]} 
+        className="pin-index-tooltip"
+      >
+        <div className="text-xs font-bold bg-white px-1 rounded-sm border shadow-sm">
+          {pinIndex + 1}
+        </div>
+      </Tooltip>
+
       <Popup 
         className="location-popup" 
         autoPan={true} 
@@ -158,7 +190,7 @@ const PinMarker: React.FC<PinMarkerProps> = ({ position, onRemove, onGenerateDes
           transition={{ duration: 0.2 }}
         >
           {/* Header with location and remove button */}
-          <LocationHeader onRemove={onRemove} />
+          <LocationHeader onRemove={onRemove} pinIndex={pinIndex} />
           
           {/* Coordinates display */}
           <CoordinatesDisplay position={position} className="mb-3" />

@@ -1,4 +1,4 @@
-
+// src/translations/explorer.ts
 import { TranslationRecord } from './types';
 
 // Explorer page translations
@@ -228,7 +228,7 @@ export const explorerTranslations: Record<string, TranslationRecord> = {
     es: "Error al generar descripción. Por favor, inténtelo de nuevo.",
     ja: "説明の生成に失敗しました。もう一度お試しください。"
   },
-  // 音声読み上げ関連の翻訳を追加
+  // Text to speech related translations
   textToSpeech: {
     en: "Text to speech",
     es: "Texto a voz",
@@ -283,6 +283,81 @@ export const explorerTranslations: Record<string, TranslationRecord> = {
     en: "Voice playback temporarily unavailable",
     es: "Reproducción de voz temporalmente no disponible",
     ja: "音声再生は一時的に利用できません"
+  },
+  // New distance-related translations
+  distancesBetweenPins: {
+    en: "Distances between pins",
+    es: "Distancias entre pines",
+    ja: "ピン間の距離"
+  },
+  distance: {
+    en: "Distance",
+    es: "Distancia",
+    ja: "距離"
+  },
+  bearing: {
+    en: "Bearing",
+    es: "Rumbo",
+    ja: "方位"
+  },
+  direction: {
+    en: "Direction",
+    es: "Dirección",
+    ja: "方向"
+  },
+  pin: {
+    en: "Pin",
+    es: "Pin",
+    ja: "ピン"
+  },
+  to: {
+    en: "to",
+    es: "a",
+    ja: "から"
+  },
+  north: {
+    en: "North",
+    es: "Norte",
+    ja: "北"
+  },
+  east: {
+    en: "East",
+    es: "Este",
+    ja: "東"
+  },
+  south: {
+    en: "South",
+    es: "Sur",
+    ja: "南"
+  },
+  west: {
+    en: "West",
+    es: "Oeste",
+    ja: "西"
+  },
+  northeast: {
+    en: "Northeast",
+    es: "Noreste",
+    ja: "北東"
+  },
+  southeast: {
+    en: "Southeast",
+    es: "Sureste",
+    ja: "南東"
+  },
+  southwest: {
+    en: "Southwest",
+    es: "Suroeste",
+    ja: "南西"
+  },
+  northwest: {
+    en: "Northwest",
+    es: "Noroeste",
+    ja: "北西"
+  },
+  degrees: {
+    en: "degrees",
+    es: "grados",
+    ja: "度"
   }
 };
-
