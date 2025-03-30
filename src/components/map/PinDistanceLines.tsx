@@ -16,7 +16,7 @@ interface PinDistanceLinesProps {
 /**
  * Component that displays lines between pins with distance tooltips
  * Improved with thicker lines and better hover detection
- * Fixed focus rectangle issue
+ * Fixed focus rectangle issue and removed invalid React.Fragment props
  */
 const PinDistanceLines: React.FC<PinDistanceLinesProps> = ({ 
   pins, 
@@ -50,8 +50,9 @@ const PinDistanceLines: React.FC<PinDistanceLinesProps> = ({
         // Skip if we don't have both pins
         if (!fromPin || !toPin) return null;
         
+        // Use a unique key for the fragment that doesn't include any data-* attributes
         return (
-          <React.Fragment key={`line-${index}`}>
+          <React.Fragment key={`distance-line-${index}`}>
             {/* Main visible line */}
             <Polyline
               positions={[fromPin, toPin]}

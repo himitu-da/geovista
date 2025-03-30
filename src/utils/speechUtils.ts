@@ -1,24 +1,34 @@
-
 // src/utils/speechUtils.ts
 import { supabase } from '@/integrations/supabase/client';
 
-// Default voice IDs per language - removed Japanese
+// Voice IDs per language (for reference only - actual selection happens in the edge function)
 export const VOICE_IDS = {
   en: 'pFZP5JQG7iQjIQuC4Bku', // Lily (English)
   es: 'pqHfZKP75CvOlQylNhV4', // Bill (Spanish)
-  ja: 'XB0fDUnXU5powFXDhCwa', // Charlotte (日本語向け)
-};
-
-// Hard-coded sample audio data to use as fallback when API fails
-// These are short valid audio samples encoded in base64 - removed Japanese
-export const FALLBACK_AUDIO = {
-  en: "data:audio/mpeg;base64,//OIxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA/AAAAjAAAZagAIDg4OFRUVFRsdHR0kJCQkKioqKjIyMjI5OTk5QUFBQU1NTU1VVVVVXFxcXGRkZGRsbGxsdHR0dHx8fHyDg4ODi4uLi5OTk5OaAAAA",
-  es: "data:audio/mpeg;base64,//OIxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA/AAAAjAAAZagAIDg4OFRUVFRsdHR0kJCQkKioqKjIyMjI5OTk5QUFBQU1NTU1VVVVVXFxcXGRkZGRsbGxsdHR0dHx8fHyDg4ODi4uLi5OTk5OaAAAA"
 };
 
 /**
+ * Interface for text-to-speech response
+ */
+interface TextToSpeechResponse {
+  audio: string; // Base64 encoded audio
+  alignment?: {
+    characters: string[];
+    character_start_times_seconds: number[];
+    character_end_times_seconds: number[];
+  };
+  normalized_alignment?: {
+    characters: string[];
+    character_start_times_seconds: number[];
+    character_end_times_seconds: number[];
+  };
+}
+
+/**
  * Generate speech from text using ElevenLabs API via Supabase Edge Function
- * Supports English and Spanish only, with fallback audio
+ * @param text The text to convert to speech
+ * @param language The language code (en, es)
+ * @returns Promise with base64 audio data
  */
 export const generateSpeech = async (
   text: string, 
@@ -36,59 +46,52 @@ export const generateSpeech = async (
       language = 'en'; // Default to English for unsupported languages
     }
 
-    // This is a simplified version that returns fallback audio
-    // In a real implementation, we would call the API
     console.log(`Generating speech for ${language} text: ${text.substring(0, 50)}...`);
     
-    // Return the fallback audio based on language
-    return FALLBACK_AUDIO[language as keyof typeof FALLBACK_AUDIO];
+    // Process only first 1000 characters to limit API usage
+    const processedText = text.substring(0, 1000);
     
-    /* 
-    // The following is the code that would be used in production
-    // with proper API integration
-    try {
-      // Process only first 1000 characters to limit API usage
-      const processedText = text.substring(0, 1000);
-      
-      // Call Supabase edge function with timeout
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('API request timed out')), 8000)
-      );
-      
-      const responsePromise = supabase.functions.invoke('elevenlabs-text-to-speech', {
-        body: { 
-          text: processedText,
-          language: language,
-          voice_id: VOICE_IDS[language as keyof typeof VOICE_IDS] || VOICE_IDS.en
-        }
-      });
-      
-      // Race between API call and timeout
-      const { data, error } = await Promise.race([
-        responsePromise,
-        timeoutPromise.then(() => ({ data: null, error: new Error('Request timed out') }))
-      ]) as any;
-      
-      if (error) {
-        console.error('Supabase edge function error:', error);
-        throw error;
+    // Create a promise that will reject after a timeout
+    const timeoutPromise = new Promise<never>((_, reject) => 
+      setTimeout(() => reject(new Error('API request timed out')), 12000)
+    );
+    
+    // Make the API call with a timeout
+    const responsePromise = supabase.functions.invoke('elevenlabs-text-to-speech', {
+      body: { 
+        text: processedText,
+        language: language
       }
-      
-      if (!data || !data.audio) {
-        console.error('No audio data returned from API');
-        throw new Error('No audio data received');
-      }
-      
-      return data.audio; // Base64 encoded audio data
-    } catch (apiError) {
-      // API call failed, use fallback
-      console.warn('API failed, using fallback audio:', apiError);
-      return FALLBACK_AUDIO[language as keyof typeof FALLBACK_AUDIO];
+    });
+    
+    // Race between API call and timeout
+    const result = await Promise.race([
+      responsePromise,
+      timeoutPromise
+    ]);
+    
+    // Handle error from Supabase function
+    if (result.error) {
+      console.error('Supabase edge function error:', result.error);
+      throw new Error(result.error.message || 'Error calling speech service');
     }
-    */
+    
+    // Parse response
+    const data = result.data as TextToSpeechResponse;
+    
+    if (!data || !data.audio) {
+      console.error('No audio data returned from API');
+      throw new Error('No audio data received');
+    }
+    
+    // Return the base64 audio data
+    return data.audio;
+    
   } catch (error) {
     console.error('Error in speech generation:', error);
-    return FALLBACK_AUDIO[language as keyof typeof FALLBACK_AUDIO];
+    
+    // Re-throw so the caller can handle the error
+    throw error;
   }
 };
 

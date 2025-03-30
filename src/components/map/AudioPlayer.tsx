@@ -1,6 +1,6 @@
 // src/components/map/AudioPlayer.tsx
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX, AlertCircle } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -17,7 +17,7 @@ interface AudioPlayerProps {
 }
 
 /**
- * Improved audio player component with simpler error handling
+ * Improved audio player component with better error handling
  * and consistent styling
  */
 const AudioPlayer: React.FC<AudioPlayerProps> = ({
@@ -37,20 +37,43 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   const [isLoaded, setIsLoaded] = useState(false);
   const [showVolumeControl, setShowVolumeControl] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Refs
   const audioRef = useRef<HTMLAudioElement | null>(null);
   
   // Hooks
   const { t, language } = useLanguage();
+
+  // Convert base64 audio to a playable source URL
+  const createAudioSource = (base64Data: string): string => {
+    try {
+      // Check if base64 includes the data URI prefix
+      const dataUri = base64Data.startsWith('data:') 
+        ? base64Data 
+        : `data:audio/mp3;base64,${base64Data}`;
+      return dataUri;
+    } catch (err) {
+      console.error('Error creating audio source:', err);
+      setError(language === 'es' 
+        ? 'Error al procesar el audio' 
+        : 'Error processing audio');
+      return '';
+    }
+  };
   
   // Set up audio on component mount or when audioBase64 changes
   useEffect(() => {
     if (!audioBase64) {
-      setError("No audio data available");
+      setError(language === 'es'
+        ? 'No hay datos de audio disponibles'
+        : 'No audio data available');
+      setIsLoading(false);
       if (onError) onError("No audio data available");
       return;
     }
+    
+    setIsLoading(true);
     
     // Clean up previous audio
     if (audioRef.current) {
@@ -67,6 +90,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       audio.oncanplay = () => {
         setDuration(audio.duration || 0);
         setIsLoaded(true);
+        setIsLoading(false);
         setError(null);
       };
       
@@ -80,11 +104,13 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
         if (onEnded) onEnded();
       };
       
-      audio.onerror = () => {
-        setError(language === 'es' ? 
-          'Error al reproducir audio' : 
-          'Failed to load audio');
+      audio.onerror = (e) => {
+        console.error('Audio error:', e);
+        setError(language === 'es' 
+          ? 'Error al reproducir audio' 
+          : 'Failed to load audio');
         setIsLoaded(false);
+        setIsLoading(false);
         
         if (onError) onError("Failed to load audio");
       };
@@ -93,11 +119,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       audio.volume = volume;
       audio.preload = 'auto';
       
-      // Set audio source - handle both formats of base64 data
-      const audioSrc = audioBase64.startsWith('data:') 
-        ? audioBase64 
-        : `data:audio/mp3;base64,${audioBase64}`;
-      
+      // Set audio source from base64
+      const audioSrc = createAudioSource(audioBase64);
       audio.src = audioSrc;
       audio.load();
       
@@ -111,12 +134,13 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       };
     } catch (err) {
       console.error("Error setting up audio:", err);
-      setError(language === 'es' ? 
-        'Error al inicializar el reproductor de audio' : 
-        'Failed to initialize audio player');
+      setError(language === 'es' 
+        ? 'Error al inicializar el reproductor de audio' 
+        : 'Failed to initialize audio player');
+      setIsLoading(false);
       if (onError) onError("Failed to initialize audio player");
     }
-  }, [audioBase64, onEnded, onError]);
+  }, [audioBase64, onEnded, onError, language]);
   
   // Play/pause toggle
   const togglePlay = () => {
@@ -137,9 +161,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
           })
           .catch(err => {
             console.error("Error playing audio:", err);
-            setError(language === 'es' ? 
-              'Error al reproducir audio' : 
-              'Failed to play audio');
+            setError(language === 'es' 
+              ? 'Error al reproducir audio' 
+              : 'Failed to play audio');
           });
       }
     }
@@ -193,6 +217,20 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
+  
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="p-4 flex items-center justify-center">
+        <div className="flex flex-col items-center">
+          <Loader2 className="animate-spin h-6 w-6 text-blue-500 mb-2" />
+          <p className="text-xs text-gray-500">
+            {language === 'es' ? 'Cargando audio...' : 'Loading audio...'}
+          </p>
+        </div>
+      </div>
+    );
+  }
   
   // Error view
   if (error) {
