@@ -1,226 +1,203 @@
 // src/components/map/LocationDescription.tsx
-import React from 'react';
-import ReactMarkdown from 'react-markdown';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Map, 
-  Clock, 
-  MapPin, 
-  Camera, 
-  Book, 
-  Users, 
-  Star
-} from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { cn } from '@/lib/utils';
+import { Map, Clock, Users, Camera, Book } from 'lucide-react';
 
 interface LocationDescriptionProps {
   description: string;
+  className?: string;
 }
 
 /**
- * Enhanced location description component that displays structured information
- * with visually appealing section-based card designs
+ * Simplified location description component that displays content in vertical boxes
  */
 const LocationDescription: React.FC<LocationDescriptionProps> = ({ 
-  description
+  description,
+  className = ''
 }) => {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   
-  // Determine appropriate icon and color scheme based on section type
-  const getSectionInfo = (text: string): { 
-    icon: JSX.Element; 
-    color: string; 
-    bgColor: string; 
-    borderColor: string;
-    headingColor: string;
-  } => {
-    const lowerText = text.toLowerCase();
+  // Parse the description and extract sections
+  const sections = useMemo(() => {
+    if (!description) return [];
+
+    // Try to break up the content into titled sections
+    const result: { type: string; title: string; content: string }[] = [];
     
-    // English section keywords
-    if (language === 'en') {
-      if (lowerText.includes('geography')) 
-        return { 
-          icon: <Map className="w-4 h-4" />, 
-          color: 'text-blue-600',
-          bgColor: 'bg-blue-50',
-          borderColor: 'border-blue-200',
-          headingColor: 'text-blue-700'
-        };
-      if (lowerText.includes('history')) 
-        return { 
-          icon: <Clock className="w-4 h-4" />, 
-          color: 'text-amber-600',
-          bgColor: 'bg-amber-50',
-          borderColor: 'border-amber-200',
-          headingColor: 'text-amber-700'
-        };
-      if (lowerText.includes('culture')) 
-        return { 
-          icon: <Users className="w-4 h-4" />, 
-          color: 'text-purple-600',
-          bgColor: 'bg-purple-50',
-          borderColor: 'border-purple-200',
-          headingColor: 'text-purple-700'
-        };
-      if (lowerText.includes('points of interest') || lowerText.includes('attractions')) 
-        return { 
-          icon: <Camera className="w-4 h-4" />, 
-          color: 'text-green-600',
-          bgColor: 'bg-green-50',
-          borderColor: 'border-green-200',
-          headingColor: 'text-green-700'
-        };
-      if (lowerText.includes('overview')) 
-        return { 
-          icon: <Book className="w-4 h-4" />, 
-          color: 'text-gray-600',
-          bgColor: 'bg-gray-50',
-          borderColor: 'border-gray-200',
-          headingColor: 'text-gray-700'
-        };
-    } 
-    // Spanish section keywords
-    else if (language === 'es') {
-      if (lowerText.includes('geografía')) 
-        return { 
-          icon: <Map className="w-4 h-4" />, 
-          color: 'text-blue-600',
-          bgColor: 'bg-blue-50',
-          borderColor: 'border-blue-200',
-          headingColor: 'text-blue-700'
-        };
-      if (lowerText.includes('historia')) 
-        return { 
-          icon: <Clock className="w-4 h-4" />, 
-          color: 'text-amber-600',
-          bgColor: 'bg-amber-50',
-          borderColor: 'border-amber-200',
-          headingColor: 'text-amber-700'
-        };
-      if (lowerText.includes('cultura')) 
-        return { 
-          icon: <Users className="w-4 h-4" />, 
-          color: 'text-purple-600',
-          bgColor: 'bg-purple-50',
-          borderColor: 'border-purple-200',
-          headingColor: 'text-purple-700'
-        };
-      if (lowerText.includes('puntos de interés') || lowerText.includes('atracciones')) 
-        return { 
-          icon: <Camera className="w-4 h-4" />, 
-          color: 'text-green-600',
-          bgColor: 'bg-green-50',
-          borderColor: 'border-green-200',
-          headingColor: 'text-green-700'
-        };
-      if (lowerText.includes('resumen')) 
-        return { 
-          icon: <Book className="w-4 h-4" />, 
-          color: 'text-gray-600',
-          bgColor: 'bg-gray-50',
-          borderColor: 'border-gray-200',
-          headingColor: 'text-gray-700'
-        };
-    }
+    // Split by markdown headers
+    const parts = description.split(/(?=# |## )/g);
     
-    // Default styling for unrecognized sections
-    return { 
-      icon: <MapPin className="w-4 h-4" />, 
-      color: 'text-gray-600',
-      bgColor: 'bg-gray-50',
-      borderColor: 'border-gray-200',
-      headingColor: 'text-gray-700'
-    };
-  };
+    // Process each part
+    parts.forEach(part => {
+      const trimmedPart = part.trim();
+      if (!trimmedPart) return;
+      
+      // Check if it's a main title (# Title) or a section (## Section)
+      if (trimmedPart.startsWith('# ')) {
+        const title = trimmedPart.replace(/^# /, '').split('\n')[0].trim();
+        const content = trimmedPart.replace(/^# [^\n]+\n/, '').trim();
+        
+        result.push({
+          type: 'title',
+          title,
+          content
+        });
+      } else if (trimmedPart.startsWith('## ')) {
+        const title = trimmedPart.replace(/^## /, '').split('\n')[0].trim();
+        const content = trimmedPart.replace(/^## [^\n]+\n/, '').trim();
+        
+        // Determine section type based on title keywords
+        let type = 'overview';
+        const lowerTitle = title.toLowerCase();
+        
+        if (language === 'es') {
+          // Spanish section detection
+          if (lowerTitle.includes('geografía')) type = 'geography';
+          else if (lowerTitle.includes('historia')) type = 'history';
+          else if (lowerTitle.includes('cultura')) type = 'culture';
+          else if (lowerTitle.includes('interés') || lowerTitle.includes('atracciones')) type = 'attractions';
+        } else {
+          // English section detection
+          if (lowerTitle.includes('geography')) type = 'geography';
+          else if (lowerTitle.includes('history')) type = 'history';
+          else if (lowerTitle.includes('culture')) type = 'culture';
+          else if (lowerTitle.includes('interest') || lowerTitle.includes('attraction')) type = 'attractions';
+        }
+        
+        result.push({ type, title, content });
+      } else {
+        // If there's text without a header, add it as an overview section
+        result.push({
+          type: 'overview',
+          title: language === 'es' ? 'Información general' : 'Overview',
+          content: trimmedPart
+        });
+      }
+    });
+    
+    return result;
+  }, [description, language]);
+
+  if (!description) return null;
 
   return (
     <motion.div 
+      className={`text-xs ${className}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="text-xs location-description p-3"
     >
-      <ReactMarkdown
-        components={{
-          h1: ({ node, children, ...props }) => {
-            return (
-              <div className="mb-3">
-                <div className="text-sm font-bold text-blue-600 border-b pb-1.5 mb-2 flex items-center">
-                  <h1 className="flex items-center" {...props}>
-                    <Star className="w-4 h-4 mr-1.5 text-blue-500" />
-                    {children}
-                  </h1>
-                </div>
-                <div className="bg-blue-50 p-2 rounded-md border border-blue-100 shadow-sm">
-                  <p className="text-xs text-blue-800 italic">
-                    {t('locationDescription')}
-                  </p>
-                </div>
-              </div>
-            );
-          },
-          h2: ({ node, children, ...props }) => {
-            // Get the heading text and select appropriate styling
-            const headingText = children ? children.toString() : '';
-            const { icon, color, bgColor, borderColor, headingColor } = getSectionInfo(headingText);
-            
-            return (
-              <div className="mt-4 mb-2" {...props}>
-                <div className={cn(
-                  "rounded-t-lg border", 
-                  borderColor,
-                  "border-b-0",
-                  "shadow-sm"
-                )}>
-                  {/* Section heading with icon and colored background */}
-                  <h2 className={cn(
-                    "text-sm font-semibold py-2 px-3 flex items-center gap-2",
-                    bgColor,
-                    headingColor
-                  )}>
-                    <span className={cn("rounded-full p-1", bgColor, color)}>
-                      {icon}
-                    </span>
-                    {children}
-                  </h2>
-                </div>
-              </div>
-            );
-          },
-          p: ({ node, children, ...props }) => {
-            return (
-              <div className={cn(
-                "bg-white px-3 py-2.5 border",
-                "border-gray-100",
-                "rounded-b-lg mb-5",
-                "shadow-sm",
-              )}>
-                <p className="leading-relaxed text-gray-700 text-xs" {...props}>
-                  {children}
-                </p>
-              </div>
-            );
-          },
-          ul: ({ node, ...props }) => (
-            <div className={cn(
-              "bg-white px-3 py-2 border mb-5 rounded-b-lg",
-              "border-gray-100",
-              "shadow-sm"
-            )}>
-              <ul className="mb-0 pl-3 list-none space-y-1.5" {...props} />
-            </div>
-          ),
-          li: ({ node, children, ...props }) => (
-            <li className="mb-0.5 text-gray-700 flex items-start" {...props}>
-              <span className="inline-block mr-1.5 text-blue-500">•</span>
-              <span className="text-xs">{children}</span>
-            </li>
-          ),
-        }}
-      >
-        {description}
-      </ReactMarkdown>
+      <div className="max-h-[250px] overflow-y-auto pr-1">
+        {sections.map((section, index) => (
+          <LocationBox
+            key={`section-${index}`}
+            type={section.type}
+            title={section.title}
+            content={section.content}
+            delay={index * 0.1}
+          />
+        ))}
+      </div>
+    </motion.div>
+  );
+};
+
+// Helper component for each location box
+interface LocationBoxProps {
+  type: string;
+  title: string;
+  content: string;
+  delay?: number;
+}
+
+const LocationBox: React.FC<LocationBoxProps> = ({
+  type,
+  title,
+  content,
+  delay = 0
+}) => {
+  // Get icon and styles based on section type
+  const getBoxStyles = () => {
+    switch (type) {
+      case 'geography':
+        return {
+          icon: <Map className="w-4 h-4" />,
+          bgColor: 'bg-blue-50',
+          borderColor: 'border-blue-200',
+          iconColor: 'text-blue-600'
+        };
+      case 'history':
+        return {
+          icon: <Clock className="w-4 h-4" />,
+          bgColor: 'bg-amber-50',
+          borderColor: 'border-amber-200',
+          iconColor: 'text-amber-600'
+        };
+      case 'culture':
+        return {
+          icon: <Users className="w-4 h-4" />,
+          bgColor: 'bg-purple-50',
+          borderColor: 'border-purple-200',
+          iconColor: 'text-purple-600'
+        };
+      case 'attractions':
+        return {
+          icon: <Camera className="w-4 h-4" />,
+          bgColor: 'bg-green-50',
+          borderColor: 'border-green-200',
+          iconColor: 'text-green-600'
+        };
+      case 'title':
+        return {
+          icon: null,
+          bgColor: 'bg-gray-50',
+          borderColor: 'border-gray-300',
+          iconColor: 'text-gray-700'
+        };
+      default:
+        return {
+          icon: <Book className="w-4 h-4" />,
+          bgColor: 'bg-gray-50',
+          borderColor: 'border-gray-200',
+          iconColor: 'text-gray-600'
+        };
+    }
+  };
+
+  const { icon, bgColor, borderColor, iconColor } = getBoxStyles();
+
+  // Format content by replacing markdown with HTML
+  const formattedContent = content
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+    .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
+    .replace(/\n\n/g, '<br/><br/>') // Paragraphs
+    .replace(/\n/g, '<br/>'); // Line breaks
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay }}
+      className={`rounded-lg border ${borderColor} mb-3 overflow-hidden shadow-sm`}
+    >
+      {/* Header */}
+      <div className={`px-3 py-2 ${bgColor} flex items-center gap-2`}>
+        {icon && (
+          <span className={`${iconColor}`}>
+            {icon}
+          </span>
+        )}
+        <h3 className="font-medium">{title}</h3>
+      </div>
+      
+      {/* Content */}
+      <div className="p-3 bg-white">
+        <div 
+          className="text-gray-700 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: formattedContent }}
+        />
+      </div>
     </motion.div>
   );
 };

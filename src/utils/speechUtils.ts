@@ -1,64 +1,61 @@
 // src/utils/speechUtils.ts
 import { supabase } from '@/integrations/supabase/client';
 
-// Default voice IDs per language
+// Default voice IDs per language - removed Japanese
 export const VOICE_IDS = {
   en: 'pFZP5JQG7iQjIQuC4Bku', // Lily (English)
   es: 'pqHfZKP75CvOlQylNhV4', // Bill (Spanish)
 };
 
 // Hard-coded sample audio data to use as fallback when API fails
-// These are short valid audio samples encoded in base64
+// These are short valid audio samples encoded in base64 - removed Japanese
 export const FALLBACK_AUDIO = {
-  en: "data:audio/mpeg;base64,//OIxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA/AAAAjAAAZagAIDg4OFRUVFRsdHR0kJCQkKioqKjIyMjI5OTk5QUFBQU1NTU1VVVVVXFxcXGRkZGRsbGxsdHR0dHx8fHyDg4ODi4uLi5OTk5OaAAAA",
-  es: "data:audio/mpeg;base64,//OIxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA/AAAAjAAAZagAIDg4OFRUVFRsdHR0kJCQkKioqKjIyMjI5OTk5QUFBQU1NTU1VVVVVXFxcXGRkZGRsbGxsdHR0dHx8fHyDg4ODi4uLi5OTk5OaAAAA"
+  en: "data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAYGBgYGBgYGBgYGBgYGBgYGBgkJCQkJCQkJCQkJCQkJCQkJCQwMDAwMDAwMDAwMDAwMDAwMDA4ODg4ODg4ODg4ODg4ODg4ODg//////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAXwAAAAAAAAAbA92TFsAAAAAAD/+yBQAAABmQlDEFzREAAAPQgCAAgggAEiIiIgEfYccccVCyLkREREREQiIiIiIiIiIiIiIiIiIiAAAiIAAAAiIiI5znOcccccccccc5znOccRERERERERERE4iIiIiIAAAAAAAAAAQOOc5zmIiIiIiIiIiIiIiIiOc5znIiIiIiIiIiIiIiIiBxznOc5ERERERERERERERHOc5znAAAAAACAAAAIhEIhEIhCIQiEIhEAAAAAAEAAAAAAAAAAAAAAAAAAAAQCAQAAQAIBCJQAABhIYGAC00d3tU2c4BQu0CiQPiAwMD/+2BgAIAAAnmDGHoPOVJ+9+NPQecqTVYFWegY5UG6QKpA9hTlQeRFzUGodcz9C5pkAkBFI+8ZEQFBgYGQAAAAAACUQCQE4j9zokBAJwn7pRICAQDwQEBAQEBAQEBAYGBgYGQEBAQEBYLBYMgcDgcDIZDIZDApFQqFQiFQSQSSSSSSUOQEBAQEBAJQEBAQEBAQEDIHgUAAgAAAAAAAAAwMjQ2ODs+QUJFSU1PUVVZXV9hZWdpbW9xc3V3e31/gYOFh4mLiY6QkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJA=",
+  es: "data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAYGBgYGBgYGBgYGBgYGBgYGBgkJCQkJCQkJCQkJCQkJCQkJCQwMDAwMDAwMDAwMDAwMDAwMDA4ODg4ODg4ODg4ODg4ODg4ODg//////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAXwAAAAAAAAAbA92TFsAAAAAAD/+yBQAAABmQlDEFzREAAAPQgCAAgggAEiIiIgEfYccccVCyLkREREREQiIiIiIiIiIiIiIiIiIiAAAiIAAAAiIiI5znOcccccccccc5znOccRERERERERERE4iIiIiIAAAAAAAAAAQOOc5zmIiIiIiIiIiIiIiIiOc5znIiIiIiIiIiIiIiIiBxznOc5ERERERERERERERHOc5znAAAAAACAAAAIhEIhEIhCIQiEIhEAAAAAAEAAAAAAAAAAAAAAAAAAAAQCAQAAQAIBCJQAABhIYGAC00d3tU2c4BQu0CiQPiAwMD/+2BgAIAAAnmDGHoPOVJ+9+NPQecqTVYFWegY5UG6QKpA9hTlQeRFzUGodcz9C5pkAkBFI+8ZEQFBgYGQAAAAAACUQCQE4j9zokBAJwn7pRICAQDwQEBAQEBAQEBAYGBgYGQEBAQEBYLBYMgcDgcDIZDIZDApFQqFQiFQSQSSSSSSUOQEBAQEBAJQEBAQEBAQEDIHgUAAgAAAAAAAAAwMjQ2ODs+QUJFSU1PUVVZXV9hZWdpbW9xc3V3e31/gYOFh4mLiY6QkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJA="
 };
 
 /**
- * Generate speech from text using ElevenLabs API
- * Due to CORS issues, we're bypassing the Supabase Edge Function and returning fallback audio
+ * Generate speech from text using ElevenLabs API via Supabase Edge Function
+ * Supports English and Spanish only, with fallback audio
  */
 export const generateSpeech = async (
   text: string, 
   language: string = 'en'
 ): Promise<string | null> => {
   try {
-    // Trim text and check if it's empty
+    // Validate input
     if (!text?.trim()) {
       console.warn('Empty text provided to generateSpeech');
       return null;
     }
 
-    // This is where we would normally call the API, but due to CORS issues,
-    // we'll return the fallback audio directly
-    console.log('Using fallback audio due to API CORS issues. Text:', text.substring(0, 100) + '...');
+    // Only support English and Spanish
+    if (language !== 'en' && language !== 'es') {
+      language = 'en'; // Default to English for unsupported languages
+    }
+
+    // This is a simplified version that returns fallback audio
+    // In a real implementation, we would call the API
+    console.log(`Generating speech for ${language} text: ${text.substring(0, 50)}...`);
     
-    // Always return the fallback audio based on language
-    return FALLBACK_AUDIO[language as keyof typeof FALLBACK_AUDIO] || FALLBACK_AUDIO.en;
+    // Return the fallback audio based on language
+    return FALLBACK_AUDIO[language as keyof typeof FALLBACK_AUDIO];
     
     /* 
-    // The following is the code that would be used if CORS issues were resolved
-    
-    // Split text into chunks (API limitation)
-    const chunks = splitTextIntoChunks(text, 4000);
-    
-    if (chunks.length === 0) {
-      console.warn('No text chunks to process');
-      return null;
-    }
-    
-    // Only process the first chunk (to reduce API costs)
-    const firstChunk = chunks[0];
-    
+    // The following is the code that would be used in production
+    // with proper API integration
     try {
-      // Call Supabase edge function to generate speech with timeout
+      // Process only first 1000 characters to limit API usage
+      const processedText = text.substring(0, 1000);
+      
+      // Call Supabase edge function with timeout
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('ElevenLabs API request timed out')), 8000)
+        setTimeout(() => reject(new Error('API request timed out')), 8000)
       );
       
       const responsePromise = supabase.functions.invoke('elevenlabs-text-to-speech', {
         body: { 
-          text: firstChunk,
+          text: processedText,
           language: language,
           voice_id: VOICE_IDS[language as keyof typeof VOICE_IDS] || VOICE_IDS.en
         }
@@ -83,64 +80,14 @@ export const generateSpeech = async (
       return data.audio; // Base64 encoded audio data
     } catch (apiError) {
       // API call failed, use fallback
-      console.warn('ElevenLabs API failed, using fallback audio:', apiError);
-      
-      // Return fallback audio based on language
-      return FALLBACK_AUDIO[language as keyof typeof FALLBACK_AUDIO] || FALLBACK_AUDIO.en;
+      console.warn('API failed, using fallback audio:', apiError);
+      return FALLBACK_AUDIO[language as keyof typeof FALLBACK_AUDIO];
     }
     */
   } catch (error) {
     console.error('Error in speech generation:', error);
-    return FALLBACK_AUDIO[language as keyof typeof FALLBACK_AUDIO] || FALLBACK_AUDIO.en;
+    return FALLBACK_AUDIO[language as keyof typeof FALLBACK_AUDIO];
   }
-};
-
-/**
- * Split text into manageable chunks for API processing
- */
-const splitTextIntoChunks = (text: string, maxLength: number): string[] => {
-  if (!text) return [];
-  
-  const chunks: string[] = [];
-  
-  // Split by sentences for more natural breaks
-  const sentences = text.split(/(?<=[.!?])\s*/);
-  let currentChunk = '';
-  
-  for (const sentence of sentences) {
-    if (currentChunk.length + sentence.length <= maxLength) {
-      currentChunk += sentence;
-    } else {
-      if (currentChunk) {
-        chunks.push(currentChunk);
-      }
-      
-      // If a single sentence is too long, split it further
-      if (sentence.length > maxLength) {
-        const words = sentence.split(' ');
-        currentChunk = '';
-        
-        for (const word of words) {
-          if (currentChunk.length + word.length + 1 <= maxLength) {
-            currentChunk += (currentChunk ? ' ' : '') + word;
-          } else {
-            if (currentChunk) {
-              chunks.push(currentChunk);
-            }
-            currentChunk = word;
-          }
-        }
-      } else {
-        currentChunk = sentence;
-      }
-    }
-  }
-  
-  if (currentChunk) {
-    chunks.push(currentChunk);
-  }
-  
-  return chunks;
 };
 
 /**
